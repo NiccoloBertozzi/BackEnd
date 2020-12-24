@@ -1,0 +1,133 @@
+{
+	"id": "aff54d76-ae4e-4cd8-bebe-778f73c8d5b8",
+	"name": "API AIBVC V1",
+	"description": "",
+	"auth": null,
+	"events": null,
+	"variables": [],
+	"order": [
+		"3e87606f-67ed-4062-9883-e0eb80e00308",
+		"d6892d1e-dd78-4bef-a921-eb4b73367f51",
+		"c8440cd5-fc35-446e-ae4b-f994f7cb43d8",
+		"1a2eb0a3-0739-4b9a-821c-2da39b6cec7c",
+		"65e8e141-b2c0-44c5-ae7a-bfc50976a624"
+	],
+	"folders_order": [],
+	"protocolProfileBehavior": {},
+	"folders": [],
+	"requests": [
+		{
+			"id": "1a2eb0a3-0739-4b9a-821c-2da39b6cec7c",
+			"name": "https://localhost:44345/api/v1/registrati/RegistraDelegato",
+			"url": "https://localhost:44345/api/v1/registrati/RegistraDelegato",
+			"description": "",
+			"data": [],
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"dataMode": "raw",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\r\n  \"delegato\": {\r\n    \"nome\": \"Mario\",\r\n    \"cognome\": \"Marini\",\r\n    \"sesso\": \"M\",\r\n    \"cf\": \"MRMRN\",\r\n    \"dataNascita\": \"2020-12-22T18:50:27.644Z\",\r\n    \"idComuneNascita\": \"H294\",\r\n    \"idComuneResidenza\": \"H294\",\r\n    \"indirizzo\": \"Via Delegati\",\r\n    \"cap\": \"44563\",\r\n    \"email\": \"mariomarini@gmail.com\",\r\n    \"tel\": \"253453\",\r\n    \"arbitro\": false,\r\n    \"supervisore\": true\r\n  },\r\n  \"cred\": {\r\n    \"comuneNascita\": \"Rimini\",\r\n    \"comuneResidenza\": \"Rimini\",\r\n    \"nomeSocieta\": \"Beach Volley University\",\r\n    \"password\": \"delegato1234\"\r\n  }\r\n}",
+			"pathVariables": {}
+		},
+		{
+			"id": "3e87606f-67ed-4062-9883-e0eb80e00308",
+			"name": "https://localhost:44345/api/v1/login/Login",
+			"url": "https://localhost:44345/api/v1/login/Login",
+			"description": "",
+			"data": [],
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"dataMode": "raw",
+			"headerData": null,
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"rawModeData": "{\r\n  \"email\": \"alextama@gmail.com\",\r\n  \"password\": \"Ciao1234\"\r\n}",
+			"pathVariables": {}
+		},
+		{
+			"id": "65e8e141-b2c0-44c5-ae7a-bfc50976a624",
+			"name": "https://localhost:44345/api/v1/registrati/RegistraSocieta",
+			"url": "https://localhost:44345/api/v1/registrati/RegistraSocieta",
+			"description": "",
+			"data": [],
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"dataMode": "raw",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\r\n  \"societa\": {\r\n    \"idComune\": \"H294\",\r\n    \"nomeSocieta\": \"ITTS Beach Volley\",\r\n    \"indirizzo\": \"Via negri \",\r\n    \"cap\": \"47823\",\r\n    \"dataFondazione\": \"2020-12-22T18:58:07.693Z\",\r\n    \"dataAffiliazione\": \"2020-12-22T18:58:07.693Z\",\r\n    \"codiceAffiliazione\": \"LA-22222\",\r\n    \"affiliata\": true,\r\n    \"email\": \"info@ittsbv.it\",\r\n    \"sito\": \"ittsbv.it\",\r\n    \"tel1\": \"33958395\",\r\n    \"tel2\": \"null\",\r\n    \"pec\": \"itts@pec.it\",\r\n    \"piva\": \"null\",\r\n    \"cf\": \"null\",\r\n    \"cu\": \"null\"\r\n  },\r\n  \"cred\": {\r\n    \"comuneNascita\": \"Rimini\",\r\n    \"comuneResidenza\": \"Rimini\",\r\n    \"nomeSocieta\": \"ITTS Beach Volley\",\r\n    \"password\": \"societa1234\"\r\n  }\r\n}",
+			"pathVariables": {}
+		},
+		{
+			"id": "c8440cd5-fc35-446e-ae4b-f994f7cb43d8",
+			"name": "https://localhost:44345/api/v1/registrati/RegistraAllenatore",
+			"url": "https://localhost:44345/api/v1/registrati/RegistraAllenatore",
+			"description": "",
+			"data": [],
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"dataMode": "raw",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\r\n  \"allenatore\": {\r\n    \"idSocieta\": 1,\r\n    \"codiceTessera\": \"ALL-223\",\r\n    \"grado\": \"1\",\r\n    \"nome\": \"Maria\",\r\n    \"cognome\": \"Guidi\",\r\n    \"sesso\": \"F\",\r\n    \"cf\": \"MRGDD\",\r\n    \"dataNascita\": \"2020-12-22T18:45:19.236Z\",\r\n    \"idComuneNascita\": \"H294\",\r\n    \"idComuneResidenza\": \"H294\",\r\n    \"indirizzo\": \"Via degli allenatori\",\r\n    \"cap\": \"47825\",\r\n    \"email\": \"mariaguidi@gmail.com\",\r\n    \"tel\": \"343253565\"\r\n  },\r\n  \"cred\": {\r\n    \"comuneNascita\": \"Rimini\",\r\n    \"comuneResidenza\": \"Rimini\",\r\n    \"nomeSocieta\": \"Beach Volley University\",\r\n    \"password\": \"allenatore1234\"\r\n  }\r\n}",
+			"pathVariables": {}
+		},
+		{
+			"id": "d6892d1e-dd78-4bef-a921-eb4b73367f51",
+			"name": "https://localhost:44345/api/v1/registrati/RegistraAtleta",
+			"url": "https://localhost:44345/api/v1/registrati/RegistraAtleta",
+			"description": "",
+			"data": [],
+			"dataOptions": {
+				"raw": {
+					"language": "json"
+				}
+			},
+			"dataMode": "raw",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\r\n  \"atleta\": {\r\n    \"idSocieta\": 1,\r\n    \"codiceTessera\": \"555\",\r\n    \"nome\": \"alex\",\r\n    \"cognome\": \"tamagnini\",\r\n    \"sesso\": \"M\",\r\n    \"cf\": \"ALXTMN\",\r\n    \"dataNascita\": \"2002-03-05T06:57:25.473Z\",\r\n    \"idComuneNascita\": \"H294\",\r\n    \"idComuneResidenza\": \"H294\",\r\n    \"indirizzo\": \"Via di santermete\",\r\n    \"cap\": \"47822\",\r\n    \"email\": \"alextama@gmail.com\",\r\n    \"tel\": \"58234053\",\r\n    \"altezza\": 180,\r\n    \"peso\": 65,\r\n    \"dataScadenzaCertificato\": \"2020-12-22T06:57:25.473Z\"\r\n  },\r\n  \"cred\": {\r\n    \"comuneNascita\": \"Rimini\",\r\n    \"comuneResidenza\": \"Rimini\",\r\n    \"nomeSocieta\": \"Beach Volley University\",\r\n    \"password\": \"Ciao1234\"\r\n  }\r\n}",
+			"pathVariables": {}
+		}
+	]
+}
