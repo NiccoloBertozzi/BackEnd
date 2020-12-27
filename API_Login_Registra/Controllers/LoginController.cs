@@ -16,7 +16,7 @@ namespace API_Login_Registra.Controllers
     {
         Database db = new Database();
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InfoMsg))]
         public IActionResult Login([FromBody] Credenziali credenziali)
         {

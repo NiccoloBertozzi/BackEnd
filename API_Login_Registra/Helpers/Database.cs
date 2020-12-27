@@ -215,7 +215,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CF", cF);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita.Date);
+                parametro = new SqlParameter("DataNascita", dataNascita);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDComuneNascita", comuneNascita);
                 comando.Parameters.Add(parametro);
@@ -298,7 +298,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CF", cF);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita.Date);
+                parametro = new SqlParameter("DataNascita", dataNascita);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDComuneNascita", comuneNascita);
                 comando.Parameters.Add(parametro);
@@ -383,7 +383,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CF", cF);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita.Date);
+                parametro = new SqlParameter("DataNascita", dataNascita);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDComuneNascita", comuneNascita);
                 comando.Parameters.Add(parametro);
@@ -465,9 +465,9 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CAP", cap);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataFondazione", dataFondazione.Date);
+                parametro = new SqlParameter("DataFondazione", dataFondazione);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataAffiliazione", dataAffilizione.Date);
+                parametro = new SqlParameter("DataAffiliazione", dataAffilizione);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CodiceAffiliazione", codAffiliazione);
                 comando.Parameters.Add(parametro);
