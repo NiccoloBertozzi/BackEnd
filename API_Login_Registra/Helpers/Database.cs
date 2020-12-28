@@ -93,14 +93,16 @@ namespace WebAPIAuthJWT.Helpers
 
             foreach (DataRow dr in dtProfili.Rows)
             {
-                if (dr["IDSocieta"] != null)
+                if (dr["IDSocieta"].ToString() !="")
                     claims.Add(new Claim(ClaimTypes.Role, "Societa"));
-                else if (dr["IDDelegato"] != null)
+                else if (dr["IDDelegato"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Delegato"));
-                else if (dr["IDAtleta"] != null)
+                else if (dr["IDAtleta"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Atleta"));
-                else if (dr["IDAllenatore"] != null)
+                else if (dr["IDAllenatore"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Allenatore"));
+                else if (dr["Admin"].ToString() != "")
+                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -188,7 +190,51 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public DataTable GetAnagrafica(int idAtleta)
+        {
+            conn.Open();
+            string sql = "";
+            sql += "SELECT Nome,Cognome,DataNascita,Email,Tel,Sesso ";
+            sql += "FROM Atleta ";
+            sql += "WHERE idAtleta='" + idAtleta + "'";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public DataTable GetIscrizioni(int idAtleta)
+        {
+            conn.Open();
+            string sql = "";
+            sql += " SELECT Torneo.idTorneo,IDTipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumTeamTabellone,NumTeamQualifiche,Squadra.IDAtleta1,Squadra.IDAtleta2";
+            sql += " FROM Torneo,ListaIscritti,Squadra,Atleta";
+            sql += " WHERE ListaIscritti.IDSquadra=Squadra.IDSquadra AND ListaIscritti.IDTorneo=Torneo.IDTorneo " +
+                   " AND (Squadra.IDAtleta1=Atleta.IDAtleta OR Squadra.IDAtleta2=Atleta.IDAtleta)" +
+                   " AND (Squadra.idAtleta1='" + idAtleta + "' OR Squadra.idAtleta2='" + idAtleta + "')";
 
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public DataTable GetTorneiEntroData(DateTime data)
+        {
+            conn.Open();
+            string sql = "";
+            sql += " SELECT *";
+            sql += " FROM Torneo";
+            sql += " WHERE CAST(DataInizio as DATE) >= '" + data.Date.ToString() + "' ";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
         public bool RegisterAllenatore(int idSocieta, string codTessera, string grado, string nome, string cognome, char sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, string pwd)
         {
             DataTable idAllenatore;

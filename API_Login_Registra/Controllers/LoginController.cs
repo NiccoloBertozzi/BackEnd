@@ -11,13 +11,14 @@ namespace API_Login_Registra.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/login")]
+    [Route("api/v1/")]
     public class LoginController : Controller
     {
         Database db = new Database();
 
         [HttpPost("Login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status405MethodNotAllowed, Type = typeof(InfoMsg))]
         public IActionResult Login([FromBody] Credenziali credenziali)
         {
             string tokenJWT = "";

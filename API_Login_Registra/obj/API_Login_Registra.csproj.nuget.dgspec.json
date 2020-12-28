@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd-main\\API_Login_Registra\\API_Login_Registra.csproj": {}
+    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_Login_Registra\\API_Login_Registra.csproj": {}
   },
   "projects": {
-    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd-main\\API_Login_Registra\\API_Login_Registra.csproj": {
+    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_Login_Registra\\API_Login_Registra.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd-main\\API_Login_Registra\\API_Login_Registra.csproj",
+        "projectUniqueName": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_Login_Registra\\API_Login_Registra.csproj",
         "projectName": "API_Login_Registra",
-        "projectPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd-main\\API_Login_Registra\\API_Login_Registra.csproj",
+        "projectPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_Login_Registra\\API_Login_Registra.csproj",
         "packagesPath": "C:\\Users\\Niccolò Bertozzi\\.nuget\\packages\\",
-        "outputPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd-main\\API_Login_Registra\\obj\\",
+        "outputPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_Login_Registra\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "E:\\Microsoft\\Xamarin\\NuGet\\"
@@ -49,6 +49,10 @@
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
               "version": "[3.1.10, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[3.1.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
