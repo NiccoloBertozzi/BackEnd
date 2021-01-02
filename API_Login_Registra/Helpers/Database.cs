@@ -448,7 +448,7 @@ namespace WebAPIAuthJWT.Helpers
             }
             return regRiuscita;
         }
-        public bool RegisterDelegato(string nome, string cognome, char sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
+        public bool RegisterDelegato(string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
         {
             DataTable idDelegato;
             bool regRiuscita = false;
@@ -464,23 +464,41 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Cognome", cognome);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Sesso", sesso);
-                comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("CF", cF);
+                comando.Parameters.Add(parametro);
+                if (sesso != null)
+                    parametro = new SqlParameter("Sesso", sesso);
+                else
+                    parametro = new SqlParameter("Sesso", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("DataNascita", dataNascita);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("IDComuneNascita", comuneNascita);
+                if (comuneNascita != "")
+                    parametro = new SqlParameter("IDComuneNascita", comuneNascita);
+                else
+                    parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
+                if (comuneResidenza != "")
+                    parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
+                else
+                    parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Indirizzo", indirizzo);
+                if (indirizzo != null)
+                    parametro = new SqlParameter("Indirizzo", indirizzo);
+                else
+                    parametro = new SqlParameter("Indirizzo", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CAP", cap);
+                if (cap != null)
+                    parametro = new SqlParameter("CAP", cap);
+                else
+                    parametro = new SqlParameter("CAP", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Email", email);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Tel", tel);
+                if (tel != null)
+                    parametro = new SqlParameter("Tel", tel);
+                else
+                    parametro = new SqlParameter("Tel", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Arbitro", arbitro);
                 comando.Parameters.Add(parametro);
