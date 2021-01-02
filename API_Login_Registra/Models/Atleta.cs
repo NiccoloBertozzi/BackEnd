@@ -24,7 +24,7 @@ namespace TEST.Models
         public string CodiceTessera { get; set; }
         public string Nome { get; set; }
         public string Cognome { get; set; }
-        public char Sesso { get; set; }
+        public string Sesso { get; set; }
         public string CF { get; set; }
         public System.DateTime DataNascita { get; set; }
         public string IDComuneNascita { get; set; }
