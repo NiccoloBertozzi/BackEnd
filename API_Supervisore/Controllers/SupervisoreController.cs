@@ -47,12 +47,12 @@ namespace API_Supervisore.Controllers
         {
             return Ok(db.GetTorneiByData(Convert.ToDateTime(data)));
         }*/
-        [HttpPost("GetNomiSquadreInPartita")]
+        [HttpGet("GetNomiSquadreInPartita/{TitoloTorneo}/NumeroPartita/{NumPartita}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore")]
-        public ActionResult<InfoMsg> GetNomiSquadreInPartita([FromBody] CercaTeam cercaTeam)
+        public ActionResult<InfoMsg> GetNomiSquadreInPartita(string TitoloTorneo, int NumPartita)
         {
-            return Ok(db.GetInfoSquadre(db.GetIDTorneo(cercaTeam.TitoloTorneo), cercaTeam.NumPartita));
+            return Ok(db.GetInfoSquadre(db.GetIDTorneo(TitoloTorneo), NumPartita));
         }
         [HttpPut("AggiornaRisultati")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
@@ -68,12 +68,12 @@ namespace API_Supervisore.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'aggiornamento del risultato"));
         }
-        [HttpPost("GetPartita")]
+        [HttpGet("GetPartita/{TitoloTorneo}/NumeroPartita/{NumPartita}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore")]
-        public ActionResult<InfoMsg> GetPartita([FromBody]CercaTeam cercaPartita)
+        public ActionResult<InfoMsg> GetPartita(string TitoloTorneo, int NumPartita)
         {
-            return Ok(db.GetPartita(db.GetIDTorneo(cercaPartita.TitoloTorneo), cercaPartita.NumPartita));
+            return Ok(db.GetPartita(db.GetIDTorneo(TitoloTorneo), NumPartita));
         }
         [HttpGet("GetTorneoByTitolo/{titolo}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
