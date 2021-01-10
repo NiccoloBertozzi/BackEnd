@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPIAuthJWT.Helpers;
 using API_Login_Registra.Models;
+using System.Net.Mail;
+using API_Supervisore.Models;
 
 namespace API_AIBVC.Controllers
 {
@@ -49,6 +51,7 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori in inserimento dell'allenatore { allenatoreLogin.allenatore.Nome}."));
         }
+
         [HttpPost("RegistraAtleta")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -69,6 +72,7 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori in inserimento dell'atleta {atletalogin.atleta.Nome}."));
         }
+
         [HttpPost("RegistraDelegato")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -88,6 +92,7 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori in inserimento del delegato {delegatologin.delegato.Nome}."));
         }
+
         [HttpPost("RegistraSocieta")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -105,6 +110,34 @@ namespace API_AIBVC.Controllers
             }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori in inserimento della societa {societalogin.societa.NomeSocieta}."));
+        }
+
+        [HttpPut("CambiaPsw")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<InfoMsg> CambiaPsw([FromBody] SetNuovaPsw setNPSW)
+        {
+            PasswordHasher hasher = new PasswordHasher();
+            setNPSW.Password = hasher.Hash(setNPSW.Password);
+            if (db.SetNuovaPsw(setNPSW.Email, setNPSW.Password))
+                return Ok(new InfoMsg(DateTime.Today, $"Password cambiata con successo."));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
+        }
+
+        [HttpPost("RecuperaPassword")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<InfoMsg> RecuperaPassword([FromBody] SetNuovaPsw setNPSW)
+        {
+            if (db.RecuperaPassword(setNPSW.Email))
+                return Ok(new InfoMsg(DateTime.Today, $"OK"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
         }
     }
 }

@@ -13,24 +13,10 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/supervisore")]
+    [Route("api/v1")]
     public class SupervisoreController : Controller
     {
         Database db = new Database();
-        [HttpPut("CambiaPsw")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<InfoMsg> CambiaPsw([FromBody] SetNuovaPsw setNPSW)
-        {
-            PasswordHasher hasher = new PasswordHasher();
-            setNPSW.Password = hasher.Hash(setNPSW.Password);
-            if (db.SetNuovaPsw(setNPSW.Email, setNPSW.Password))
-                return Ok(new InfoMsg(DateTime.Today, $"Password cambiata con successo."));
-            else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
-        }
         [HttpGet("GetAllTornei")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]

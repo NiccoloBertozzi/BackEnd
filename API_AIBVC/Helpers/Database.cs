@@ -10,6 +10,7 @@ using System.Security.Claims;
 using TEST.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
+using System.Net.Mail;
 
 namespace WebAPIAuthJWT.Helpers
 {
@@ -95,14 +96,14 @@ namespace WebAPIAuthJWT.Helpers
                 else if (dr["IDDelegato"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Delegato"));
-                    if (Convert.ToInt32(dr["AdminDelegati"]) == 1)
+                    if (dr["AdminDelegati"].ToString()== "false")
                         claims.Add(new Claim(ClaimTypes.Role, "AdminDelegato"));
                 }
                 else if (dr["IDAtleta"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Atleta"));
                 else if (dr["IDAllenatore"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Allenatore"));
-                if (Convert.ToInt32(dr["Admin"].ToString()) == 1)
+                if (dr["Admin"].ToString() == "false")
                     claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             }
 
@@ -1061,5 +1062,32 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
+        public bool RecuperaPassword(string email)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress("recoverypass.aibvc@gmail.com");
+                mail.To.Add(email);
+                mail.Subject = "Recupero password Account AIBVC";
+                mail.Body ="Clicca il bottone per cambiare la password" +
+                    "<a href=\"https://aibvcwa.azurewebsites.net/nuovapassword?email="+email+"\">"+
+                 "<button>Cambia Password</button></a>";
+                mail.IsBodyHtml = true;
+
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("recoverypass.aibvc@gmail.com", "rpsabv21");
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        } //invia l'email per recuperare la password
     }
 }
