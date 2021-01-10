@@ -227,7 +227,7 @@ namespace WebAPIAuthJWT.Helpers
             string sql = "";
             sql += " SELECT *";
             sql += " FROM Torneo";
-            sql += " WHERE CAST(DataInizio as DATE) >= '" + data.Date.ToString() + "' ";
+            sql += " WHERE CAST(DataInizio as DATE) <= '" + data.Date.ToString() + "' ";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
