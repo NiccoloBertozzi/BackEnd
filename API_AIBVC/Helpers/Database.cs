@@ -1217,5 +1217,23 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }//Inserisci la squadra nella lista iscritti ti un torneo
+        public DataTable GetPartite(int NumeroPartite)
+        {
+            try
+            {
+                sql = "";
+                sql += "SELECT TOP "+NumeroPartite+ " * FROM Partita";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return query;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

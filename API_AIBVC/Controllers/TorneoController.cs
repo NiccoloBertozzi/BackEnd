@@ -13,7 +13,6 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Authorize(Roles = "Societa, Delegato, Atleta, Allenatore")]
     [Route("api/v1/tornei")]
     public class TorneoController : Controller
     {
@@ -67,6 +66,16 @@ namespace API_AIBVC.Controllers
                 return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
+        }
+
+        //Restituisce tornei prima della data inserita
+        [HttpGet("GetPartite/{NumeroPartite}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetTornei(int NumeroPartite)
+        {
+            return db.GetPartite(NumeroPartite);
         }
     }
 }
