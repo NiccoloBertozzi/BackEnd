@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPIAuthJWT.Helpers;
 using API_AIBVC.Models;
+using TEST.Models;
 
 namespace API_AIBVC.Controllers
 {
@@ -39,6 +40,33 @@ namespace API_AIBVC.Controllers
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
+        }
+
+        [HttpPost("InserisciSquadra")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta")]
+        public Nullable<int> InsertSquadra([FromBody]Squadra squadra)
+        {
+            Nullable<int> idsquadra = db.InsertSquadra(squadra.Atleta1, squadra.Atleta2, squadra.NomeTeam);
+            if (idsquadra != null)
+                return idsquadra;
+            else
+                return null;
+        }
+
+        [HttpPost("IscriviSquadra")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta")]
+        public ActionResult<InfoMsg> IscriviSquadra([FromBody]ListaIscritti iscritti)
+        {
+            if (db.IscriviSquadra(iscritti.IDTorneo, iscritti.IDSquadra, iscritti.IDAllenatore))
+                return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
     }
 }

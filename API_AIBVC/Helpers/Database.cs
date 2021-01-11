@@ -1090,5 +1090,132 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         } //invia l'email per recuperare la password
+        public Nullable<int> InsertSquadra(string NomeAtleta1, string NomeAtleta2, string NomeTeam)
+        {
+            int idatleta1, idatleta2;
+            try
+            {
+                idatleta1 = GetIDAtleta(NomeAtleta1);
+                idatleta2 = GetIDAtleta(NomeAtleta2);
+
+            }
+            catch
+            {
+                return null;
+            }
+            try
+            {
+                sql = "";
+                sql += "SELECT IDSquadra FROM Squadra WHERE (IDAtleta1='" + idatleta1 + "' AND IDAtleta2='" + idatleta2 + "') OR (IDAtleta1='" + idatleta2 + "' AND IDAtleta2='" + idatleta1 + "')";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                //controllo che non ci sia gia una squadra
+                if (query.Rows.Count > 0)
+                {
+                    //restituisco id squadra
+                    return (Convert.ToInt32(query.Rows[0]["IDSquadra"]));
+                }
+                else
+                {
+                    try
+                    {
+                        //Insert nella tabella squadra
+                        sql = "";
+                        sql += "INSERT INTO Squadra(IDAtleta1,IDAtleta2,NomeTeam)";
+                        sql += "VALUES (@IDAtleta1,@IDAtleta2,@NomeTeam)";
+                        comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("IDAtleta1", idatleta1);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("IDAtleta2", idatleta2);
+                        comando.Parameters.Add(parametro);
+                        if (NomeTeam != null)
+                            parametro = new SqlParameter("NomeTeam", NomeTeam);
+                        else
+                            parametro = new SqlParameter("NomeTeam", DBNull.Value);
+                        comando.Parameters.Add(parametro);
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                        //riscarico id squadra appena inserito
+                        sql = "";
+                        sql += "SELECT IDSquadra FROM Squadra WHERE IDAtleta1='" + idatleta1 + "' AND IDAtleta2='" + idatleta2 + "'";
+                        query = new DataTable();
+                        adapter = new SqlDataAdapter(sql, conn);
+                        conn.Open();
+                        adapter.Fill(query);
+                        conn.Close();
+                        //controllo che non ci sia gia una squadra
+                        if (query.Rows.Count > 0)
+                        {
+                            //restituisco id squadra
+                            return (Convert.ToInt32(query.Rows[0]["IDSquadra"]));
+                        }
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }// inserisce le squadre
+        public int GetIDAtleta(string tessera)//Metodo che restituisce l'ID del atleta cercato
+        {
+            //uso il codice della tessera in modo tale che un atleta per invitare un compagno debba conoscerlo e quindi richiederlo
+            //a differenza del nome e cognome che è conosciuto da tutti
+            try
+            {
+                sql = "";
+                sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera ='" + tessera + "'";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return Convert.ToInt32(query.Rows[0]["IDAtleta"]);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        public bool IscriviSquadra(int idTorneo, int idSquadra, int idAllenatore)
+        {
+            try
+            {
+                sql = "";
+                sql += "INSERT INTO ListaIscritti(IDSquadra,IDTorneo,IDAllenatore,DataIscrizione,Cancellata)VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@DataIscrizione,@Cancellata)";
+                comando = new SqlCommand(sql, conn);
+                parametro = new SqlParameter("IDSquadra", idSquadra);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("IDTorneo", idTorneo);
+                comando.Parameters.Add(parametro);
+                if (idAllenatore != 0)
+                    parametro = new SqlParameter("IDAllenatore", idAllenatore);
+                else
+                    parametro = new SqlParameter("IDAllenatore", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("DataIscrizione", DateTime.Now.Date);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("Cancellata", SqlDbType.Bit) { Value = 0 };
+                comando.Parameters.Add(parametro);
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                string error = ex.Message;
+                return false;
+            }
+        }//Inserisci la squadra nella lista iscritti ti un torneo
     }
 }

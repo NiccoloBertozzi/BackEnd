@@ -19,9 +19,9 @@ namespace TEST.Models
         }
     
         public int IDSquadra { get; set; }
-        public int IDAtleta1 { get; set; }
-        public int IDAtleta2 { get; set; }
-        public Nullable<bool> Accettato { get; set; }
+        public string Atleta1 { get; set; }
+        public string Atleta2 { get; set; }
+        public bool Accettato { get; set; }
         public string NomeTeam { get; set; }
     
     }
