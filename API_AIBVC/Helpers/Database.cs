@@ -1072,11 +1072,12 @@ namespace WebAPIAuthJWT.Helpers
                 mail.From = new MailAddress("recoverypass.aibvc@gmail.com");
                 mail.To.Add(email);
                 mail.Subject = "Recupero password Account AIBVC";
-                mail.Body ="Clicca il bottone per cambiare la password" +
-                    "<a href=\"https://aibvcwa.azurewebsites.net/nuovapassword?email="+email+"\">"+
-                 "<button>Cambia Password</button></a>";
+                mail.Body = "Clicca il bottone per cambiare la password"+
+                    "<br><form action=\"https://aibvcwa.azurewebsites.net/nuovapassword\" method=\"post\">" +
+                    "<input type=\"hidden\" name=\"email\" value=\""+email+"\" id=\"email\"/>" +
+                    "<button type =\"submit\"> Cambia Password </button>" +
+                    "</form> ";
                 mail.IsBodyHtml = true;
-
                 SmtpServer.Port = 587;
                 SmtpServer.Credentials = new System.Net.NetworkCredential("recoverypass.aibvc@gmail.com", "rpsabv21");
                 SmtpServer.EnableSsl = true;
