@@ -67,6 +67,7 @@ namespace API_AIBVC.Controllers
                 return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
+            string c;
         }
     }
 }
