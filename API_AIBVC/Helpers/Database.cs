@@ -959,7 +959,7 @@ namespace WebAPIAuthJWT.Helpers
                 //Creo il torneo
                 sql = "";
                 sql += "INSERT INTO Torneo(IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumTeamTabellone,NumTeamQualifiche) ";
-                sql += "VALUES(@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche)";
+                sql += "VALUES(@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIscrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche)";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("IDTipoTorneo", idTipoTorneo.Rows[0][0]);
                 comando.Parameters.Add(parametro);
@@ -971,7 +971,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Montepremi", montepremi);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataChiusuraIScrizioni", dataChiusuraIscrizioni.Date);
+                parametro = new SqlParameter("DataChiusuraIscrizioni", dataChiusuraIscrizioni.Date);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("DataInzio", dataInizio.Date);
                 comando.Parameters.Add(parametro);
@@ -1028,7 +1028,7 @@ namespace WebAPIAuthJWT.Helpers
                 for(int i = 0; i < impianti.Length; i++)
                 {
                     sql = "";
-                    sql += "SELECT IDImpainto FROM Impianto WHERE NomeImpianto='" + impianti[i] + "'";
+                    sql += "SELECT IDImpianto FROM Impianto WHERE NomeImpianto='" + impianti[i] + "'";
                     query = new DataTable();
                     adapter = new SqlDataAdapter(sql, conn);
                     conn.Open();
@@ -1056,8 +1056,9 @@ namespace WebAPIAuthJWT.Helpers
                 }
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                string errore = e.Message;
                 return false;
             }
         }

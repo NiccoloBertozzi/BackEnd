@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iazz0uZvwy1Ffkep5NuBb5caGoktW6Zy7WOtLRjiVO5o3HDuYf4AcmU/qvsfgFWHWy+T3YK3Rnn/v46NTaPraQ==",
+  "dgSpecHash": "takPqYFHZKzw+HEiygo1zxcYztK5J8fGV2Z9jlHYX/RL0m2QNa6O3EmwBcb9SOk5/BCcZwHnVLIwP+mePhW3xw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\API_AIBVC\\API_AIBVC.csproj",
+  "projectFilePath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rigon\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.10\\microsoft.aspnetcore.authentication.jwtbearer.3.1.10.nupkg.sha512",
     "C:\\Users\\rigon\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\3.1.10\\microsoft.aspnetcore.jsonpatch.3.1.10.nupkg.sha512",

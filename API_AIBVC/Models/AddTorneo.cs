@@ -10,9 +10,9 @@ namespace API_AIBVC.Models
         public string Titolo { get; set; }
         public int PuntiVittoria { get; set; }
         public float Montepremi { get; set; }
-        public DateTime DataChiusuraIscrizioni { get; set; }
-        public DateTime DataInizio { get; set; }
-        public DateTime DataFine { get; set; }
+        public string DataChiusuraIscrizioni { get; set; }
+        public string DataInizio { get; set; }
+        public string DataFine { get; set; }
         public char Genere { get; set; }
         public string FormulaTorneo { get; set; }
         public int NumTeamTabellone { get; set; }

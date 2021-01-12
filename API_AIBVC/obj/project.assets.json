@@ -1148,11 +1148,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\API_AIBVC\\API_AIBVC.csproj",
+      "projectUniqueName": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
       "projectName": "API_AIBVC",
-      "projectPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\API_AIBVC\\API_AIBVC.csproj",
+      "projectPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
       "packagesPath": "C:\\Users\\rigon\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\API_AIBVC\\obj\\",
+      "outputPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
