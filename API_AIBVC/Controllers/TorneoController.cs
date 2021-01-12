@@ -28,6 +28,7 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTorneiEntroData(Data);
         }
+
         [HttpPost("CreaTorneo")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -76,6 +77,56 @@ namespace API_AIBVC.Controllers
         public DataTable GetTornei(int NumeroPartite)
         {
             return db.GetPartite(NumeroPartite);
+        }
+
+        //Return TipoTorneo
+        [HttpGet("TipoTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetTipoTorneo()
+        {
+            return db.GetTipoTorneo();
+        }
+
+        //Return ListaDelegati
+        [HttpGet("ListaDelegati/{tipo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetDelegato(int tipo)
+        {
+            return db.GetDeleago(tipo);
+        }
+
+        //Return ListaDelegati
+        [HttpGet("FormulaTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetFormula()
+        {
+            return db.GetFormula();
+        }
+
+        //Return ParametriTorneo
+        [HttpGet("ParametroTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetParametriTorneo()
+        {
+            return db.GetParametriTorneo();
+        }
+
+        //Return ParametriTorneo
+        [HttpGet("GetImpianti/{idSocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetImpianti(int idSocieta)
+        {
+            return db.GetImpianti(idSocieta);
         }
     }
 }
