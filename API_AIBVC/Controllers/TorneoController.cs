@@ -7,12 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPIAuthJWT.Helpers;
 using API_AIBVC.Models;
+using TEST.Models;
 
 namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Authorize(Roles = "Societa, Delegato, Atleta, Allenatore")]
     [Route("api/v1/tornei")]
     public class TorneoController : Controller
     {
@@ -28,6 +28,7 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTorneiEntroData(Data);
         }
+
         [HttpPost("CreaTorneo")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -35,38 +36,97 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, torneo.DataChiusuraIscrizioni, torneo.DataInizio, torneo.DataFine, torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
         }
-        [HttpPut("AutorizzaTorneo/{nomeTorneo}")]
+
+        [HttpPost("InserisciSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Admin")]
-        public ActionResult<InfoMsg> AutorizzaTorneo(string nomeTorneo)
+        [Authorize(Roles = "Atleta")]
+        public Nullable<int> InsertSquadra([FromBody]Squadra squadra)
         {
-            //Questa API viene richiamata solo se l'AIBVC autorizza il torneo
-            if(db.AutorizzaTorneo(nomeTorneo))
-                return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
+            Nullable<int> idsquadra = db.InsertSquadra(squadra.Atleta1, squadra.Atleta2, squadra.NomeTeam);
+            if (idsquadra != null)
+                return idsquadra;
             else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'autorizzazione del torneo"));
+                return null;
         }
-        [HttpPut("AssegnaSupervisori")]
+
+        [HttpPost("IscriviSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "AdminDelegato")]
-        /*
-         * Se l'admin decide di non inserire il supervisore arbitrale e/o il direttore, i dati di questi vengono impostati null
-         */
-        public ActionResult<InfoMsg> AssegnaSupervisori([FromBody]AssegnaDelegati assegnaDel)
+        [Authorize(Roles = "Atleta")]
+        public ActionResult<InfoMsg> IscriviSquadra([FromBody]ListaIscritti iscritti)
         {
-            if (db.AssegnaSupervisori(assegnaDel.NomeSupervisore, assegnaDel.CognomeSupervisore, assegnaDel.NomeSupArbitrale, assegnaDel.CognomeSupArbitrale, assegnaDel.NomeDirettore, assegnaDel.CognomeDirettore, assegnaDel.TitoloTorneo))
-                return Ok(new InfoMsg(DateTime.Today, $"Delegati assegnati con successo"));
+            if (db.IscriviSquadra(iscritti.IDTorneo, iscritti.IDSquadra, iscritti.IDAllenatore))
+                return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
             else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'assegnazione dei delegati"));
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
+        }
+
+        //Restituisce tornei prima della data inserita
+        [HttpGet("GetPartite/{NumeroPartite}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetTornei(int NumeroPartite)
+        {
+            return db.GetPartite(NumeroPartite);
+        }
+
+        //Return TipoTorneo
+        [HttpGet("TipoTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetTipoTorneo()
+        {
+            return db.GetTipoTorneo();
+        }
+
+        //Return ListaDelegati
+        [HttpGet("ListaDelegati/{tipo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetDelegato(int tipo)
+        {
+            return db.GetDeleago(tipo);
+        }
+
+        //Return ListaDelegati
+        [HttpGet("FormulaTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetFormula()
+        {
+            return db.GetFormula();
+        }
+
+        //Return ParametriTorneo
+        [HttpGet("ParametroTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetParametriTorneo()
+        {
+            return db.GetParametriTorneo();
+        }
+
+        //Return ParametriTorneo
+        [HttpGet("GetImpianti/{idSocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetImpianti(int idSocieta)
+        {
+            return db.GetImpianti(idSocieta);
         }
     }
 }

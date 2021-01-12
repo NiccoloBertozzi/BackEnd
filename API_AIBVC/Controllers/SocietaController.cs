@@ -22,12 +22,5 @@ namespace API_AIBVC.Controllers
         {
             return Json(new { output = db.GetTorneoEPartecipanti(titoloTorneo) });
         }
-        [HttpGet("GetSocieta/{nomeSocieta}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public JsonResult GetSocieta(string nomeSocieta)
-        {
-            return Json(new { output = db.GetSocieta(nomeSocieta) });
-        }
     }
 }
