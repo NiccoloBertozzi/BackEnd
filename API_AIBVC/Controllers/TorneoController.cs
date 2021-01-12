@@ -36,7 +36,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, torneo.DataChiusuraIscrizioni, torneo.DataInizio, torneo.DataFine, torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
@@ -96,7 +96,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(200, Type = typeof(DataTable))]
         public DataTable GetDelegato(int tipo)
         {
-            return db.GetDeleago(tipo);
+            return db.GetDelegato(tipo);
         }
 
         //Return ListaDelegati
@@ -119,7 +119,7 @@ namespace API_AIBVC.Controllers
             return db.GetParametriTorneo();
         }
 
-        //Return ParametriTorneo
+        //Return Impianti società
         [HttpGet("GetImpianti/{idSocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -127,6 +127,20 @@ namespace API_AIBVC.Controllers
         public DataTable GetImpianti(int idSocieta)
         {
             return db.GetImpianti(idSocieta);
+        }
+
+        //Autorizza il torneo
+        [HttpPut("AutorizzaTorneo/{titoloTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Admin")]
+        public ActionResult<InfoMsg> AutorizzaTorneo(string titoloTorneo)
+        {
+            if(db.AutorizzaTorneo(titoloTorneo))
+                return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'autorizzazione del torneo"));
         }
     }
 }
