@@ -1652,5 +1652,78 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query.Rows[0]["Allenatore"].ToString();
         }//torna nome cognome allenatore con la tessera
+        public bool ControlloSupervisore(int idDelegato, int idTorneo)
+        {
+            try
+            {
+                sql = "";
+                sql += "SELECT IDSupervisore FROM Torneo WHERE Torneo.IDTorneo=" + idTorneo;
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                if (Convert.ToInt32(query.Rows[0][0]) == idDelegato)
+                    return true;
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool EliminaTeam(int idTorneo, int idAtleta1, int idAtleta2)
+        {
+            DataTable idSquadra;
+            try
+            {
+                //Prendo l'IDSquadra
+                sql = "";
+                sql += "SELECT IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=" + idTorneo + " AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=" + idAtleta1 + " AND Squadra.IDAtleta2=" + idAtleta2;
+                idSquadra = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(idSquadra);
+                conn.Close();
+                //Elimino il team
+                sql = "";
+                sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra";
+                comando = new SqlCommand(sql, conn);
+                parametro = new SqlParameter("IDSquadra", idSquadra.Rows[0][0]);
+                comando.Parameters.Add(parametro);
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool AssegnaWildCard(int idTorneo, int idSquadra)
+        {
+            try
+            {
+                sql = "";
+                sql += "UPDATE ListaIscritti SET WC=@WC WHERE IDTorneo=@IDTorneo AND IDSquadra=@IDSquadra";
+                comando = new SqlCommand(sql, conn);
+                parametro = new SqlParameter("WC", true);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("IDTorneo", idTorneo);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("IDSquadra", idSquadra);
+                comando.Parameters.Add(parametro);
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

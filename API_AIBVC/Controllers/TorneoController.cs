@@ -68,7 +68,7 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
-
+        //ritorna la lista degli atleti di una societa
         [HttpPost("AtletiSocieta/{idsocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -79,6 +79,7 @@ namespace API_AIBVC.Controllers
             return db.GetAtletiSocieta(idsocieta);
         }
 
+        //ritorna la lista degli allenatori di una societa
         [HttpPost("AllenatoriSocieta/{idSocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -89,6 +90,7 @@ namespace API_AIBVC.Controllers
             return db.GetAllenatoreSocieta(idsocieta);
         }
 
+        //ritorna allenatore in base alla tessera
         [HttpPost("AllenatoriTessera/{tessera}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -99,6 +101,7 @@ namespace API_AIBVC.Controllers
             return db.GetAllenatoreByTessera(tessera);
         }
 
+        //ritorna atleta in base alla tessera
         [HttpPost("AtletaTessera/{tessera}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
