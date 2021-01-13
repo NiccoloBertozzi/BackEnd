@@ -69,6 +69,46 @@ namespace API_AIBVC.Controllers
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
 
+        [HttpPost("AtletiSocieta/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public DataTable GetAtletiSocieta(int idsocieta)
+        {
+            return db.GetAtletiSocieta(idsocieta);
+        }
+
+        [HttpPost("AllenatoriSocieta/{idSocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public DataTable GetAllenatoriSocieta(int idsocieta)
+        {
+            return db.GetAllenatoreSocieta(idsocieta);
+        }
+
+        [HttpPost("AllenatoriTessera/{tessera}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public string GetAllenatoreTessera(string tessera)
+        {
+            return db.GetAllenatoreByTessera(tessera);
+        }
+
+        [HttpPost("AtletaTessera/{tessera}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public string GetAtletaTessera(string tessera)
+        {
+            return db.GetAtletaByTessera(tessera);
+        }
+
         //Restituisce tornei prima della data inserita
         [HttpGet("GetPartite/{NumeroPartite}")]
         [ProducesResponseType(400)]

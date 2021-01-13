@@ -176,7 +176,21 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-
+        public int GetIDAllenatore(int tessera)
+        {
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT IDAllenatore ";
+            sql += "FROM Allenatore ";
+            sql += "WHERE Codicetessera='" + tessera + "'";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return Convert.ToInt32(query.Rows[0]["IDAllenatore"]);
+        }
         public DataTable GetIDSocieta(string nomeSocieta)
         {
             conn.Open();
@@ -572,31 +586,58 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Indirizzo", indirizzo);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CAP", cap);
+                if (cap != null)
+                    parametro = new SqlParameter("CAP", cap);
+                else
+                    parametro = new SqlParameter("CAP", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("DataFondazione", dataFondazione);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("DataAffiliazione", dataAffilizione);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CodiceAffiliazione", codAffiliazione);
+                if (codAffiliazione != null)
+                    parametro = new SqlParameter("CodiceAffiliazione", codAffiliazione);
+                else
+                    parametro = new SqlParameter("CodiceAffiliazione", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Affiliata", affiliata);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Email", email);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Sito", sito);
+                if (sito != null)
+                    parametro = new SqlParameter("Sito", sito);
+                else
+                    parametro = new SqlParameter("Sito", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Tel1", tel1);
+                if (tel1 != null)
+                    parametro = new SqlParameter("Tel1", tel1);
+                else
+                    parametro = new SqlParameter("Tel1", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Tel2", tel2);
+                if (tel2 != null)
+                    parametro = new SqlParameter("Tel2", tel2);
+                else
+                    parametro = new SqlParameter("Tel2", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Pec", pec);
+                if (pec != null)
+                    parametro = new SqlParameter("Pec", pec);
+                else
+                    parametro = new SqlParameter("Pec", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("PIVA", piva);
+                if (piva != null)
+                    parametro = new SqlParameter("PIVA", piva);
+                else
+                    parametro = new SqlParameter("PIVA", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CF", cF);
+                if (cF != null)
+                    parametro = new SqlParameter("CF", cF);
+                else
+                    parametro = new SqlParameter("CF", DBNull.Value);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CU", cU);
+                if (cU != null)
+                    parametro = new SqlParameter("CU", cU);
+                else
+                    parametro = new SqlParameter("CU", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 conn.Open();
                 comando.ExecuteNonQuery();
@@ -1196,7 +1237,7 @@ namespace WebAPIAuthJWT.Helpers
             int idatleta1, idatleta2;
             try
             {
-                idatleta1 = GetIDAtleta(NomeAtleta1);
+                idatleta1 = Convert.ToInt32(NomeAtleta1);
                 idatleta2 = GetIDAtleta(NomeAtleta2);
 
             }
@@ -1267,14 +1308,35 @@ namespace WebAPIAuthJWT.Helpers
                 return null;
             }
         }// inserisce le squadre
-        public int GetIDAtleta(string tessera)//Metodo che restituisce l'ID del atleta cercato
+        public int GetIDAtleta(string data)//Metodo che restituisce l'ID del atleta cercato
         {
             //uso il codice della tessera in modo tale che un atleta per invitare un compagno debba conoscerlo e quindi richiederlo
             //a differenza del nome e cognome che è conosciuto da tutti
+            //data= Nome Cognome CodiceTesera
             try
             {
                 sql = "";
-                sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera ='" + tessera + "'";
+                sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera ='" + data + "'";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return Convert.ToInt32(query.Rows[0]["IDAtleta"]);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        public int GetIDAllenatore(string data)//Metodo che restituisce l'ID dell'allentaore cercato
+        {
+            //data= Nome Cognome CodiceTesera
+            string[] splited = data.Split(null);//splitto per lo spazio
+            try
+            {
+                sql = "";
+                sql += "SELECT IDAllenatore FROM Allenatore WHERE CodiceTessera ='" + splited[2] + "'";
                 query = new DataTable();
                 adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
@@ -1291,6 +1353,7 @@ namespace WebAPIAuthJWT.Helpers
         {
             try
             {
+                idAllenatore = GetIDAllenatore(idAllenatore);//trasformo il codice della tessera dell'allenatore ricevuto con id 
                 sql = "";
                 sql += "INSERT INTO ListaIscritti(IDSquadra,IDTorneo,IDAllenatore,DataIscrizione,Cancellata)VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@DataIscrizione,@Cancellata)";
                 comando = new SqlCommand(sql, conn);
@@ -1305,7 +1368,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("DataIscrizione", DateTime.Now.Date);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Cancellata", SqlDbType.Bit) { Value = 0 };
+                parametro = new SqlParameter("Cancellata", SqlDbType.Bit) { Value = 0 };//di base settata a FALSE
                 comando.Parameters.Add(parametro);
                 conn.Open();
                 comando.ExecuteNonQuery();
@@ -1545,5 +1608,49 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return Convert.ToInt32(query.Rows[0][0]);
         }
+        public DataTable GetAtletiSocieta(int idsocieta)
+        {
+            sql = "";
+            sql += "SELECT Atleta.CodiceTessera FROM Atleta,Societa WHERE Atleta.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=" + idsocieta+";";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }//torna lista atleti di una societa
+        public DataTable GetAllenatoreSocieta(int idsocieta)
+        {
+            sql = "";
+            sql += "SELECT Allenatore.CodiceTessera FROM Allenatore,Societa WHERE Allenatore.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=" + idsocieta + ";";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }//torna lista allenatori di una societa
+        public string GetAtletaByTessera(string tessera)
+        {
+            sql = "";
+            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=" + tessera + ";";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query.Rows[0]["Atleta"].ToString();
+        } //torna nome cognome atleta con la tessera
+        public string GetAllenatoreByTessera(string tessera)
+        {
+            sql = "";
+            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera='" + tessera + "';";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query.Rows[0]["Allenatore"].ToString();
+        }//torna nome cognome allenatore con la tessera
     }
 }
