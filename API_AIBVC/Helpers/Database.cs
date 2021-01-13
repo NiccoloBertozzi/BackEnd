@@ -96,14 +96,14 @@ namespace WebAPIAuthJWT.Helpers
                 else if (dr["IDDelegato"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Delegato"));
-                    if (Convert.ToInt32(dr["AdminDelegati"])!= 0)
+                    if (dr["AdminDelegati"].ToString() != "False")
                         claims.Add(new Claim(ClaimTypes.Role, "AdminDelegato"));
                 }
                 else if (dr["IDAtleta"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Atleta"));
                 else if (dr["IDAllenatore"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Allenatore"));
-                if (Convert.ToInt32(dr["Admin"]) != 0)
+                if (dr["Admin"].ToString() != "False")
                     claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             }
 
@@ -1479,7 +1479,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                if (nomeSupArbitrale == null && cognomeSupArbitrale == null)
+                else if (nomeSupArbitrale == null && cognomeSupArbitrale == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDDirettoreCompetizione=@IDDirettore ";
@@ -1490,7 +1490,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                if (nomeDirettore == null && cognomeDirettore == null)
+                else if (nomeDirettore == null && cognomeDirettore == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale ";
@@ -1506,8 +1506,9 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                string errore = e.Message;
                 return false;
             }
         }

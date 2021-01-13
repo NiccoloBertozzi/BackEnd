@@ -134,13 +134,27 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<InfoMsg> AutorizzaTorneo(string titoloTorneo)
         {
             if(db.AutorizzaTorneo(titoloTorneo))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'autorizzazione del torneo"));
+        }
+
+        //Assegnazione dei delegati del torneo
+        [HttpPut("AssegnaDelegati")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "AdminDelegato")]
+        public ActionResult<InfoMsg> AssegnaDelegati([FromBody]AddDelegatiTorneo delgatiTorn)
+        {
+            if(db.AssegnaSupervisori(delgatiTorn.NomeSupervisore,delgatiTorn.CognomeSupervisore,delgatiTorn.NomeSupArbitrale,delgatiTorn.CognomeSupArbitrale,delgatiTorn.NomeDirettore,delgatiTorn.CognomeDirettore,delgatiTorn.TitoloTorneo))
+                return Ok(new InfoMsg(DateTime.Today, $"Delegati assegnati con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione dei delegati"));
         }
     }
 }
