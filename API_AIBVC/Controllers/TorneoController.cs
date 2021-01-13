@@ -156,5 +156,41 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione dei delegati"));
         }
+
+        [HttpDelete("EliminaSquadra")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato")]
+        public ActionResult<InfoMsg> EliminaSquadra([FromBody]EliminaTeam eliminaTeam)
+        {
+            if (db.ControlloSupervisore(eliminaTeam.IdDelegato,eliminaTeam.IdTorneo))
+            {
+                if(db.EliminaTeam(eliminaTeam.IdTorneo,eliminaTeam.IdAtleta1,eliminaTeam.IdAtleta2))
+                    return Ok(new InfoMsg(DateTime.Today, $"Team eliminato dal torneo con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'eleminazione del team"));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
+        }
+
+        [HttpPut("AssegnaWildCard/{IDTorneo}/{IDDelegato}/{IDSquadra}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato")]
+        public ActionResult<InfoMsg> AssegnaWildCard(int idTorneo, int idDelegato, int idSquadra)
+        {
+            if (db.ControlloSupervisore(idDelegato, idTorneo))
+            {
+                if(db.AssegnaWildCard(idTorneo,idSquadra))
+                    return Ok(new InfoMsg(DateTime.Today, $"Assegnata la WC alla squadra con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione della WC alla squadra"));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
+        }
     }
 }
