@@ -9,16 +9,18 @@ namespace API_AIBVC.Models
     {
         public string Titolo { get; set; }
         public int PuntiVittoria { get; set; }
-        public float Montepremi { get; set; }
+        public double Montepremi { get; set; }
         public string DataChiusuraIscrizioni { get; set; }
         public string DataInizio { get; set; }
         public string DataFine { get; set; }
         public char Genere { get; set; }
+        public double QuotaIngresso { get; set; }
         public string FormulaTorneo { get; set; }
         public int NumTeamTabellone { get; set; }
         public int NumTeamQualifiche { get; set; }
         public string[] ParametriTorneo { get; set; }
         public string TipoTorneo { get; set; }
         public string[] Impianti { get; set; }
+
     }
 }
