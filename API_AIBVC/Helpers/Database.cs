@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text; 
+using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using TEST.Models;
@@ -91,12 +91,12 @@ namespace WebAPIAuthJWT.Helpers
 
             foreach (DataRow dr in dtProfili.Rows)
             {
-                if (dr["IDSocieta"].ToString() !="")
+                if (dr["IDSocieta"].ToString() != "")
                     claims.Add(new Claim(ClaimTypes.Role, "Societa"));
                 else if (dr["IDDelegato"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Delegato"));
-                    if (Convert.ToInt32(dr["AdminDelegati"])!= 0)
+                    if (Convert.ToInt32(dr["AdminDelegati"]) != 0)
                         claims.Add(new Claim(ClaimTypes.Role, "AdminDelegato"));
                 }
                 else if (dr["IDAtleta"].ToString() != "")
@@ -154,10 +154,10 @@ namespace WebAPIAuthJWT.Helpers
             sql += "FROM Comune ";
             sql += "WHERE Citta='" + comuneNascita + "'";
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);        
+            adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
             conn.Close();
-            int  p = query.Rows.Count;
+            int p = query.Rows.Count;
             return query;
         }
 
@@ -212,10 +212,10 @@ namespace WebAPIAuthJWT.Helpers
             string sql = "";
             sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumTeamTabellone,NumTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome,' ',atleta1.cognome) AS Atleta1,CONCAT(atleta2.Nome,' ',atleta2.cognome) AS Atleta2 ";
             sql += "FROM (((((Torneo " +
-            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)"+
-            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo=Torneo.IDTorneo)"+
-            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)"+
-            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)"+
+            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)" +
+            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo=Torneo.IDTorneo)" +
+            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
+            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta)";
             sql += "WHERE Squadra.IDAtleta1=" + idAtleta + "or Squadra.IDAtleta2=" + idAtleta;
             query = new DataTable();
@@ -1012,72 +1012,13 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return risultati;
         }
-        public bool CreaTorneo(string titolo, int puntiVittoria, float montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int numTeamTabellone, int numTeamQualifiche, string[] parametriTorneo, string tipoTorneo, string[] impianti)
+        public bool CreaTorneo(string titolo, int puntiVittoria, double montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int numTeamTabellone, int numTeamQualifiche, string[] parametriTorneo, string tipoTorneo, string[] impianti, double QuotaIngresso)
         {
             DataTable idFormula, idTipoTorneo, idTorneo;
             List<int> idParametriTorneo = new List<int>();
             List<int> idImpianti = new List<int>();
             try
             {
-                //Trovo l'IDFormula
-                sql = "";
-                sql += "SELECT IDFormula FROM FormulaTorneo WHERE Formula='" + formulaTorneo + "'";
-                idFormula = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
-                conn.Open();
-                adapter.Fill(idFormula);
-                conn.Close();
-                //Trovo l'IDTipoTorneo
-                sql = "";
-                sql += "SELECT IDTipoTorneo FROM TipoTorneo WHERE Descrizione='" + tipoTorneo + "'";
-                idTipoTorneo = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
-                conn.Open();
-                adapter.Fill(idTipoTorneo);
-                conn.Close();
-                //Creo il torneo
-                sql = "";
-                sql += "INSERT INTO Torneo(IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumTeamTabellone,NumTeamQualifiche) ";
-                sql += "VALUES(@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDTipoTorneo", idTipoTorneo.Rows[0][0]);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("IDFormula", idFormula.Rows[0][0]);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Titolo", titolo);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("PuntiVittoria", puntiVittoria);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Montepremi", montepremi);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataChiusuraIScrizioni", dataChiusuraIscrizioni.Date);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataInzio", dataInizio.Date);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataFine", dataFine.Date);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Gender", genere);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("NumTeamTabellone", numTeamTabellone);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("NumTeamQualifiche", numTeamQualifiche);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                //Trovo gli ID dei parametri
-                for(int i = 0; i < parametriTorneo.Length; i++)
-                {
-                    sql = "";
-                    sql += "SELECT IDParametro FROM ParametroQualita WHERE NomeParametro='" + parametriTorneo[i] + "'";
-                    query = new DataTable();
-                    adapter = new SqlDataAdapter(sql, conn);
-                    conn.Open();
-                    adapter.Fill(query);
-                    conn.Close();
-                    if (query.Rows.Count > 0)
-                        idParametriTorneo.Add(Convert.ToInt32(query.Rows[0][0]));
-                }
                 //Prendo l'IDTorneo
                 sql = "";
                 sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titolo + "'";
@@ -1086,54 +1027,136 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(idTorneo);
                 conn.Close();
-                //Assegno i parametri al torneo
-                if (idParametriTorneo.Count > 0)
+
+                try
                 {
-                    for (int i = 0; i < idParametriTorneo.Count; i++)
+                    //controllo che non ci sia gia un torneo con quel nome
+                    if (idTorneo.Rows.Count == 0)
                     {
+                        //Trovo l'IDFormula
                         sql = "";
-                        sql += "INSERT INTO ParametroTorneo(IDTorneo,IDParametro) VALUES(@IDTorneo,@IDParametro)";
+                        sql += "SELECT IDFormula FROM FormulaTorneo WHERE Formula='" + formulaTorneo + "'";
+                        idFormula = new DataTable();
+                        adapter = new SqlDataAdapter(sql, conn);
+                        conn.Open();
+                        adapter.Fill(idFormula);
+                        conn.Close();
+                        //Trovo l'IDTipoTorneo
+                        sql = "";
+                        sql += "SELECT IDTipoTorneo FROM TipoTorneo WHERE Descrizione='" + tipoTorneo + "'";
+                        idTipoTorneo = new DataTable();
+                        adapter = new SqlDataAdapter(sql, conn);
+                        conn.Open();
+                        adapter.Fill(idTipoTorneo);
+                        conn.Close();
+                        //Creo il torneo
+                        sql = "";
+                        sql += "INSERT INTO Torneo(IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumTeamTabellone,NumTeamQualifiche,QuotaIscrizione) ";
+                        sql += "VALUES(@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche,@QuotaIscrizione)";
                         comando = new SqlCommand(sql, conn);
-                        parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0][0]);
+                        parametro = new SqlParameter("IDTipoTorneo", idTipoTorneo.Rows[0][0]);
                         comando.Parameters.Add(parametro);
-                        parametro = new SqlParameter("IDParametro", idParametriTorneo[i]);
+                        parametro = new SqlParameter("IDFormula", idFormula.Rows[0][0]);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("Titolo", titolo);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("PuntiVittoria", puntiVittoria);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("Montepremi", montepremi);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataChiusuraIScrizioni", dataChiusuraIscrizioni.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataInzio", dataInizio.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataFine", dataFine.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("Gender", genere);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("NumTeamTabellone", numTeamTabellone);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("NumTeamQualifiche", numTeamQualifiche);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("QuotaIscrizione", QuotaIngresso);
                         comando.Parameters.Add(parametro);
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
-                    }
-                }
-                //Prendo gli id deiìgli impianti
-                for(int i = 0; i < impianti.Length; i++)
-                {
-                    sql = "";
-                    sql += "SELECT IDImpianto FROM Impianto WHERE NomeImpianto='" + impianti[i] + "'";
-                    query = new DataTable();
-                    adapter = new SqlDataAdapter(sql, conn);
-                    conn.Open();
-                    adapter.Fill(query);
-                    conn.Close();
-                    if (query.Rows.Count > 0)
-                        idImpianti.Add(Convert.ToInt32(query.Rows[0][0]));
-                }
-                //Assegno gli impianti al torneo
-                if (idImpianti.Count > 0)
-                {
-                    for (int i = 0; i < idImpianti.Count; i++)
-                    {
+                        //Trovo gli ID dei parametri
+                        for (int i = 0; i < parametriTorneo.Length; i++)
+                        {
+                            sql = "";
+                            sql += "SELECT IDParametro FROM ParametroQualita WHERE NomeParametro='" + parametriTorneo[i] + "'";
+                            query = new DataTable();
+                            adapter = new SqlDataAdapter(sql, conn);
+                            conn.Open();
+                            adapter.Fill(query);
+                            conn.Close();
+                            if (query.Rows.Count > 0)
+                                idParametriTorneo.Add(Convert.ToInt32(query.Rows[0][0]));
+                        }
+                        //Prendo l'IDTorneo
                         sql = "";
-                        sql += "INSERT INTO ImpiantoTorneo(IDTorneo,IDImpianto) VALUES(@IDTorneo,@IDImpianto)";
-                        comando = new SqlCommand(sql, conn);
-                        parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0][0]);
-                        comando.Parameters.Add(parametro);
-                        parametro = new SqlParameter("IDImpianto", idImpianti[i]);
-                        comando.Parameters.Add(parametro);
+                        sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titolo + "'";
+                        idTorneo = new DataTable();
+                        adapter = new SqlDataAdapter(sql, conn);
                         conn.Open();
-                        comando.ExecuteNonQuery();
+                        adapter.Fill(idTorneo);
                         conn.Close();
+                        //Assegno i parametri al torneo
+                        if (idParametriTorneo.Count > 0)
+                        {
+                            for (int i = 0; i < idParametriTorneo.Count; i++)
+                            {
+                                sql = "";
+                                sql += "INSERT INTO ParametroTorneo(IDTorneo,IDParametro) VALUES(@IDTorneo,@IDParametro)";
+                                comando = new SqlCommand(sql, conn);
+                                parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0]["IDTorneo"]);
+                                comando.Parameters.Add(parametro);
+                                parametro = new SqlParameter("IDParametro", idParametriTorneo[i]);
+                                comando.Parameters.Add(parametro);
+                                conn.Open();
+                                comando.ExecuteNonQuery();
+                                conn.Close();
+                            }
+                        }
+                        //Prendo gli id deiìgli impianti
+                        for (int i = 0; i < impianti.Length; i++)
+                        {
+                            sql = "";
+                            sql += "SELECT IDImpianto FROM Impianto WHERE NomeImpianto='" + impianti[i] + "'";
+                            query = new DataTable();
+                            adapter = new SqlDataAdapter(sql, conn);
+                            conn.Open();
+                            adapter.Fill(query);
+                            conn.Close();
+                            if (query.Rows.Count > 0)
+                                idImpianti.Add(Convert.ToInt32(query.Rows[0][0]));
+                        }
+                        //Assegno gli impianti al torneo
+                        if (idImpianti.Count > 0)
+                        {
+                            for (int i = 0; i < idImpianti.Count; i++)
+                            {
+                                sql = "";
+                                sql += "INSERT INTO ImpiantoTorneo(IDTorneo,IDImpianto) VALUES(@IDTorneo,@IDImpianto)";
+                                comando = new SqlCommand(sql, conn);
+                                parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0][0]);
+                                comando.Parameters.Add(parametro);
+                                parametro = new SqlParameter("IDImpianto", idImpianti[i]);
+                                comando.Parameters.Add(parametro);
+                                conn.Open();
+                                comando.ExecuteNonQuery();
+                                conn.Close();
+                            }
+                        }
+                        return true;
                     }
+                    else return false;
                 }
-                return true;
+                catch
+                {
+                    return false;
+                }
             }
             catch
             {
@@ -1150,9 +1173,9 @@ namespace WebAPIAuthJWT.Helpers
                 mail.From = new MailAddress("recoverypass.aibvc@gmail.com");
                 mail.To.Add(email);
                 mail.Subject = "Recupero password Account AIBVC";
-                mail.Body = "Clicca il bottone per cambiare la password"+
+                mail.Body = "Clicca il bottone per cambiare la password" +
                     "<br><form action=\"https://aibvcwa.azurewebsites.net/nuovapassword\" method=\"post\">" +
-                    "<input type=\"hidden\" name=\"email\" value=\""+email+"\" id=\"email\"/>" +
+                    "<input type=\"hidden\" name=\"email\" value=\"" + email + "\" id=\"email\"/>" +
                     "<button type =\"submit\"> Cambia Password </button>" +
                     "</form> ";
                 mail.IsBodyHtml = true;
@@ -1428,7 +1451,7 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT Impianto.IDImpianto, Impianto.NomeImpianto FROM Impianto, ImpiantoSocieta WHERE ImpiantoSocieta.IDSocieta="+idimpianti+" AND Impianto.IDImpianto= ImpiantoSocieta.IDImpianto;";
+                sql += "SELECT Impianto.IDImpianto, Impianto.NomeImpianto FROM Impianto, ImpiantoSocieta WHERE ImpiantoSocieta.IDSocieta=" + idimpianti + " AND Impianto.IDImpianto= ImpiantoSocieta.IDImpianto;";
                 query = new DataTable();
                 adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
@@ -1455,7 +1478,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 string errore = e.Message;
                 return false;
