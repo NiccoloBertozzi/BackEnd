@@ -68,6 +68,49 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
+        //ritorna la lista degli atleti di una societa
+        [HttpPost("AtletiSocieta/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public DataTable GetAtletiSocieta(int idsocieta)
+        {
+            return db.GetAtletiSocieta(idsocieta);
+        }
+
+        //ritorna la lista degli allenatori di una societa
+        [HttpPost("AllenatoriSocieta/{idSocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public DataTable GetAllenatoriSocieta(int idsocieta)
+        {
+            return db.GetAllenatoreSocieta(idsocieta);
+        }
+
+        //ritorna allenatore in base alla tessera
+        [HttpPost("AllenatoriTessera/{tessera}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public string GetAllenatoreTessera(string tessera)
+        {
+            return db.GetAllenatoreByTessera(tessera);
+        }
+
+        //ritorna atleta in base alla tessera
+        [HttpPost("AtletaTessera/{tessera}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public string GetAtletaTessera(string tessera)
+        {
+            return db.GetAtletaByTessera(tessera);
+        }
 
         //Restituisce tornei prima della data inserita
         [HttpGet("GetPartite/{NumeroPartite}")]

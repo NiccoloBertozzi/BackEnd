@@ -8,6 +8,7 @@ using API_Login_Registra.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using API_Supervisore.Models;
+using System.Data;
 
 namespace API_AIBVC.Controllers
 {
@@ -52,12 +53,12 @@ namespace API_AIBVC.Controllers
         {
             return Ok(db.GetPartita(db.GetIDTorneo(cercaPartita.TitoloTorneo), cercaPartita.NumPartita));
         }
-        [HttpGet("GetTorneoByTitolo/{titolo}")]
+        [HttpGet("GetTorneoById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public JsonResult GetTorneoByTitolo(string titolo)
+        public DataTable GetTorneoByID(int id)
         {
-            return Json(new { myOutput = db.GetTorneoByTitolo(db.GetIDTorneo(titolo)) });
+            return db.GetTorneoByID(id);
         }
     }
 }
