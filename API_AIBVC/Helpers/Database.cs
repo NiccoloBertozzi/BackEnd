@@ -1003,7 +1003,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             risultati[2] = new DataTable();
             sql = "";
-            sql += "SELECT CONCAT(Atleta1.Nome,' ',Atleta1.Cognome) AS Atleta1,CONCAT(Atleta2.Nome,' ',Atleta2.Cognome) AS Atleta2,Squadra.NomeTeam AS NomeTeam ";
+            sql += "SELECT CONCAT(Atleta1.Nome,' ',Atleta1.Cognome) AS Atleta1,CONCAT(Atleta2.Nome,' ',Atleta2.Cognome) AS Atleta2,Squadra.NomeTeam AS NomeTeam,ListaIScritti.WC ";
             sql += "FROM(((ListaIscritti LEFT JOIN Squadra ON Squadra.IDSquadra=ListaIscritti.IDSquadra)LEFT JOIN Atleta Atleta1 ON Squadra.IDAtleta1=Atleta1.IDAtleta)LEFT JOIN Atleta Atleta2 ON Squadra.IDAtleta2=Atleta2.IDAtleta) ";
             sql += "WHERE ListaIscritti.IDTorneo=" + query.Rows[0]["IDTorneo"];
             adapter = new SqlDataAdapter(sql, conn);
@@ -1502,7 +1502,16 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                if (nomeSupArbitrale == null && cognomeSupArbitrale == null)
+                if (nomeSupArbitrale == null && cognomeSupArbitrale == null && nomeDirettore == null && cognomeDirettore == null)
+                {
+                    sql += "UPDATE Torneo ";
+                    sql += "SET IDSupervisore=@IDSupervisore ";
+                    sql += "WHERE IDTorneo=" + GetIDTorneo(titoloTorneo);
+                    comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("IDSupervisore", GetIDDelegato(nomeSupervisore, cognomeSupervisore));
+                    comando.Parameters.Add(parametro);
+                }
+                else if (nomeSupArbitrale == null && cognomeSupArbitrale == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDDirettoreCompetizione=@IDDirettore ";
@@ -1513,7 +1522,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                if (nomeDirettore == null && cognomeDirettore == null)
+                else if (nomeDirettore == null && cognomeDirettore == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale ";
@@ -1529,8 +1538,9 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                string errore = e.Message;
                 return false;
             }
         }
@@ -1574,7 +1584,7 @@ namespace WebAPIAuthJWT.Helpers
             {
                 //Prendo l'IDSquadra
                 sql = "";
-                sql += "SELECT IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=" + idTorneo + " AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=" + idAtleta1 + " AND Squadra.IDAtleta2=" + idAtleta2;
+                sql += "SELECT ListaIScritti.IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=" + idTorneo + " AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=" + idAtleta1 + " AND Squadra.IDAtleta2=" + idAtleta2;
                 idSquadra = new DataTable();
                 adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
@@ -1591,8 +1601,9 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                string errore = e.Message;
                 return false;
             }
         }
