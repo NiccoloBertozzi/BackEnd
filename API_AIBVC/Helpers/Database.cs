@@ -276,7 +276,7 @@ namespace WebAPIAuthJWT.Helpers
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
             " WHERE CAST(DataInizio as DATE) <= @Data AND Autorizzato= 1";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("Data", data.Date.ToString()));
+            comando.Parameters.Add(new SqlParameter("Data", data.Date));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
@@ -306,8 +306,7 @@ namespace WebAPIAuthJWT.Helpers
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
             " WHERE CAST(DataInizio as DATE) <= @Data AND Autorizzato= 1 AND Torneo.IDSocieta= @idSocieta";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("Data", data.Date.ToString()));
-            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Data", data.Date));
             comando.Parameters.Add(new SqlParameter("idSocieta", idsocieta));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);

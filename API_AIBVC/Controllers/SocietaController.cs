@@ -24,7 +24,7 @@ namespace API_AIBVC.Controllers
             return Json(new { output = db.GetTorneoEPartecipanti(titoloTorneo) });
         }
         //Restituisce tornei prima della data inserita
-        [HttpGet("GetTorneiSocieta/{Data}/{idsocieta}")]
+        [HttpGet("GetTorneiSocieta/{Data}/IdSocieta/{idsocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
