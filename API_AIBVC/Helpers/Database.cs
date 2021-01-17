@@ -68,12 +68,11 @@ namespace WebAPIAuthJWT.Helpers
             }
             return autenticato;
         }
-
         public string[] GetToken(string email)//Rilascio token
         {
             DataTable dtUtente = this.CheckUser(email);
             string sql;
-            string[] risposta = new string[2];
+            string[] risposta = new string[3];
 
             //Creazione del Token Jwt
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -101,6 +100,7 @@ namespace WebAPIAuthJWT.Helpers
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Societa"));
                     risposta[1] = dtUtente.Rows[0]["IDSocieta"].ToString();
+                    risposta[2] = "Societa";
                 }
                 else if (dr["IDDelegato"].ToString() != "")
                 {
@@ -108,19 +108,24 @@ namespace WebAPIAuthJWT.Helpers
                     if (Convert.ToInt32(dr["AdminDelegati"]) != 0)
                         claims.Add(new Claim(ClaimTypes.Role, "AdminDelegato"));
                     risposta[1] = dtUtente.Rows[0]["IDDelegato"].ToString();
+                    risposta[2] = "Delegato";
                 }
                 else if (dr["IDAtleta"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Atleta"));
                     risposta[1] = dtUtente.Rows[0]["IDAtleta"].ToString();
+                    risposta[2] = "Atleta";
                 }
                 else if (dr["IDAllenatore"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Allenatore"));
                     risposta[1] = dtUtente.Rows[0]["IDAllenatore"].ToString();
+                    risposta[2] = "Allenatore";
                 }
-                if (Convert.ToInt32(dr["Admin"]) != 0)
+                if (Convert.ToInt32(dr["Admin"]) != 0) { 
                     claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                    risposta[2] = "Admin";
+                }
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -135,7 +140,6 @@ namespace WebAPIAuthJWT.Helpers
             risposta[0] = tokenHandler.WriteToken(token);
             return risposta;
         }
-
         public DataTable CheckUser(string email)
         {
             string sql;
@@ -154,14 +158,11 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
-
-
         /// <summary>
         /// Esegui una query SQL (INSERT/UPDATE/DELETE)
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-
         public DataTable GetIDComuneNascita(string comuneNascita)
         {
             conn.Open();

@@ -42,9 +42,6 @@ C:\Users\rigon\Desktop\PROGETTO AIBVC\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBV
 C:\Users\rigon\Desktop\PROGETTO AIBVC\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.pdb
 C:\Users\rigon\Desktop\PROGETTO AIBVC\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.csprojAssemblyReference.cache
-E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
-E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
-E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.AssemblyInfoInputs.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.AssemblyInfo.cs
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.dll
@@ -127,3 +124,7 @@ C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\
 C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.dll
 C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.pdb
 C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
+E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Debug\netcoreapp3.1\RestSharp.dll
+E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
+E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
+E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache

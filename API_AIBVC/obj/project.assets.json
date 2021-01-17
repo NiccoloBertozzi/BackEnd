@@ -191,6 +191,15 @@
           "lib/netstandard2.0/Newtonsoft.Json.Bson.dll": {}
         }
       },
+      "RestSharp/106.11.7": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        }
+      },
       "runtime.native.System.Data.SqlClient.sni/4.7.0": {
         "type": "package",
         "dependencies": {
@@ -739,6 +748,22 @@
         "newtonsoft.json.bson.nuspec"
       ]
     },
+    "RestSharp/106.11.7": {
+      "sha512": "NzndH096CTulvq+ihr7u1mBJ29oukdi9A8bypQJk+kaHxbRzTTrtgsEEQAb04ptTUZmQa7cgo7uF5z7NuEPX1Q==",
+      "type": "package",
+      "path": "restsharp/106.11.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net452/RestSharp.dll",
+        "lib/net452/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.106.11.7.nupkg.sha512",
+        "restsharp.nuspec",
+        "restsharp.png"
+      ]
+    },
     "runtime.native.System.Data.SqlClient.sni/4.7.0": {
       "sha512": "9kyFSIdN3T0qjDQ2R0HRXYIhS3l5psBzQi6qqhdLz+SzFyEy4sVxNOke+yyYv8Cu8rPER12c3RDjLT8wF3WBYQ==",
       "type": "package",
@@ -1136,29 +1161,30 @@
     ".NETCoreApp,Version=v3.1": [
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 3.1.10",
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson >= 3.1.10",
+      "RestSharp >= 106.11.7",
       "Swashbuckle.AspNetCore >= 5.6.3",
       "System.Data.SqlClient >= 4.8.2",
       "System.IdentityModel.Tokens.Jwt >= 6.8.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rigon\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\Niccolò Bertozzi\\.nuget\\packages\\": {},
+    "E:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+      "projectUniqueName": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
       "projectName": "API_AIBVC",
-      "projectPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
-      "packagesPath": "C:\\Users\\rigon\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\obj\\",
+      "projectPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+      "packagesPath": "C:\\Users\\Niccolò Bertozzi\\.nuget\\packages\\",
+      "outputPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "E:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\rigon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Niccolò Bertozzi\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
@@ -1171,7 +1197,6 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -1183,7 +1208,6 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
-        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
@@ -1192,6 +1216,10 @@
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
             "target": "Package",
             "version": "[3.1.10, )"
+          },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[106.11.7, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
@@ -1224,7 +1252,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
       }
     }
   }
