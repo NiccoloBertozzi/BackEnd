@@ -41,3 +41,46 @@ E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\staticweba
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.dll
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\appsettings.Development.json
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\appsettings.json
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.exe
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.deps.json
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.runtimeconfig.json
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.runtimeconfig.dev.json
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.pdb
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Newtonsoft.Json.Bson.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\System.Data.SqlClient.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csprojAssemblyReference.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.AssemblyInfoInputs.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.AssemblyInfo.cs
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\staticwebassets\API_AIBVC.StaticWebAssets.Manifest.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\staticwebassets\API_AIBVC.StaticWebAssets.xml
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\scopedcss\bundle\API_AIBVC.styles.css
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.RazorTargetAssemblyInfo.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csproj.CopyComplete
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.dll
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache

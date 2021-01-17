@@ -46,9 +46,11 @@ namespace WebAPIAuthJWT.Helpers
                 string sql = "";
                 sql += "SELECT * ";
                 sql += "FROM Login ";
-                sql += "WHERE Email='" + email + "'";
+                sql += "WHERE Email=@Email";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Email", email));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -61,7 +63,8 @@ namespace WebAPIAuthJWT.Helpers
             }
             catch (Exception e)
             {
-
+                string errore = e.Message;
+                autenticato = false;
             }
             return autenticato;
         }
@@ -76,9 +79,11 @@ namespace WebAPIAuthJWT.Helpers
             var key = Encoding.ASCII.GetBytes(JWT_secretKey);
             //Query
             sql = "";
-            sql += "SELECT * FROM Login WHERE Email=" + "'" + email + "'";
+            sql += "SELECT * FROM Login WHERE Email=@Email";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Email", email));
             DataTable dtProfili = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(dtProfili);
             conn.Close();
@@ -129,9 +134,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT * ";
             sql += "FROM Login ";
-            sql += "WHERE Email='" + email + "'";
+            sql += "WHERE Email=@Email";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Email", email));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -152,9 +159,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDComune ";
             sql += "FROM Comune ";
-            sql += "WHERE Citta='" + comuneNascita + "'";
+            sql += "WHERE Citta=@ComuneNascita";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("ComuneNascita", comuneNascita));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -168,9 +177,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDComune ";
             sql += "FROM Comune ";
-            sql += "WHERE Citta='" + comuneResidenza + "'";
+            sql += "WHERE Citta=@ComuneResidenza";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("ComuneResidenza", comuneResidenza));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -183,9 +194,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDAllenatore ";
             sql += "FROM Allenatore ";
-            sql += "WHERE Codicetessera='" + tessera + "'";
+            sql += "WHERE Codicetessera=@Tessera";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Tessera", tessera));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -198,9 +211,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDSocieta ";
             sql += "FROM Societa ";
-            sql += "WHERE NomeSocieta='" + nomeSocieta + "'";
+            sql += "WHERE NomeSocieta=@NomeSocieta";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("NomeSocieta", nomeSocieta));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -212,9 +227,11 @@ namespace WebAPIAuthJWT.Helpers
             string sql = "";
             sql += "SELECT Nome,Cognome,DataNascita,Email,Tel,Sesso ";
             sql += "FROM Atleta ";
-            sql += "WHERE IDAtleta=" + id_Atleta;
+            sql += "WHERE IDAtleta=@IDAtleta";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAtleta", id_Atleta));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -231,9 +248,11 @@ namespace WebAPIAuthJWT.Helpers
             "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
             "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta)";
-            sql += "WHERE Squadra.IDAtleta1=" + idAtleta + "or Squadra.IDAtleta2=" + idAtleta;
+            sql += "WHERE Squadra.IDAtleta1=@IDAtleta or Squadra.IDAtleta2=@IDAtleta";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -245,9 +264,11 @@ namespace WebAPIAuthJWT.Helpers
             string sql = "";
             sql += "SELECT DISTINCT Torneo.IDTorneo, Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome, ' ', Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome, ' ', SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale, CONCAT(DirettoreCompetizione.Nome, ' ', DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
-            " WHERE CAST(DataInizio as DATE) <= '" + data.Date.ToString() + "' AND Autorizzato= 1";
+            " WHERE CAST(DataInizio as DATE) <= @Data AND Autorizzato= 1";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Data", data.Date.ToString()));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -319,9 +340,11 @@ namespace WebAPIAuthJWT.Helpers
                 string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
-                sql += "SELECT IDAllenatore FROM Allenatore WHERE Email='" + email + "'";
+                sql += "SELECT IDAllenatore FROM Allenatore WHERE Email=@Email";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Email", email));
                 idAllenatore = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idAllenatore);
                 conn.Close();
@@ -429,9 +452,11 @@ namespace WebAPIAuthJWT.Helpers
                 string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
-                sql += "SELECT IDAtleta FROM Atleta WHERE Email='" + email + "'";
+                sql += "SELECT IDAtleta FROM Atleta WHERE Email=@Email";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Email", email));
                 idAtleta = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idAtleta);
                 conn.Close();
@@ -530,9 +555,11 @@ namespace WebAPIAuthJWT.Helpers
                 string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
-                sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Email='" + email + "'";
+                sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Email=@Email";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Email", email));
                 idDelegato = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idDelegato);
                 conn.Close();
@@ -647,9 +674,11 @@ namespace WebAPIAuthJWT.Helpers
                 string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
-                sql += "SELECT IDSocieta FROM Societa WHERE Email='" + email + "'";
+                sql += "SELECT IDSocieta FROM Societa WHERE Email=@Email";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Email", email));
                 idSocieta = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idSocieta);
                 conn.Close();
@@ -689,9 +718,11 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titolo + "'";
+                sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@Titolo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Titolo", titolo));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -770,9 +801,12 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT t1.NomeTeam as Team1,t2.NomeTeam As Team2 " +
             "FROM((Partita LEFT JOIN Squadra t1 ON Partita.idsq1 = t1.idsquadra) LEFT JOIN Squadra t2 ON Partita.idsq2 = t2.idsquadra) " +
-            "WHERE Partita.IDTorneo=" + idTorneo + " AND Partita.NumPartita=" + numPartita;
+            "WHERE Partita.IDTorneo=@IDTorneo AND Partita.NumPartita=@NumPartita";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+            comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -791,7 +825,7 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "SET PT1S1=@PuntiTeam1,PT2S1=@PuntiTeam2 ";
                         break;
                     case 2:
-                        sql += "SET PT1S2=@PuntiTeam1,PT2S2 =@PuntiTeam2 ";
+                        sql += "SET PT1S2=@PuntiTeam1,PT2S2=@PuntiTeam2 ";
                         break;
                     case 3:
                         sql += "SET PT1S3=@PuntiTeam1,PT2S3=@PuntiTeam2 ";
@@ -832,9 +866,12 @@ namespace WebAPIAuthJWT.Helpers
             "left JOIN Atleta A1 ON S1.IDAtleta1 = A1.IDAtleta) LEFT JOIN Atleta A2 ON S1.IDAtleta2 = A2.IDAtleta) " +
             "left JOIN Atleta A3 ON S2.IDAtleta1 = A3.IDAtleta) LEFT JOIN Atleta A4 ON S2.IDAtleta2 = A4.IDAtleta) " +
             "left JOIN DelegatoTecnico D1 ON Partita.idarbitro1 = D1.IDDelegato) LEFT JOIN DelegatoTecnico D2 ON Partita.idarbitro2 = D2.IDDelegato) " +
-            "WHERE Partita.IDTorneo =" + idTorneo + " AND Partita.NumPartita = " + numPartita + ";";
+            "WHERE Partita.IDTorneo=@IDTorneo AND Partita.NumPartita=@NumPartita;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+            comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -847,27 +884,33 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
-            "WHERE Torneo.IDTorneo=" + idTorneo;
+            "WHERE Torneo.IDTorneo=@IDTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
             ris1 = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(ris1);
             conn.Close();
             sql = "";
             sql += "SELECT NomeParametro " +
             "FROM ParametroQualita, ParametroTorneo, Torneo " +
-            "WHERE Torneo.IDTorneo=" + idTorneo + " AND ParametroTorneo.idtorneo = Torneo.idtorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
+            "WHERE Torneo.IDTorneo=@IDTorneo AND ParametroTorneo.idtorneo = Torneo.idtorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
             ris2 = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(ris2);
             conn.Close();
             sql = "";
             sql += "SELECT NomeImpianto,Citta ";
             sql += "FROM ((Impianto LEFT JOIN ImpiantoTorneo ON Impianto.IDImpianto=ImpiantoTorneo.IDImpianto)LEFT JOIN Comune ON Impianto.IDComune=Comune.IDComune) ";
-            sql += "WHERE ImpiantoTorneo.IDTorneo=" + idTorneo;
+            sql += "WHERE ImpiantoTorneo.IDTorneo=@IDTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
             ris3 = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(ris3);
             conn.Close();
@@ -881,9 +924,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
-            "WHERE Torneo.IDTorneo=" + id;
+            "WHERE Torneo.IDTorneo=@IDTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", id));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -944,23 +989,23 @@ namespace WebAPIAuthJWT.Helpers
         public DataTable GetClassificaMaschile()
         {
             sql = "";
-            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) < 120 GROUP BY idatleta1 UNION " +
+            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
+            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta1 "+ 
+            "UNION " +
             "SELECT idatleta2, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) < 120 GROUP BY idatleta2 UNION " +
-            "SELECT idatleta1, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) BETWEEN 121 AND 365 GROUP BY idatleta1 " +
-            "UNION " +
-            "SELECT idatleta2, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) BETWEEN 121 AND 365 GROUP BY idatleta2 " +
-            ") " +
-            "SELECT cognome, nome, sum(punti) " +
-            "FROM punteggi, atleta WHERE idatleta = idAtl AND atleta.sesso = 'M' " +
-            "GROUP BY idatleta ORDER BY sum(punti) DESC,Cognome,Nome";
+            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta2 "+
+            "UNION "+
+            "SELECT idatleta1, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE "+
+            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
+            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta1 "+
+            "UNION "+
+            "SELECT idatleta2, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE "+
+            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
+            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2) "+
+            "SELECT cognome, nome, sum(punti) "+
+            "FROM punteggi, atleta WHERE idatleta = idAtl AND atleta.sesso = 'M' "+
+            "GROUP BY cognome,nome HAVING sum(punti) > 0 ORDER BY sum(punti) DESC,Cognome,Nome";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             conn.Open();
@@ -971,23 +1016,23 @@ namespace WebAPIAuthJWT.Helpers
         public DataTable GetClassificaFemminile()
         {
             sql = "";
-            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) < 120 GROUP BY idatleta1 UNION " +
+            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
+            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta1 " +
+            "UNION " +
             "SELECT idatleta2, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) < 120 GROUP BY idatleta2 UNION " +
+            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta2 " +
+            "UNION " +
             "SELECT idatleta1, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) BETWEEN 121 AND 365 GROUP BY idatleta1 " +
+            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta1 " +
             "UNION " +
             "SELECT idatleta2, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND julianday('now')-julianday(datafine) BETWEEN 121 AND 365 GROUP BY idatleta2 " +
-            ") " +
+            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2) " +
             "SELECT cognome, nome, sum(punti) " +
             "FROM punteggi, atleta WHERE idatleta = idAtl AND atleta.sesso = 'F' " +
-            "GROUP BY idatleta ORDER BY sum(punti) DESC,Cognome,Nome";
+            "GROUP BY cognome,nome HAVING sum(punti) > 0 ORDER BY sum(punti) DESC,Cognome,Nome";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             conn.Open();
@@ -1008,9 +1053,11 @@ namespace WebAPIAuthJWT.Helpers
             "left JOIN Atleta A1 ON S1.IDAtleta1 = A1.IDAtleta) LEFT JOIN Atleta A2 ON S1.IDAtleta2 = A2.IDAtleta) " +
             "left JOIN Atleta A3 ON S2.IDAtleta1 = A3.IDAtleta) LEFT JOIN Atleta A4 ON S2.IDAtleta2 = A4.IDAtleta) " +
             "left JOIN DelegatoTecnico D1 ON Partita.idarbitro1 = D1.IDDelegato) LEFT JOIN DelegatoTecnico D2 ON Partita.idarbitro2 = D2.IDDelegato) " +
-            "WHERE Partita.IDTorneo =" + idTorneo + ";";
+            "WHERE Partita.IDTorneo =@IDTorneo;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1049,9 +1096,11 @@ namespace WebAPIAuthJWT.Helpers
             risultati[0] = GetTorneoByTitolo(GetIDTorneo(titoloTorneo))[0];//Informazioni sul torneo
             risultati[1] = GetTorneoByTitolo(GetIDTorneo(titoloTorneo))[1];//Parametri del torneo
             sql = "";
-            sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titoloTorneo + "'";
+            sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@TitoloTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("TitoloTorneo", titoloTorneo));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1059,8 +1108,10 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT CONCAT(Atleta1.Nome,' ',Atleta1.Cognome) AS Atleta1,CONCAT(Atleta2.Nome,' ',Atleta2.Cognome) AS Atleta2,Squadra.NomeTeam AS NomeTeam,ListaIScritti.WC ";
             sql += "FROM(((ListaIscritti LEFT JOIN Squadra ON Squadra.IDSquadra=ListaIscritti.IDSquadra)LEFT JOIN Atleta Atleta1 ON Squadra.IDAtleta1=Atleta1.IDAtleta)LEFT JOIN Atleta Atleta2 ON Squadra.IDAtleta2=Atleta2.IDAtleta) ";
-            sql += "WHERE ListaIscritti.IDTorneo=" + query.Rows[0]["IDTorneo"];
-            adapter = new SqlDataAdapter(sql, conn);
+            sql += "WHERE ListaIscritti.IDTorneo=@IDTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", query.Rows[0][0]));
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(risultati[2]);
             conn.Close();
@@ -1073,15 +1124,17 @@ namespace WebAPIAuthJWT.Helpers
             List<int> idImpianti = new List<int>();
             try
             {
-                //Prendo l'IDTorneo
+                //Prendo l'IDTorneo se ne esiste già uno con lo stesso nome
                 sql = "";
-                sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titolo + "'";
+                sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@Titolo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Titolo", titolo));
                 idTorneo = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idTorneo);
                 conn.Close();
-
+                
                 try
                 {
                     //controllo che non ci sia gia un torneo con quel nome
@@ -1089,17 +1142,21 @@ namespace WebAPIAuthJWT.Helpers
                     {
                         //Trovo l'IDFormula
                         sql = "";
-                        sql += "SELECT IDFormula FROM FormulaTorneo WHERE Formula='" + formulaTorneo + "'";
+                        sql += "SELECT IDFormula FROM FormulaTorneo WHERE Formula=@FormulaTorneo";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("FormulaTorneo", formulaTorneo));
                         idFormula = new DataTable();
-                        adapter = new SqlDataAdapter(sql, conn);
+                        adapter = new SqlDataAdapter(comando);
                         conn.Open();
                         adapter.Fill(idFormula);
                         conn.Close();
                         //Trovo l'IDTipoTorneo
                         sql = "";
-                        sql += "SELECT IDTipoTorneo FROM TipoTorneo WHERE Descrizione='" + tipoTorneo + "'";
+                        sql += "SELECT IDTipoTorneo FROM TipoTorneo WHERE Descrizione=@TipoTorneo";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("TipoTorneo", tipoTorneo));
                         idTipoTorneo = new DataTable();
-                        adapter = new SqlDataAdapter(sql, conn);
+                        adapter = new SqlDataAdapter(comando);
                         conn.Open();
                         adapter.Fill(idTipoTorneo);
                         conn.Close();
@@ -1139,9 +1196,11 @@ namespace WebAPIAuthJWT.Helpers
                         for (int i = 0; i < parametriTorneo.Length; i++)
                         {
                             sql = "";
-                            sql += "SELECT IDParametro FROM ParametroQualita WHERE NomeParametro='" + parametriTorneo[i] + "'";
+                            sql += "SELECT IDParametro FROM ParametroQualita WHERE NomeParametro=@ParametriTorneo";
+                            comando = new SqlCommand(sql, conn);
+                            comando.Parameters.Add(new SqlParameter("ParametriTorneo", parametriTorneo[i]));
                             query = new DataTable();
-                            adapter = new SqlDataAdapter(sql, conn);
+                            adapter = new SqlDataAdapter(comando);
                             conn.Open();
                             adapter.Fill(query);
                             conn.Close();
@@ -1150,9 +1209,11 @@ namespace WebAPIAuthJWT.Helpers
                         }
                         //Prendo l'IDTorneo
                         sql = "";
-                        sql += "SELECT IDTorneo FROM Torneo WHERE Titolo='" + titolo + "'";
+                        sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@Titolo";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("Titolo", titolo));
                         idTorneo = new DataTable();
-                        adapter = new SqlDataAdapter(sql, conn);
+                        adapter = new SqlDataAdapter(comando);
                         conn.Open();
                         adapter.Fill(idTorneo);
                         conn.Close();
@@ -1177,7 +1238,9 @@ namespace WebAPIAuthJWT.Helpers
                         for (int i = 0; i < impianti.Length; i++)
                         {
                             sql = "";
-                            sql += "SELECT IDImpianto FROM Impianto WHERE NomeImpianto='" + impianti[i] + "'";
+                            sql += "SELECT IDImpianto FROM Impianto WHERE NomeImpianto=@Impianti";
+                            comando = new SqlCommand(sql, conn);
+                            comando.Parameters.Add(new SqlParameter("Impianti", impianti[i]));
                             query = new DataTable();
                             adapter = new SqlDataAdapter(sql, conn);
                             conn.Open();
@@ -1212,8 +1275,9 @@ namespace WebAPIAuthJWT.Helpers
                     return false;
                 }
             }
-            catch
+            catch(Exception e)
             {
+                string errore = e.Message;
                 return false;
             }
         }
@@ -1261,9 +1325,12 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDSquadra FROM Squadra WHERE (IDAtleta1='" + idatleta1 + "' AND IDAtleta2='" + idatleta2 + "') OR (IDAtleta1='" + idatleta2 + "' AND IDAtleta2='" + idatleta1 + "')";
+                sql += "SELECT IDSquadra FROM Squadra WHERE (IDAtleta1=@IDAtleta1 AND IDAtleta2=@IDAtleta2) OR (IDAtleta1=@IDAtleta1 AND IDAtleta2=@IDAtleta2)";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDAtleta1", idatleta1));
+                comando.Parameters.Add(new SqlParameter("IDAtleta2", idatleta2));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1296,9 +1363,12 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                         //riscarico id squadra appena inserito
                         sql = "";
-                        sql += "SELECT IDSquadra FROM Squadra WHERE IDAtleta1='" + idatleta1 + "' AND IDAtleta2='" + idatleta2 + "'";
+                        sql += "SELECT IDSquadra FROM Squadra WHERE IDAtleta1=@IDAtleta1 AND IDAtleta2=@IDAtleta2";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDAtleta1", idatleta1));
+                        comando.Parameters.Add(new SqlParameter("IDAtleta2", idatleta2));
                         query = new DataTable();
-                        adapter = new SqlDataAdapter(sql, conn);
+                        adapter = new SqlDataAdapter(comando);
                         conn.Open();
                         adapter.Fill(query);
                         conn.Close();
@@ -1329,9 +1399,11 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera ='" + data + "'";
+                sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera =@Data";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("Data", data));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1349,9 +1421,11 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDAllenatore FROM Allenatore WHERE CodiceTessera ='" + splited[2] + "'";
+                sql += "SELECT IDAllenatore FROM Allenatore WHERE CodiceTessera =@CodiceTessera";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("CodiceTessera", splited[2]));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1399,7 +1473,7 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT TOP " + NumeroPartite +
+                sql += "SELECT TOP @NumeroPartite " +
                 " CONCAT(A1.Nome,' ',A1.cognome) as Atleta1,CONCAT(A2.Nome,' ',A2.cognome) as Atleta2,S1.NomeTeam as Team1, " +
                 "CONCAT(A3.Nome,' ',A3.cognome) as Atleta3,CONCAT(A4.Nome,' ',A4.cognome) AS Atleta4, S2.NomeTeam as Team2, " +
                 "CONCAT(D1.Nome,' ',D1.Cognome) as Arbitro1,CONCAT(D2.Nome,' ',D2.Cognome) as Arbitro2, " +
@@ -1411,8 +1485,10 @@ namespace WebAPIAuthJWT.Helpers
                 "left JOIN Atleta A1 ON S1.IDAtleta1 = A1.IDAtleta) LEFT JOIN Atleta A2 ON S1.IDAtleta2 = A2.IDAtleta) " +
                 "left JOIN Atleta A3 ON S2.IDAtleta1 = A3.IDAtleta) LEFT JOIN Atleta A4 ON S2.IDAtleta2 = A4.IDAtleta) " +
                 "left JOIN DelegatoTecnico D1 ON Partita.idarbitro1 = D1.IDDelegato) LEFT JOIN DelegatoTecnico D2 ON Partita.idarbitro2 = D2.IDDelegato) ";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("NumeroPartite", NumeroPartite));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1527,9 +1603,11 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT Impianto.IDImpianto, Impianto.NomeImpianto FROM Impianto, ImpiantoSocieta WHERE ImpiantoSocieta.IDSocieta=" + idimpianti + " AND Impianto.IDImpianto= ImpiantoSocieta.IDImpianto;";
+                sql += "SELECT Impianto.IDImpianto, Impianto.NomeImpianto FROM Impianto, ImpiantoSocieta WHERE ImpiantoSocieta.IDSocieta=@IDImpianti AND Impianto.IDImpianto= ImpiantoSocieta.IDImpianto;";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDImpianti", idimpianti));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1623,9 +1701,12 @@ namespace WebAPIAuthJWT.Helpers
         public int GetIDDelegato(string nomeSupervisore, string cognomeSupervisore)
         {
             sql = "";
-            sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Nome='" + nomeSupervisore + "' AND Cognome='" + cognomeSupervisore + "'";
+            sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Nome=@NomeSupervisore AND Cognome=@CognomeSupervisore";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("NomeSupervisore", nomeSupervisore));
+            comando.Parameters.Add(new SqlParameter("CognomeSupervisore", cognomeSupervisore));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1634,9 +1715,11 @@ namespace WebAPIAuthJWT.Helpers
         public DataTable GetAtletiSocieta(int idsocieta)
         {
             sql = "";
-            sql += "SELECT Atleta.CodiceTessera FROM Atleta,Societa WHERE Atleta.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=" + idsocieta + ";";
+            sql += "SELECT Atleta.CodiceTessera FROM Atleta,Societa WHERE Atleta.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=@IDSocieta;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDSocieta", idsocieta));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1645,9 +1728,11 @@ namespace WebAPIAuthJWT.Helpers
         public DataTable GetAllenatoreSocieta(int idsocieta)
         {
             sql = "";
-            sql += "SELECT Allenatore.CodiceTessera FROM Allenatore,Societa WHERE Allenatore.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=" + idsocieta + ";";
+            sql += "SELECT Allenatore.CodiceTessera FROM Allenatore,Societa WHERE Allenatore.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=@IDSocieta;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDSocieta", idsocieta));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1656,9 +1741,11 @@ namespace WebAPIAuthJWT.Helpers
         public string GetAtletaByTessera(string tessera)
         {
             sql = "";
-            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=" + tessera + ";";
+            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=@Tessera;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Tessera", tessera));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1667,9 +1754,11 @@ namespace WebAPIAuthJWT.Helpers
         public string GetAllenatoreByTessera(string tessera)
         {
             sql = "";
-            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera='" + tessera + "';";
+            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera=@Tessera;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Tessera", tessera));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1680,9 +1769,11 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDSupervisore FROM Torneo WHERE Torneo.IDTorneo=" + idTorneo;
+                sql += "SELECT IDSupervisore FROM Torneo WHERE Torneo.IDTorneo=@IDTorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
                 query = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(query);
                 conn.Close();
@@ -1703,9 +1794,13 @@ namespace WebAPIAuthJWT.Helpers
             {
                 //Prendo l'IDSquadra
                 sql = "";
-                sql += "SELECT ListaIScritti.IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=" + idTorneo + " AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=" + idAtleta1 + " AND Squadra.IDAtleta2=" + idAtleta2;
+                sql += "SELECT ListaIScritti.IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=@IDTorneo AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=@IDAtleta1 AND Squadra.IDAtleta2=@IDAtleta2";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("IDAtleta1", idAtleta1));
+                comando.Parameters.Add(new SqlParameter("IDAtleta2", idAtleta2));
                 idSquadra = new DataTable();
-                adapter = new SqlDataAdapter(sql, conn);
+                adapter = new SqlDataAdapter(comando);
                 conn.Open();
                 adapter.Fill(idSquadra);
                 conn.Close();
