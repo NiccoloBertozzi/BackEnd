@@ -28,6 +28,16 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTorneiEntroData(Data);
         }
+        //Restituisce tornei prima della data inserita
+        [HttpGet("GetTorneiNonAutorizzati/{Data}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public DataTable GetTorneiNonAutorizzati(DateTime Data)
+        {
+            return db.GetTorneiNonAutorizzatiEntroData(Data);
+        }
 
         [HttpPost("CreaTorneo")]
         [ProducesResponseType(400)]
@@ -173,14 +183,14 @@ namespace API_AIBVC.Controllers
         }
 
         //Autorizza il torneo
-        [HttpPut("AutorizzaTorneo/{titoloTorneo}")]
+        [HttpPut("AutorizzaTorneo/{idTorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Admin")]
-        public ActionResult<InfoMsg> AutorizzaTorneo(string titoloTorneo)
+        public ActionResult<InfoMsg> AutorizzaTorneo(int idTorneo)
         {
-            if(db.AutorizzaTorneo(titoloTorneo))
+            if(db.AutorizzaTorneo(idTorneo))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'autorizzazione del torneo"));

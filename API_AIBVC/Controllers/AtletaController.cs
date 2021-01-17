@@ -28,16 +28,27 @@ namespace API_AIBVC.Controllers
         {
             return db.GetAnagrafica(Atleti_Id);
         }
+
         //Restituisce le informazioni fondamentali relative a tutti i tornei in cui un atleta è iscritto
         [HttpGet("Iscrizioni/{Atleti_Id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Admin")]
-
         public DataTable GetIscrizioni(int Atleti_Id)
         {
             return db.GetIscrizioni(Atleti_Id);
+        }
+
+        // restituisce l'id dela societa in base al id dell'alttela
+        [HttpGet("GetIdSocieta/{Atleti_Id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin")]
+        public int Getidsocieta(int Atleti_Id)
+        {
+            return db.GetIdSocietaByAtleta(Atleti_Id);
         }
     }
 }

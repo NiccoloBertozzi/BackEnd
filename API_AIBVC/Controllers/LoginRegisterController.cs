@@ -8,6 +8,8 @@ using WebAPIAuthJWT.Helpers;
 using API_Login_Registra.Models;
 using System.Net.Mail;
 using API_Supervisore.Models;
+using Newtonsoft.Json;
+
 
 namespace API_AIBVC.Controllers
 {
@@ -23,12 +25,15 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status405MethodNotAllowed, Type = typeof(InfoMsg))]
         public IActionResult Login([FromBody] Credenziali credenziali)
         {
+            string[] risposta;
             string tokenJWT = "";
-            if (db.Authenticate(credenziali.Email, credenziali.Password))
-                tokenJWT = db.GetToken(credenziali.Email);
+            if (db.Authenticate(credenziali.Email, credenziali.Password)) {
+                risposta = db.GetToken(credenziali.Email);
+                tokenJWT = risposta[0];
+            }
             else
                 return BadRequest(new InfoMsg(DateTime.Today, string.Format($"Username e/o Password errati.")));
-            return Ok(new { token = tokenJWT });
+            return Ok(new { token = tokenJWT, id = risposta[1] });
         }
 
         [HttpPost("RegistraAllenatore")]

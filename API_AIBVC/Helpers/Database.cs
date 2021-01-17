@@ -69,10 +69,11 @@ namespace WebAPIAuthJWT.Helpers
             return autenticato;
         }
 
-        public string GetToken(string email)//Rilascio token
+        public string[] GetToken(string email)//Rilascio token
         {
             DataTable dtUtente = this.CheckUser(email);
             string sql;
+            string[] risposta = new string[2];
 
             //Creazione del Token Jwt
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -97,17 +98,27 @@ namespace WebAPIAuthJWT.Helpers
             foreach (DataRow dr in dtProfili.Rows)
             {
                 if (dr["IDSocieta"].ToString() != "")
+                {
                     claims.Add(new Claim(ClaimTypes.Role, "Societa"));
+                    risposta[1] = dtUtente.Rows[0]["IDSocieta"].ToString();
+                }
                 else if (dr["IDDelegato"].ToString() != "")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Delegato"));
                     if (Convert.ToInt32(dr["AdminDelegati"]) != 0)
                         claims.Add(new Claim(ClaimTypes.Role, "AdminDelegato"));
+                    risposta[1] = dtUtente.Rows[0]["IDDelegato"].ToString();
                 }
                 else if (dr["IDAtleta"].ToString() != "")
+                {
                     claims.Add(new Claim(ClaimTypes.Role, "Atleta"));
+                    risposta[1] = dtUtente.Rows[0]["IDAtleta"].ToString();
+                }
                 else if (dr["IDAllenatore"].ToString() != "")
+                {
                     claims.Add(new Claim(ClaimTypes.Role, "Allenatore"));
+                    risposta[1] = dtUtente.Rows[0]["IDAllenatore"].ToString();
+                }
                 if (Convert.ToInt32(dr["Admin"]) != 0)
                     claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             }
@@ -120,10 +131,9 @@ namespace WebAPIAuthJWT.Helpers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
             };
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            risposta[0] = tokenHandler.WriteToken(token);
+            return risposta;
         }
 
         public DataTable CheckUser(string email)
@@ -169,7 +179,6 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-
         public DataTable GetIDComuneResidenza(string comuneResidenza)
         {
             conn.Open();
@@ -269,6 +278,20 @@ namespace WebAPIAuthJWT.Helpers
             comando.Parameters.Add(new SqlParameter("Data", data.Date.ToString()));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public DataTable GetTorneiNonAutorizzatiEntroData(DateTime data)
+        {
+            conn.Open();
+            string sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo, Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome, ' ', Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome, ' ', SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale, CONCAT(DirettoreCompetizione.Nome, ' ', DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
+            "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
+            " WHERE CAST(DataInizio as DATE) <= '" + data.Date.ToString() + "' AND Autorizzato= 0";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -1440,33 +1463,90 @@ namespace WebAPIAuthJWT.Helpers
         {
             try
             {
-                idAllenatore = GetIDAllenatore(idAllenatore);//trasformo il codice della tessera dell'allenatore ricevuto con id 
                 sql = "";
-                sql += "INSERT INTO ListaIscritti(IDSquadra,IDTorneo,IDAllenatore,DataIscrizione,Cancellata)VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@DataIscrizione,@Cancellata)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDSquadra", idSquadra);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("IDTorneo", idTorneo);
-                comando.Parameters.Add(parametro);
-                if (idAllenatore != 0)
-                    parametro = new SqlParameter("IDAllenatore", idAllenatore);
-                else
-                    parametro = new SqlParameter("IDAllenatore", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataIscrizione", DateTime.Now.Date);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Cancellata", SqlDbType.Bit) { Value = 0 };//di base settata a FALSE
-                comando.Parameters.Add(parametro);
+                sql += "SELECT IDAtleta1, IDAtleta2 FROM Squadra WHERE IDSquadra="+ idSquadra + "";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
-                comando.ExecuteNonQuery();
+                adapter.Fill(query);
                 conn.Close();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                string error = ex.Message;
+                //se ha trovato una squdra con quel id
+                if (query.Rows.Count > 0)
+                {
+                    //prende il sesso degli atleti
+                    try
+                    {
+                        sql = "";
+                        sql += "SELECT Sesso FROM Atleta, Squadra WHERE((Squadra.IDAtleta1 = " + query.Rows[0]["IDAtleta1"] + " AND Atleta.IDAtleta = Squadra.IDAtleta1) OR(Squadra.IDAtleta2 = " + query.Rows[0]["IDAtleta1"] + " AND Atleta.IDAtleta = Squadra.IDAtleta2))";
+                        query = new DataTable();
+                        adapter = new SqlDataAdapter(sql, conn);
+                        conn.Open();
+                        adapter.Fill(query);
+                        conn.Close();
+                        //controllo che il sesso della squadra sia idoneo
+                        if (query.Rows.Count > 0)
+                        {
+                            sql = "";
+                            sql += "SELECT IDTorneo FROM Torneo WHERE torneo.Gender = '" + query.Rows[0]["Sesso"] + "' AND IDTorneo = " + idTorneo + ";";
+                            query = new DataTable();
+                            adapter = new SqlDataAdapter(sql, conn);
+                            conn.Open();
+                            adapter.Fill(query);
+                            conn.Close();
+                            //se è stata trovata una corrispondenza significa che il sesso è corretto
+                            if (query.Rows.Count > 0)
+                            {
+                                try
+                                {
+                                    //controllo che l'allentatore si presente
+                                    if (GetIDAllenatore(idAllenatore) > 0)
+                                    {
+                                        //trasformo il codice della tessera dell'allenatore ricevuto con id 
+                                        idAllenatore = GetIDAllenatore(idAllenatore);
+                                        sql = "";
+                                        sql += "INSERT INTO ListaIscritti(IDSquadra,IDTorneo,IDAllenatore,DataIscrizione,Cancellata)VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@DataIscrizione,@Cancellata)";
+                                        comando = new SqlCommand(sql, conn);
+                                        parametro = new SqlParameter("IDSquadra", idSquadra);
+                                        comando.Parameters.Add(parametro);
+                                        parametro = new SqlParameter("IDTorneo", idTorneo);
+                                        comando.Parameters.Add(parametro);
+                                        if (idAllenatore != 0)
+                                            parametro = new SqlParameter("IDAllenatore", idAllenatore);
+                                        else
+                                            parametro = new SqlParameter("IDAllenatore", DBNull.Value);
+                                        comando.Parameters.Add(parametro);
+                                        parametro = new SqlParameter("DataIscrizione", DateTime.Now.Date);
+                                        comando.Parameters.Add(parametro);
+                                        parametro = new SqlParameter("Cancellata", SqlDbType.Bit) { Value = 0 };//di base settata a FALSE
+                                        comando.Parameters.Add(parametro);
+                                        conn.Open();
+                                        comando.ExecuteNonQuery();
+                                        conn.Close();
+                                        return true;
+                                    }
+                                    else return false;
+                                }
+                                catch (Exception ex)
+                                {
+                                    string error = ex.Message;
+                                    return false;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
                 return false;
             }
+            catch
+            {
+                return false;
+            }
+
         }//Inserisci la squadra nella lista iscritti ti un torneo
         public DataTable GetPartite(int NumeroPartite)
         {
@@ -1618,14 +1698,14 @@ namespace WebAPIAuthJWT.Helpers
                 return null;
             }
         }//ritorna i tutti i tipi di formula
-        public bool AutorizzaTorneo(string nomeTorneo)
+        public bool AutorizzaTorneo(int idTorneo)
         {
             try
             {
                 sql = "";
-                sql += "UPDATE Torneo SET Autorizzato=1 WHERE Titolo=@nomeTorneo";
+                sql += "UPDATE Torneo SET Autorizzato=1 WHERE IdTorneo=@idTorneo";
                 comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("nomeTorneo", nomeTorneo);
+                parametro = new SqlParameter("idTorneo", idTorneo);
                 comando.Parameters.Add(parametro);
                 conn.Open();
                 comando.ExecuteNonQuery();
@@ -1844,5 +1924,23 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
+        public int GetIdSocietaByAtleta(int idatleta)
+        {
+            try
+            {
+                sql = "";
+                sql += "SELECT IDSocieta FROM Atleta WHERE IDAtleta="+idatleta+";";
+                query = new DataTable();
+                adapter = new SqlDataAdapter(sql, conn);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return Convert.ToInt32(query.Rows[0]["IDSocieta"]);
+            }
+            catch
+            {
+                return 0;
+            }
+        }//ritorna id societa dal id alteta
     }
 }
