@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebAPIAuthJWT.Helpers;
-using API_Login_Registra.Models;
-using System.Net.Mail;
+﻿using API_Login_Registra.Models;
 using API_Supervisore.Models;
-using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using RestSharp;
+using System;
+using System.Net.Http;
+using WebAPIAuthJWT.Helpers;
 
 namespace API_AIBVC.Controllers
 {
@@ -30,12 +26,13 @@ namespace API_AIBVC.Controllers
             if (db.Authenticate(credenziali.Email, credenziali.Password)) {
                 risposta = db.GetToken(credenziali.Email);
                 tokenJWT = risposta[0];
+                //Set cookie con ruolo
+                HttpContext.Response.Cookies.Append("ruolo", risposta[2]);
             }
             else
                 return BadRequest(new InfoMsg(DateTime.Today, string.Format($"Username e/o Password errati.")));
             return Ok(new { token = tokenJWT, id = risposta[1] });
         }
-
         [HttpPost("RegistraAllenatore")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -48,8 +45,8 @@ namespace API_AIBVC.Controllers
                 allenatoreLogin.allenatore.IDSocieta = Convert.ToInt32(db.GetIDSocieta(allenatoreLogin.cred.NomeSocieta).Rows[0][0]);
                 allenatoreLogin.allenatore.IDComuneNascita = "";
                 allenatoreLogin.allenatore.IDComuneResidenza = "";
-                if (db.GetIDComuneNascita(allenatoreLogin.cred.ComuneNascita).Rows.Count > 0) allenatoreLogin.allenatore.IDComuneNascita = db.GetIDComuneNascita(allenatoreLogin.cred.ComuneNascita).Rows[0][0].ToString();
-                if (db.GetIDComuneResidenza(allenatoreLogin.cred.ComuneResidenza).Rows.Count > 0) allenatoreLogin.allenatore.IDComuneResidenza = db.GetIDComuneResidenza(allenatoreLogin.cred.ComuneResidenza).Rows[0][0].ToString();
+                if (allenatoreLogin.cred.ComuneNascita != null) if (db.GetIDComuneNascita(allenatoreLogin.cred.ComuneNascita).Rows.Count > 0) allenatoreLogin.allenatore.IDComuneNascita = db.GetIDComuneNascita(allenatoreLogin.cred.ComuneNascita).Rows[0][0].ToString();
+                if (allenatoreLogin.cred.ComuneResidenza != null) if (db.GetIDComuneResidenza(allenatoreLogin.cred.ComuneResidenza).Rows.Count > 0) allenatoreLogin.allenatore.IDComuneResidenza = db.GetIDComuneResidenza(allenatoreLogin.cred.ComuneResidenza).Rows[0][0].ToString();
                 if (db.RegisterAllenatore(allenatoreLogin.allenatore.IDSocieta, allenatoreLogin.allenatore.CodiceTessera, allenatoreLogin.allenatore.Grado, allenatoreLogin.allenatore.Nome, allenatoreLogin.allenatore.Cognome, allenatoreLogin.allenatore.Sesso, allenatoreLogin.allenatore.CF, allenatoreLogin.allenatore.DataNascita, allenatoreLogin.allenatore.IDComuneNascita, allenatoreLogin.allenatore.IDComuneResidenza, allenatoreLogin.allenatore.Indirizzo, allenatoreLogin.allenatore.CAP, allenatoreLogin.allenatore.Email, allenatoreLogin.allenatore.Tel, allenatoreLogin.cred.Password))
                     return Ok(new InfoMsg(DateTime.Today, $"Inserimento dell'allenatore { allenatoreLogin.allenatore.Nome} eseguito con successo."));
                 else
@@ -70,8 +67,8 @@ namespace API_AIBVC.Controllers
                 atletalogin.atleta.IDSocieta = Convert.ToInt32(db.GetIDSocieta(atletalogin.cred.NomeSocieta).Rows[0][0]);
                 atletalogin.atleta.IDComuneNascita = "";
                 atletalogin.atleta.IDComuneResidenza = "";
-                if (db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows[0][0].ToString();
-                if (db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows.Count > 0) atletalogin.atleta.IDComuneResidenza = db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows[0][0].ToString();
+                if(atletalogin.cred.ComuneNascita!=null)if(db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows[0][0].ToString();
+                if (atletalogin.cred.ComuneResidenza != null) if (db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows.Count > 0) atletalogin.atleta.IDComuneResidenza = db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows[0][0].ToString();
                 //registro
                 if (db.RegisterAtleta(atletalogin.atleta.IDSocieta, atletalogin.atleta.CodiceTessera, atletalogin.atleta.Nome, atletalogin.atleta.Cognome, atletalogin.atleta.Sesso, atletalogin.atleta.CF, atletalogin.atleta.DataNascita, atletalogin.atleta.IDComuneNascita, atletalogin.atleta.IDComuneResidenza, atletalogin.atleta.Indirizzo, atletalogin.atleta.CAP, atletalogin.atleta.Email, atletalogin.atleta.Tel, atletalogin.atleta.Altezza, atletalogin.atleta.Peso, atletalogin.atleta.DataScadenzaCertificato, atletalogin.cred.Password))
                     return Ok(new InfoMsg(DateTime.Today, $"Inserimento dell'atleta {atletalogin.atleta.Nome} eseguito con successo."));
@@ -90,8 +87,8 @@ namespace API_AIBVC.Controllers
         {
             delegatologin.delegato.IDComuneNascita = "";
             delegatologin.delegato.IDComuneResidenza = "";
-            if (db.GetIDComuneNascita(delegatologin.cred.ComuneNascita).Rows.Count > 0) delegatologin.delegato.IDComuneNascita = db.GetIDComuneNascita(delegatologin.cred.ComuneNascita).Rows[0][0].ToString();
-            if (db.GetIDComuneResidenza(delegatologin.cred.ComuneResidenza).Rows.Count > 0) delegatologin.delegato.IDComuneResidenza = db.GetIDComuneResidenza(delegatologin.cred.ComuneResidenza).Rows[0][0].ToString();
+            if (delegatologin.cred.ComuneNascita != null) if (db.GetIDComuneNascita(delegatologin.cred.ComuneNascita).Rows.Count > 0) delegatologin.delegato.IDComuneNascita = db.GetIDComuneNascita(delegatologin.cred.ComuneNascita).Rows[0][0].ToString();
+            if (delegatologin.cred.ComuneResidenza != null) if (db.GetIDComuneResidenza(delegatologin.cred.ComuneResidenza).Rows.Count > 0) delegatologin.delegato.IDComuneResidenza = db.GetIDComuneResidenza(delegatologin.cred.ComuneResidenza).Rows[0][0].ToString();
             if (db.RegisterDelegato(delegatologin.delegato.Nome, delegatologin.delegato.Cognome, delegatologin.delegato.Sesso, delegatologin.delegato.CF, delegatologin.delegato.DataNascita, delegatologin.delegato.IDComuneNascita, delegatologin.delegato.IDComuneResidenza, delegatologin.delegato.Indirizzo, delegatologin.delegato.CAP, delegatologin.delegato.Email, delegatologin.delegato.Tel, delegatologin.delegato.Arbitro, delegatologin.delegato.Supervisore, delegatologin.cred.Password))
                 return Ok(new InfoMsg(DateTime.Today, $"Inserimento del delegato {delegatologin.delegato.Nome} eseguito con successo."));
             else
