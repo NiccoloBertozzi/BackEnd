@@ -1909,6 +1909,60 @@ namespace WebAPIAuthJWT.Helpers
                 return 0;
             }
         }//ritorna id societa dal id alteta
+        public int GetIDSquadraByNomeTeam(int idatleta,string NomeSquadra)
+        {
+            try
+            {
+                sql = "";
+                sql += "SELECT IDSquadra FROM Squadra WHERE (IDAtleta1=@IDAtleta OR IDAtleta2=@IDAtleta) AND NomeTeam=@nomeTeam";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+                comando.Parameters.Add(new SqlParameter("nomeTeam", NomeSquadra));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return Convert.ToInt32(query.Rows[0]["IDSquadra"]);
+            }
+            catch
+            {
+                return 0;
+            }
+        }//ritorna id squadra dal id atleta e nome team
+        public DataTable GetidTorneiIscritti(int idatleta)
+        {
+            sql = "";
+            sql += "SELECT IDTorneo FROM ListaIscritti,Squadra WHERE Squadra.IDSquadra=ListaIscritti.IDSquadra AND (Squadra.IDAtleta1=@IDAtleta OR Squadra.IDAtleta2=@IDAtleta)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return GetTorneiEntroDataSocieta(query);//Scarico tutti i tornei iscritto di quel atleta
+        }//torna lista tornei iscritti
+        public DataTable GetTorneiEntroDataSocieta(DataTable dt)
+        {
+
+            string[] arrray = dt.Rows.OfType<DataRow>().Select(k => k[0].ToString()).ToArray();
+            conn.Open();
+            query = new DataTable();
+            for (int i = 0; i< arrray.Length; i++) {
+                string sql = "";
+                sql += "SELECT DISTINCT Torneo.IDTorneo, Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome, ' ', Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome, ' ', SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale, CONCAT(DirettoreCompetizione.Nome, ' ', DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
+                "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
+                " WHERE Autorizzato= 1 AND Torneo.IDTorneo= @idtorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idtorneo", arrray[i]));
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+            }
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
         public string EliminaTeamByAtleta(int idTorneo, int idSquadra) 
         {
             try
