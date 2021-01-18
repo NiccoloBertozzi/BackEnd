@@ -14,13 +14,13 @@ namespace API_AIBVC.Models
         public string DataInizio { get; set; }
         public string DataFine { get; set; }
         public char Genere { get; set; }
-        public double QuotaIngresso { get; set; }
+        public double QuotaIscrizione { get; set; }
         public string FormulaTorneo { get; set; }
         public int NumTeamTabellone { get; set; }
         public int NumTeamQualifiche { get; set; }
         public string[] ParametriTorneo { get; set; }
         public string TipoTorneo { get; set; }
         public string[] Impianti { get; set; }
-
+        public int IDSocieta { get; set; }
     }
 }
