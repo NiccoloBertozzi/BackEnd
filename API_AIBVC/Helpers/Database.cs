@@ -182,7 +182,7 @@ namespace WebAPIAuthJWT.Helpers
         }
         public DataTable GetIDComuneResidenza(string comuneResidenza)
         {
-            conn.Open();
+            
             string sql;
             sql = "";
             sql += "SELECT IDComune ";
@@ -192,6 +192,7 @@ namespace WebAPIAuthJWT.Helpers
             comando.Parameters.Add(new SqlParameter("ComuneResidenza", comuneResidenza));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
+            conn.Open();
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
@@ -1264,7 +1265,7 @@ namespace WebAPIAuthJWT.Helpers
                             comando = new SqlCommand(sql, conn);
                             comando.Parameters.Add(new SqlParameter("Impianti", impianti[i]));
                             query = new DataTable();
-                            adapter = new SqlDataAdapter(sql, conn);
+                            adapter = new SqlDataAdapter(comando);
                             conn.Open();
                             adapter.Fill(query);
                             conn.Close();
@@ -1941,5 +1942,83 @@ namespace WebAPIAuthJWT.Helpers
             }
             catch { return "Errore nell'eliminazione della squadra."; }
         }//elimina una squadra da un torneo by atleta 
+        public bool AggiungiImpianto(string nomeComune, string nomeImpianto, int numeroCampi, string indirizzo, string cap, string descrizione, string email, string sito, string tel, int idSocieta)
+        {
+            DataTable idImpianto; 
+            try
+            {
+                //Insert per aggiungere un impianto
+                sql = "";
+                sql += "INSERT INTO Impianto(IDComune,NomeImpianto,NumeroCampi,Indirizzo,CAP,Descrizione,Email,Sito,Tel) ";
+                sql += "VALUES(@IDComune,@NomeImpianto,@NumeroCampi,@Indirizzo,@CAP,@Descrizione,@Email,@Sito,@Tel)";
+                comando = new SqlCommand(sql, conn);
+                parametro = new SqlParameter("IDComune", GetIDComuneResidenza(nomeComune).Rows[0][0]);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("NomeImpianto", nomeImpianto);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("NumeroCampi", numeroCampi);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("Indirizzo", indirizzo);
+                comando.Parameters.Add(parametro);
+                if (cap != null)
+                    parametro = new SqlParameter("CAP", cap);
+                else
+                    parametro = new SqlParameter("CAP", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (descrizione != null)
+                    parametro = new SqlParameter("Descrizione", descrizione);
+                else
+                    parametro = new SqlParameter("Descrizione", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (email != null)
+                    parametro = new SqlParameter("Email", email);
+                else
+                    parametro = new SqlParameter("Email", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (sito != null)
+                    parametro = new SqlParameter("Sito", sito);
+                else
+                    parametro = new SqlParameter("Sito", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (tel != null)
+                    parametro = new SqlParameter("Tel", tel);
+                else
+                    parametro = new SqlParameter("Tel", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                //Prendo l'IDImpianto
+                sql = "";
+                sql += "Select idimpianto from Impianto WHERE NomeImpianto=@NomeImpianto";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("NomeImpianto", nomeImpianto));
+                adapter = new SqlDataAdapter(comando);
+                idImpianto = new DataTable();
+                conn.Open();
+                adapter.Fill(idImpianto);
+                conn.Close();
+                //Insert per associare l'impianto alla società
+                if (idImpianto.Rows.Count > 0)//Controllo che l'impianto sia stato trovato
+                {
+                    sql = "";
+                    sql += "INSERT INTO ImpiantoSocieta(IDSocieta,IDImpianto) VALUES(@IDSocieta,@IDImpianto)";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                    comando.Parameters.Add(new SqlParameter("IDImpianto", idImpianto.Rows[0][0]));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch(Exception e)
+            {
+                string errore = e.Message;
+                return false;
+            }
+        }
     }
 }

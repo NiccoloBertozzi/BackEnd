@@ -128,3 +128,4 @@ E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Debug\netcoreapp3.1\RestSharp.dl
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Debug\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Debug\netcoreapp3.1\RestSharp.dll

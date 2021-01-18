@@ -224,7 +224,7 @@ namespace API_AIBVC.Controllers
                 if (db.EliminaTeam(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra))
                     return Ok(new InfoMsg(DateTime.Today, $"Team eliminato dal torneo con successo"));
                 else
-                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'eleminazione del team"));
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'eliminazione del team"));
             }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
