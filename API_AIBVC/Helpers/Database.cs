@@ -206,7 +206,7 @@ namespace WebAPIAuthJWT.Helpers
             sql += "FROM Allenatore ";
             sql += "WHERE Codicetessera=@Tessera";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("Tessera", tessera));
+            comando.Parameters.Add(new SqlParameter("Tessera", tessera.ToString()));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
@@ -1027,55 +1027,34 @@ namespace WebAPIAuthJWT.Helpers
             risultati[1] = ris2;
             return risultati;
         }
-        public DataTable GetClassificaMaschile()
+        public DataTable GetClassifica(string sesso)
         {
+            string sql;
             sql = "";
-            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
-            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta1 "+ 
-            "UNION " +
-            "SELECT idatleta2, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
+            sql += "WITH punteggi(idAtl, punti) AS(" +
+            "SELECT idatleta1, sum(punti) / 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta2 "+
-            "UNION "+
-            "SELECT idatleta1, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE "+
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
-            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta1 "+
-            "UNION "+
-            "SELECT idatleta2, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE "+
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo "+
-            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2) "+
-            "SELECT cognome, nome, sum(punti) "+
-            "FROM punteggi, atleta WHERE idatleta = idAtl AND atleta.sesso = 'M' "+
-            "GROUP BY cognome,nome HAVING sum(punti) > 0 ORDER BY sum(punti) DESC,Cognome,Nome";
+            "AND datediff(day,datafine,GETDATE())<120 GROUP BY idatleta1 " +
+            "UNION " +
+            "SELECT idatleta2, sum(punti) / 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
+            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
+            "AND datediff(day,datafine,GETDATE())<120 GROUP BY idatleta2 " +
+            "UNION " +
+            "SELECT idatleta1, sum(punti) / 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
+            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
+            "AND datediff(day,datafine,GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta1 " +
+            "UNION " +
+            "SELECT idatleta2, sum(punti) / 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
+            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
+            "AND datediff(day,datafine,GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2 " +
+            ") " +
+            "SELECT idatleta, cognome, nome, sum(punti) " +
+            "FROM punteggi, atleta WHERE idatleta=idAtl AND atleta.sesso=@Sesso" +
+            " GROUP BY idatleta,cognome,nome HAVING sum(punti)>0 ORDER BY sum(punti) DESC,Cognome,Nome";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Sesso", sesso));
             query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
-            conn.Open();
-            adapter.Fill(query);
-            conn.Close();
-            return query;
-        }
-        public DataTable GetClassificaFemminile()
-        {
-            sql = "";
-            sql += "WITH punteggi(idAtl,punti) AS (SELECT idatleta1, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta1 " +
-            "UNION " +
-            "SELECT idatleta2, sum(punti)/ 2.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND datediff(day, datafine, GETDATE())< 120 GROUP BY idatleta2 " +
-            "UNION " +
-            "SELECT idatleta1, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta1 " +
-            "UNION " +
-            "SELECT idatleta2, sum(punti)/ 4.0 FROM Partecipa, Squadra, Torneo WHERE " +
-            "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
-            "AND datediff(day, datafine, GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2) " +
-            "SELECT cognome, nome, sum(punti) " +
-            "FROM punteggi, atleta WHERE idatleta = idAtl AND atleta.sesso = 'F' " +
-            "GROUP BY cognome,nome HAVING sum(punti) > 0 ORDER BY sum(punti) DESC,Cognome,Nome";
-            query = new DataTable();
-            adapter = new SqlDataAdapter(sql, conn);
+            adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(query);
             conn.Close();
@@ -1443,28 +1422,6 @@ namespace WebAPIAuthJWT.Helpers
                 sql += "SELECT IDAtleta FROM Atleta WHERE CodiceTessera =@Data";
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("Data", data));
-                query = new DataTable();
-                adapter = new SqlDataAdapter(comando);
-                conn.Open();
-                adapter.Fill(query);
-                conn.Close();
-                return Convert.ToInt32(query.Rows[0]["IDAtleta"]);
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-        public int GetIDAllenatore(string data)//Metodo che restituisce l'ID dell'allentaore cercato
-        {
-            //data= Nome Cognome CodiceTesera
-            string[] splited = data.Split(null);//splitto per lo spazio
-            try
-            {
-                sql = "";
-                sql += "SELECT IDAllenatore FROM Allenatore WHERE CodiceTessera =@CodiceTessera";
-                comando = new SqlCommand(sql, conn);
-                comando.Parameters.Add(new SqlParameter("CodiceTessera", splited[2]));
                 query = new DataTable();
                 adapter = new SqlDataAdapter(comando);
                 conn.Open();
@@ -1885,8 +1842,9 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
-        public bool EliminaTeam(int idTorneo, int idAtleta1, int idAtleta2)
+        public bool EliminaTeam(int idTorneo, int idsquadra)
         {
+            /*
             DataTable idSquadra;
             try
             {
@@ -1918,6 +1876,8 @@ namespace WebAPIAuthJWT.Helpers
                 string errore = e.Message;
                 return false;
             }
+            */
+            return false;// DA ELIMINARE SERVE SOLO PER NON FARLO ANDARE IN ERRORE SE E' COMMENTATO
         }
         public bool AssegnaWildCard(int idTorneo, int idSquadra)
         {
@@ -1960,5 +1920,38 @@ namespace WebAPIAuthJWT.Helpers
                 return 0;
             }
         }//ritorna id societa dal id alteta
+        public string EliminaTeamByAtleta(int idTorneo, int idSquadra) 
+        {
+            try
+            {
+                //controllo che la data di iscrizione sia ancora aperta
+                sql = "";
+                sql = "SELECT IDTorneo FROM Torneo WHERE IDTorneo=@idTorneo AND CAST(DataChiusuraIscrizioni as DATE) >= @Data";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date.ToString("MM-dd-yyyy")));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                // la data di iscrizione è ancora aperta
+                if (query.Rows.Count > 0)
+                {
+                    //Elimino la squadra
+                    sql = "";
+                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra";
+                    comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("IDSquadra", idSquadra);
+                    comando.Parameters.Add(parametro);
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return "Squadra eliminata con successo";
+                }
+                else return "Data di iscrizione chiusa.";
+            }
+            catch { return "Errore nell'eliminazione della squadra."; }
+        }//elimina una squadra da un torneo by atleta 
     }
 }

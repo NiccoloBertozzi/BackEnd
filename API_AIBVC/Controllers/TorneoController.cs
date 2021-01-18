@@ -46,12 +46,13 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIngresso))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti, torneo.QuotaIngresso))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
         }
 
+        //crea una nuova squadra se non esite gia
         [HttpPost("InserisciSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -65,7 +66,7 @@ namespace API_AIBVC.Controllers
             else
                 return null;
         }
-
+        //iscrive una suadra ad un torneo
         [HttpPost("IscriviSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -78,6 +79,7 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
+
         //ritorna la lista degli atleti di una societa
         [HttpPost("AtletiSocieta/{idsocieta}")]
         [ProducesResponseType(400)]
@@ -190,7 +192,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult<InfoMsg> AutorizzaTorneo(int idTorneo)
         {
-            if(db.AutorizzaTorneo(idTorneo))
+            if (db.AutorizzaTorneo(idTorneo))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'autorizzazione del torneo"));
@@ -204,7 +206,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "AdminDelegato")]
         public ActionResult<InfoMsg> AssegnaDelegati([FromBody]AddDelegatiTorneo delgatiTorn)
         {
-            if(db.AssegnaSupervisori(delgatiTorn.NomeSupervisore,delgatiTorn.CognomeSupervisore,delgatiTorn.NomeSupArbitrale,delgatiTorn.CognomeSupArbitrale,delgatiTorn.NomeDirettore,delgatiTorn.CognomeDirettore,delgatiTorn.TitoloTorneo))
+            if (db.AssegnaSupervisori(delgatiTorn.NomeSupervisore, delgatiTorn.CognomeSupervisore, delgatiTorn.NomeSupArbitrale, delgatiTorn.CognomeSupArbitrale, delgatiTorn.NomeDirettore, delgatiTorn.CognomeDirettore, delgatiTorn.TitoloTorneo))
                 return Ok(new InfoMsg(DateTime.Today, $"Delegati assegnati con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione dei delegati"));
@@ -217,15 +219,27 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Delegato")]
         public ActionResult<InfoMsg> EliminaSquadra([FromBody]EliminaTeam eliminaTeam)
         {
-            if (db.ControlloSupervisore(eliminaTeam.IdDelegato,eliminaTeam.IdTorneo))
+            if (db.ControlloSupervisore(eliminaTeam.IdDelegato, eliminaTeam.IdTorneo))
             {
-                if(db.EliminaTeam(eliminaTeam.IdTorneo,eliminaTeam.IdAtleta1,eliminaTeam.IdAtleta2))
+                if (db.EliminaTeam(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra))
                     return Ok(new InfoMsg(DateTime.Today, $"Team eliminato dal torneo con successo"));
                 else
                     return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'eleminazione del team"));
             }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
+        }
+
+        //elimina la squdra da parte di un atleta
+        [HttpDelete("EliminaSquadraByAtleta")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Admin")]
+        public ActionResult<InfoMsg> EliminaSquadraByAtleta([FromBody]EliminaTeam eliminaTeam)
+        {
+            //ritorno risposta
+            return Ok(new InfoMsg(DateTime.Today, db.EliminaTeamByAtleta(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra)));
         }
 
         [HttpPut("AssegnaWildCard/{IDTorneo}/{IDDelegato}/{IDSquadra}")]
@@ -237,7 +251,7 @@ namespace API_AIBVC.Controllers
         {
             if (db.ControlloSupervisore(idDelegato, idTorneo))
             {
-                if(db.AssegnaWildCard(idTorneo,idSquadra))
+                if (db.AssegnaWildCard(idTorneo, idSquadra))
                     return Ok(new InfoMsg(DateTime.Today, $"Assegnata la WC alla squadra con successo"));
                 else
                     return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione della WC alla squadra"));

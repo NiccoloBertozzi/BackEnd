@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPIAuthJWT.Helpers;
@@ -31,19 +32,13 @@ namespace API_AIBVC.Controllers
         {
             return Json(new { output = db.GetAllTorneiFemminili() });
         }
-        [HttpGet("GetClassificaMaschile")]
+        //in base al sesso passato ritorna la classifica
+        [HttpGet("GetClassifica/{sesso}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore")]
-        public JsonResult GetClassificaMaschile()
+        public DataTable GetClassificaMaschile(string sesso)
         {
-            return Json(new { output = db.GetClassificaMaschile() });
-        }
-        [HttpGet("GetClassificaFemminile")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore")]
-        public JsonResult GetClassificaFemminile()
-        {
-            return Json(new { output = db.GetClassificaFemminile() });
+            return db.GetClassifica(sesso);
         }
     }
 }

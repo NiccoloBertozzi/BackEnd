@@ -9,7 +9,6 @@ namespace API_AIBVC.Models
     {
         public int IdDelegato { get; set; }
         public int IdTorneo { get; set; }
-        public int IdAtleta1 { get; set; }
-        public int IdAtleta2 { get; set; }
+        public int IdSquadra { get; set; }
     }
 }
