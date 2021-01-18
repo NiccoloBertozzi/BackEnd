@@ -1137,7 +1137,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return risultati;
         }
-        public bool CreaTorneo(string titolo, int puntiVittoria, double montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int numTeamTabellone, int numTeamQualifiche, string[] parametriTorneo, string tipoTorneo, string[] impianti, double QuotaIngresso)
+        public bool CreaTorneo(string titolo, int puntiVittoria, double montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int numTeamTabellone, int numTeamQualifiche, string[] parametriTorneo, string tipoTorneo, string[] impianti, double quotaIscrizione, int idSocieta)
         {
             DataTable idFormula, idTipoTorneo, idTorneo;
             List<int> idParametriTorneo = new List<int>();
@@ -1182,9 +1182,11 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                         //Creo il torneo
                         sql = "";
-                        sql += "INSERT INTO Torneo(IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumTeamTabellone,NumTeamQualifiche,QuotaIscrizione) ";
-                        sql += "VALUES(@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche,@QuotaIscrizione)";
+                        sql += "INSERT INTO Torneo(IDSocieta,IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumTeamTabellone,NumTeamQualifiche,QuotaIscrizione) ";
+                        sql += "VALUES(@IDSocieta,@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumTeamTabellone,@NumTeamQualifiche,@QuotaIscrizione)";
                         comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("IDSocieta", idSocieta);
+                        comando.Parameters.Add(parametro);
                         parametro = new SqlParameter("IDTipoTorneo", idTipoTorneo.Rows[0][0]);
                         comando.Parameters.Add(parametro);
                         parametro = new SqlParameter("IDFormula", idFormula.Rows[0][0]);
@@ -1207,7 +1209,7 @@ namespace WebAPIAuthJWT.Helpers
                         comando.Parameters.Add(parametro);
                         parametro = new SqlParameter("NumTeamQualifiche", numTeamQualifiche);
                         comando.Parameters.Add(parametro);
-                        parametro = new SqlParameter("QuotaIscrizione", QuotaIngresso);
+                        parametro = new SqlParameter("QuotaIscrizione", quotaIscrizione);
                         comando.Parameters.Add(parametro);
                         conn.Open();
                         comando.ExecuteNonQuery();
@@ -1290,7 +1292,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     else return false;
                 }
-                catch
+                catch(Exception e)
                 {
                     return false;
                 }
@@ -1842,29 +1844,17 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
-        public bool EliminaTeam(int idTorneo, int idsquadra)
+        public bool EliminaTeam(int idTorneo, int idSquadra)
         {
-            /*
-            DataTable idSquadra;
             try
             {
-                //Prendo l'IDSquadra
-                sql = "";
-                sql += "SELECT ListaIScritti.IDSquadra FROM ListaIscritti,Squadra WHERE ListaIscritti.IDTorneo=@IDTorneo AND ListaIscritti.IDSquadra=Squadra.IDSquadra AND Squadra.IDAtleta1=@IDAtleta1 AND Squadra.IDAtleta2=@IDAtleta2";
-                comando = new SqlCommand(sql, conn);
-                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
-                comando.Parameters.Add(new SqlParameter("IDAtleta1", idAtleta1));
-                comando.Parameters.Add(new SqlParameter("IDAtleta2", idAtleta2));
-                idSquadra = new DataTable();
-                adapter = new SqlDataAdapter(comando);
-                conn.Open();
-                adapter.Fill(idSquadra);
-                conn.Close();
                 //Elimino il team
                 sql = "";
-                sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra";
+                sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra AND IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDSquadra", idSquadra.Rows[0][0]);
+                parametro = new SqlParameter("IDSquadra", idSquadra);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("IDTorneo", idTorneo);
                 comando.Parameters.Add(parametro);
                 conn.Open();
                 comando.ExecuteNonQuery();
@@ -1876,8 +1866,6 @@ namespace WebAPIAuthJWT.Helpers
                 string errore = e.Message;
                 return false;
             }
-            */
-            return false;// DA ELIMINARE SERVE SOLO PER NON FARLO ANDARE IN ERRORE SE E' COMMENTATO
         }
         public bool AssegnaWildCard(int idTorneo, int idSquadra)
         {
