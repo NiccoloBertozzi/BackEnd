@@ -17,12 +17,12 @@ namespace API_AIBVC.Controllers
     public class SocietaController : Controller
     {
         Database db = new Database();
-        [HttpGet("SpecificaTorneo/{TitoloTorneo}")]
+        [HttpGet("SpecificaTorneo/{IDTorneo}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public JsonResult SpecificaTorneo(string titoloTorneo)
+        public JsonResult SpecificaTorneo(int idTorneo)
         {
-            return Json(new { output = db.GetTorneoEPartecipanti(titoloTorneo) });
+            return Json(new { output = db.GetTorneoEPartecipanti(idTorneo) });
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiSocieta/{Data}/IdSocieta/{idsocieta}")]

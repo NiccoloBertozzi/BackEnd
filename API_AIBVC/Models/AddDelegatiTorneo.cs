@@ -7,12 +7,9 @@ namespace API_AIBVC.Models
 {
     public class AddDelegatiTorneo
     {
-        public string NomeSupervisore { get; set; }
-        public string CognomeSupervisore { get; set; }
-        public string NomeSupArbitrale { get; set; }
-        public string CognomeSupArbitrale { get; set; }
-        public string NomeDirettore { get; set; }
-        public string CognomeDirettore { get; set; }
-        public string TitoloTorneo { get; set; }
+        public int IdSupervisore { get; set; }
+        public int IdSupArbitrale { get; set; }
+        public int IdDirettore { get; set; }
+        public int IdTorneo { get; set; }
     }
 }

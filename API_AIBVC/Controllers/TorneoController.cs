@@ -206,7 +206,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "AdminDelegato")]
         public ActionResult<InfoMsg> AssegnaDelegati([FromBody]AddDelegatiTorneo delgatiTorn)
         {
-            if (db.AssegnaSupervisori(delgatiTorn.NomeSupervisore, delgatiTorn.CognomeSupervisore, delgatiTorn.NomeSupArbitrale, delgatiTorn.CognomeSupArbitrale, delgatiTorn.NomeDirettore, delgatiTorn.CognomeDirettore, delgatiTorn.TitoloTorneo))
+            if (db.AssegnaSupervisori(delgatiTorn.IdSupervisore,delgatiTorn.IdSupArbitrale,delgatiTorn.IdDirettore,delgatiTorn.IdTorneo))
                 return Ok(new InfoMsg(DateTime.Today, $"Delegati assegnati con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'assegnazione dei delegati"));
