@@ -51,14 +51,14 @@ namespace API_AIBVC.Controllers
             return db.GetIdSocietaByAtleta(Atleti_Id);
         }
         // restituisce l'id dela squadra dal nome team
-        [HttpGet("GetIdSquadra/{Atleti_Id}/NomeSquadra/{NomeSquadra}")]
+        [HttpGet("GetIdSquadra/{Atleti_Id}/Torneo/{IdTorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin")]
-        public int Getidsquadra(int Atleti_Id,string NomeSquadra)
+        public int Getidsquadra(int Atleti_Id,int IdTorneo)
         {
-            return db.GetIDSquadraByNomeTeam(Atleti_Id,NomeSquadra);
+            return db.GetIDSquadraByNomeTeam(Atleti_Id, IdTorneo);
         }
     }
 }

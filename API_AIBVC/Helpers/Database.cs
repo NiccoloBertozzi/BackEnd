@@ -1909,15 +1909,15 @@ namespace WebAPIAuthJWT.Helpers
                 return 0;
             }
         }//ritorna id societa dal id alteta
-        public int GetIDSquadraByNomeTeam(int idatleta,string NomeSquadra)
+        public int GetIDSquadraByNomeTeam(int idatleta,int idtorneo)
         {
             try
             {
                 sql = "";
-                sql += "SELECT IDSquadra FROM Squadra WHERE (IDAtleta1=@IDAtleta OR IDAtleta2=@IDAtleta) AND NomeTeam=@nomeTeam";
+                sql += "SELECT Squadra.IDSquadra FROM Squadra,ListaIscritti WHERE (Squadra.IDAtleta1=@IDAtleta OR Squadra.IDAtleta2=@IDAtleta) AND ListaIscritti.IDTorneo=@idtorneo AND ListaIscritti.IDSquadra=Squadra.IDSquadra";
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
-                comando.Parameters.Add(new SqlParameter("nomeTeam", NomeSquadra));
+                comando.Parameters.Add(new SqlParameter("idtorneo", idtorneo));
                 query = new DataTable();
                 adapter = new SqlDataAdapter(comando);
                 conn.Open();
@@ -1983,12 +1983,14 @@ namespace WebAPIAuthJWT.Helpers
                 {
                     //Elimino la squadra
                     sql = "";
-                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra";
+                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra AND IDTorneo=@IDtorneo";
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSquadra", idSquadra);
-                    comando.Parameters.Add(parametro);
+                    comando.Parameters.Add(new SqlParameter("IDSquadra", idSquadra));
+                    comando.Parameters.Add(new SqlParameter("IDtorneo", idTorneo));
+                    query = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
                     conn.Open();
-                    comando.ExecuteNonQuery();
+                    adapter.Fill(query);
                     conn.Close();
                     return "Squadra eliminata con successo";
                 }
