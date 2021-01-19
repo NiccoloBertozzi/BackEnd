@@ -122,8 +122,7 @@ namespace WebAPIAuthJWT.Helpers
                     risposta[1] = dtUtente.Rows[0]["IDAllenatore"].ToString();
                     risposta[2] = "Allenatore";
                 }
-                if (Convert.ToInt32(dr["Admin"]) != 0)
-                {
+                if (Convert.ToInt32(dr["Admin"]) != 0) { 
                     claims.Add(new Claim(ClaimTypes.Role, "Admin"));
                     risposta[2] = "Admin";
                 }
@@ -183,7 +182,7 @@ namespace WebAPIAuthJWT.Helpers
         }
         public DataTable GetIDComuneResidenza(string comuneResidenza)
         {
-
+            
             string sql;
             sql = "";
             sql += "SELECT IDComune ";
@@ -253,7 +252,7 @@ namespace WebAPIAuthJWT.Helpers
         {
             conn.Open();
             string sql = "";
-            sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumTeamTabellone,NumTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome,' ',atleta1.cognome) AS Atleta1,CONCAT(atleta2.Nome,' ',atleta2.cognome) AS Atleta2 ";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumTeamTabellone,NumTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome,' ',atleta1.cognome) AS Atleta1,CONCAT(atleta2.Nome,' ',atleta2.cognome) AS Atleta2 ";
             sql += "FROM (((((Torneo " +
             "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)" +
             "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo=Torneo.IDTorneo)" +
@@ -962,43 +961,20 @@ namespace WebAPIAuthJWT.Helpers
             risultati[2] = ris3;
             return risultati;
         }
-        public DataTable[] GetTorneoByID(int id)//Metodo che restituisce un torneo tramite l'ID
+        public DataTable GetTorneoByID(int id)//Metodo che restituisce un torneo tramite l'ID
         {
-            DataTable[] risultati = new DataTable[3];
             sql = "";
             sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
             "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
             "WHERE Torneo.IDTorneo=@IDTorneo";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDTorneo", id));
-            risultati[0] = new DataTable();
+            query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
-            adapter.Fill(risultati[0]);
+            adapter.Fill(query);
             conn.Close();
-            sql = "";
-            sql += "SELECT NomeParametro " +
-            "FROM ParametroQualita, ParametroTorneo, Torneo " +
-            "WHERE Torneo.IDTorneo=@IDTorneo AND ParametroTorneo.idtorneo = Torneo.idtorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
-            comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("IDTorneo", id));
-            risultati[1] = new DataTable();
-            adapter = new SqlDataAdapter(comando);
-            conn.Open();
-            adapter.Fill(risultati[1]);
-            conn.Close();
-            sql = "";
-            sql += "SELECT NomeImpianto,Citta ";
-            sql += "FROM ((Impianto LEFT JOIN ImpiantoTorneo ON Impianto.IDImpianto=ImpiantoTorneo.IDImpianto)LEFT JOIN Comune ON Impianto.IDComune=Comune.IDComune) ";
-            sql += "WHERE ImpiantoTorneo.IDTorneo=@IDTorneo";
-            comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("IDTorneo", id));
-            risultati[2] = new DataTable();
-            adapter = new SqlDataAdapter(comando);
-            conn.Open();
-            adapter.Fill(risultati[2]);
-            conn.Close();
-            return risultati;
+            return query;
         }
         public DataTable[] GetAllTorneiMaschili()
         {
@@ -1135,18 +1111,27 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
-        public DataTable[] GetTorneoEPartecipanti(int idTorneo)
+        public DataTable[] GetTorneoEPartecipanti(string titoloTorneo)
         {
             DataTable[] risultati = new DataTable[3];
-            risultati[0] = GetTorneoByID(idTorneo)[0];//Informazioni sul torneo
-            risultati[1] = GetTorneoByID(idTorneo)[1];//Parametri del torneo
+            risultati[0] = GetTorneoByTitolo(GetIDTorneo(titoloTorneo))[0];//Informazioni sul torneo
+            risultati[1] = GetTorneoByTitolo(GetIDTorneo(titoloTorneo))[1];//Parametri del torneo
+            sql = "";
+            sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@TitoloTorneo";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("TitoloTorneo", titoloTorneo));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
             risultati[2] = new DataTable();
             sql = "";
             sql += "SELECT CONCAT(Atleta1.Nome,' ',Atleta1.Cognome) AS Atleta1,CONCAT(Atleta2.Nome,' ',Atleta2.Cognome) AS Atleta2,Squadra.NomeTeam AS NomeTeam,ListaIScritti.WC ";
             sql += "FROM(((ListaIscritti LEFT JOIN Squadra ON Squadra.IDSquadra=ListaIscritti.IDSquadra)LEFT JOIN Atleta Atleta1 ON Squadra.IDAtleta1=Atleta1.IDAtleta)LEFT JOIN Atleta Atleta2 ON Squadra.IDAtleta2=Atleta2.IDAtleta) ";
             sql += "WHERE ListaIscritti.IDTorneo=@IDTorneo";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+            comando.Parameters.Add(new SqlParameter("IDTorneo", query.Rows[0][0]));
             adapter = new SqlDataAdapter(comando);
             conn.Open();
             adapter.Fill(risultati[2]);
@@ -1170,7 +1155,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(idTorneo);
                 conn.Close();
-
+                
                 try
                 {
                     //controllo che non ci sia gia un torneo con quel nome
@@ -1308,12 +1293,12 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     else return false;
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     return false;
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 string errore = e.Message;
                 return false;
@@ -1457,7 +1442,7 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDAtleta1, IDAtleta2 FROM Squadra WHERE IDSquadra=" + idSquadra + "";
+                sql += "SELECT IDAtleta1, IDAtleta2 FROM Squadra WHERE IDSquadra="+ idSquadra + "";
                 query = new DataTable();
                 adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
@@ -1711,61 +1696,53 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
-        public bool AssegnaSupervisori(int idSupervisore, int idSupArbitrale, int idDirettore, int idTorneo)
+        public bool AssegnaSupervisori(string nomeSupervisore, string cognomeSupervisore, string nomeSupArbitrale, string cognomeSupArbitrale, string nomeDirettore, string cognomeDirettore, string titoloTorneo)
         {
             try
             {
                 sql = "";
-                if (idSupArbitrale != null && idDirettore != null)
+                if (nomeSupArbitrale != null && cognomeSupArbitrale != null && nomeDirettore != null && cognomeDirettore != null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale,IDDirettoreCompetizione=@IDDirettore ";
-                    sql += "WHERE IDTorneo=@IDTorneo";
+                    sql += "WHERE IDTorneo=" + GetIDTorneo(titoloTorneo);
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSupervisore", idSupervisore);
+                    parametro = new SqlParameter("IDSupervisore", GetIDDelegato(nomeSupervisore, cognomeSupervisore));
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDSupArbitrale", idSupArbitrale);
+                    parametro = new SqlParameter("IDSupArbitrale", GetIDDelegato(nomeSupArbitrale, cognomeSupArbitrale));
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDDirettore", idDirettore);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDTorneo", idTorneo);
+                    parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                if (idSupArbitrale == null && idDirettore == null)
+                if (nomeSupArbitrale == null && cognomeSupArbitrale == null && nomeDirettore == null && cognomeDirettore == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore ";
-                    sql += "WHERE IDTorneo=@IDTorneo";
+                    sql += "WHERE IDTorneo=" + GetIDTorneo(titoloTorneo);
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSupervisore", idSupervisore);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDTorneo", idTorneo);
+                    parametro = new SqlParameter("IDSupervisore", GetIDDelegato(nomeSupervisore, cognomeSupervisore));
                     comando.Parameters.Add(parametro);
                 }
-                else if (idSupArbitrale == null)
+                else if (nomeSupArbitrale == null && cognomeSupArbitrale == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDDirettoreCompetizione=@IDDirettore ";
-                    sql += "WHERE IDTorneo=@IDTorneo";
+                    sql += "WHERE IDTorneo=" + GetIDTorneo(titoloTorneo);
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSupervisore", idSupervisore);
+                    parametro = new SqlParameter("IDSupervisore", GetIDDelegato(nomeSupervisore, cognomeSupervisore));
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDDirettore", idDirettore);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDTorneo", idTorneo);
+                    parametro = new SqlParameter("IDDirettore", GetIDDelegato(nomeDirettore, cognomeDirettore));
                     comando.Parameters.Add(parametro);
                 }
-                else if (idDirettore == null)
+                else if (nomeDirettore == null && cognomeDirettore == null)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale ";
-                    sql += "WHERE IDTorneo=@IDTorneo";
+                    sql += "WHERE IDTorneo=" + GetIDTorneo(titoloTorneo);
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSupervisore", idSupervisore);
+                    parametro = new SqlParameter("IDSupervisore", GetIDDelegato(nomeSupervisore, cognomeSupervisore));
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDSupArbitrale", idSupArbitrale);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDTorneo", idTorneo);
+                    parametro = new SqlParameter("IDSupArbitrale", GetIDDelegato(nomeSupArbitrale, cognomeSupArbitrale));
                     comando.Parameters.Add(parametro);
                 }
                 conn.Open();
@@ -1773,7 +1750,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 string errore = e.Message;
                 return false;
@@ -1885,7 +1862,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return true;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 string errore = e.Message;
                 return false;
@@ -1919,7 +1896,7 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "SELECT IDSocieta FROM Atleta WHERE IDAtleta=" + idatleta + ";";
+                sql += "SELECT IDSocieta FROM Atleta WHERE IDAtleta="+idatleta+";";
                 query = new DataTable();
                 adapter = new SqlDataAdapter(sql, conn);
                 conn.Open();
@@ -1932,7 +1909,61 @@ namespace WebAPIAuthJWT.Helpers
                 return 0;
             }
         }//ritorna id societa dal id alteta
-        public string EliminaTeamByAtleta(int idTorneo, int idSquadra)
+        public int GetIDSquadraByNomeTeam(int idatleta,int idtorneo)
+        {
+            try
+            {
+                sql = "";
+                sql += "SELECT Squadra.IDSquadra FROM Squadra,ListaIscritti WHERE (Squadra.IDAtleta1=@IDAtleta OR Squadra.IDAtleta2=@IDAtleta) AND ListaIscritti.IDTorneo=@idtorneo AND ListaIscritti.IDSquadra=Squadra.IDSquadra";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+                comando.Parameters.Add(new SqlParameter("idtorneo", idtorneo));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return Convert.ToInt32(query.Rows[0]["IDSquadra"]);
+            }
+            catch
+            {
+                return 0;
+            }
+        }//ritorna id squadra dal id atleta e nome team
+        public DataTable GetidTorneiIscritti(int idatleta)
+        {
+            sql = "";
+            sql += "SELECT IDTorneo FROM ListaIscritti,Squadra WHERE Squadra.IDSquadra=ListaIscritti.IDSquadra AND (Squadra.IDAtleta1=@IDAtleta OR Squadra.IDAtleta2=@IDAtleta)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return GetTorneiEntroDataSocieta(query);//Scarico tutti i tornei iscritto di quel atleta
+        }//torna lista tornei iscritti
+        public DataTable GetTorneiEntroDataSocieta(DataTable dt)
+        {
+
+            string[] arrray = dt.Rows.OfType<DataRow>().Select(k => k[0].ToString()).ToArray();
+            conn.Open();
+            query = new DataTable();
+            for (int i = 0; i< arrray.Length; i++) {
+                string sql = "";
+                sql += "SELECT DISTINCT Torneo.IDTorneo, Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome, ' ', Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome, ' ', SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale, CONCAT(DirettoreCompetizione.Nome, ' ', DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
+                "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
+                " WHERE Autorizzato= 1 AND Torneo.IDTorneo= @idtorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idtorneo", arrray[i]));
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+            }
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public string EliminaTeamByAtleta(int idTorneo, int idSquadra) 
         {
             try
             {
@@ -1952,12 +1983,14 @@ namespace WebAPIAuthJWT.Helpers
                 {
                     //Elimino la squadra
                     sql = "";
-                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra";
+                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra AND IDTorneo=@IDtorneo";
                     comando = new SqlCommand(sql, conn);
-                    parametro = new SqlParameter("IDSquadra", idSquadra);
-                    comando.Parameters.Add(parametro);
+                    comando.Parameters.Add(new SqlParameter("IDSquadra", idSquadra));
+                    comando.Parameters.Add(new SqlParameter("IDtorneo", idTorneo));
+                    query = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
                     conn.Open();
-                    comando.ExecuteNonQuery();
+                    adapter.Fill(query);
                     conn.Close();
                     return "Squadra eliminata con successo";
                 }
@@ -1967,7 +2000,7 @@ namespace WebAPIAuthJWT.Helpers
         }//elimina una squadra da un torneo by atleta 
         public bool AggiungiImpianto(string nomeComune, string nomeImpianto, int numeroCampi, string indirizzo, string cap, string descrizione, string email, string sito, string tel, int idSocieta)
         {
-            DataTable idImpianto;
+            DataTable idImpianto; 
             try
             {
                 //Insert per aggiungere un impianto
@@ -2037,7 +2070,7 @@ namespace WebAPIAuthJWT.Helpers
                 else
                     return false;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 string errore = e.Message;
                 return false;

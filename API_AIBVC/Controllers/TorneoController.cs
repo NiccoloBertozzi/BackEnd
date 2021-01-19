@@ -174,6 +174,16 @@ namespace API_AIBVC.Controllers
             return db.GetParametriTorneo();
         }
 
+        //Return ParametriTorneo Iscritti
+        [HttpGet("TorneiIscritti/{idAtleta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Admin,Atleta")]
+        public DataTable GetidTorneiIscritti(int idAtleta)
+        {
+            return db.GetidTorneiIscritti(idAtleta);
+        }
         //Return Impianti società
         [HttpGet("GetImpianti/{idSocieta}")]
         [ProducesResponseType(400)]
