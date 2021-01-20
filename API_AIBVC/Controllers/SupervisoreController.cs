@@ -58,7 +58,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetTorneoByID(int id)
         {
-            return db.GetTorneoByID(id);
+            return db.GetTorneoByID(id)[0];
         }
     }
 }
