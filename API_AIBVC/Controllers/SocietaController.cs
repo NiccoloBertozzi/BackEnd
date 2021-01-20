@@ -20,9 +20,9 @@ namespace API_AIBVC.Controllers
         [HttpGet("SpecificaTorneo/{IDTorneo}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public JsonResult SpecificaTorneo(int idTorneo)
+        public JsonResult SpecificaTorneo(int IDTorneo)
         {
-            return Json(new { output = db.GetTorneoEPartecipanti(idTorneo) });
+            return Json(new { output = db.GetTorneoEPartecipanti(IDTorneo) });
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiSocieta/{Data}/IdSocieta/{idsocieta}")]
@@ -45,6 +45,17 @@ namespace API_AIBVC.Controllers
                 return Ok(new InfoMsg(DateTime.Today, $"Impianto aggiunto con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta dell'impianto"));
+        }
+
+        // restituisce i campi di anagrafica di una societa
+        [HttpGet("GetAnagraficaSocieta/{Societa_Id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin")]
+        public DataTable GetAnagraficaSocieta(int Societa_Id)
+        {
+            return db.GetAnagraficaSocieta(Societa_Id);
         }
     }
 }
