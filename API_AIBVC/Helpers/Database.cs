@@ -249,6 +249,40 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public DataTable GetNomeCognomeArbitro(string cf)
+        {
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE CF=@Codicefiscale AND Arbitro=1";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public DataTable GetNomeCognomeDirettore(string cf)
+        {
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE CF=@Codicefiscale";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
         public DataTable GetIDSocieta(string nomeSocieta)
         {
             conn.Open();
