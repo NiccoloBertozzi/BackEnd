@@ -232,22 +232,22 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return Convert.ToInt32(query.Rows[0]["IDDelegato"]);
         }
-        public int GetNomeCognomeSupervisore(int tessera)
+        public DataTable GetNomeCognomeSupervisore(string cf)
         {
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Nome.' '.Cognome) ";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE Codicetessera=@Tessera AND Supervisore=True";
+            sql += "WHERE CF=@Codicefiscale AND Supervisore=1";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("Tessera", tessera.ToString()));
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
-            return Convert.ToInt32(query.Rows[0]["IDDelegato"]);
+            return query;
         }
         public DataTable GetIDSocieta(string nomeSocieta)
         {
