@@ -1904,12 +1904,13 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }//torna lista allenatori di una societa
-        public string GetAtletaByTessera(string tessera)
+        public string GetAtletaByTessera(string tessera,int idsocieta)
         {
             sql = "";
-            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=@Tessera;";
+            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=@Tessera AND Atleta.IDSocieta=@idSocieta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Tessera", tessera));
+            comando.Parameters.Add(new SqlParameter("idSocieta", idsocieta));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
@@ -1917,12 +1918,13 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query.Rows[0]["Atleta"].ToString();
         } //torna nome cognome atleta con la tessera
-        public string GetAllenatoreByTessera(string tessera)
+        public string GetAllenatoreByTessera(string tessera,int idsocieta)
         {
             sql = "";
-            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera=@Tessera;";
+            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera=@Tessera AND Allenatore.IDSocieta=@idSocieta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Tessera", tessera));
+            comando.Parameters.Add(new SqlParameter("idSocieta", idsocieta));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
