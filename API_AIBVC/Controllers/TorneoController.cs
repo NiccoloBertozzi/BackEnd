@@ -269,5 +269,33 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
         }
+        
+        [HttpPost("AddArbitriTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato")]
+        public ActionResult<InfoMsg> AddArbitriTorneo([FromBody]ArbitraTorneo arbitraTorneo)
+        {
+            if (db.ControlloSupervisore(arbitraTorneo.IDDelegato, arbitraTorneo.IDTorneo))
+            {
+                if(db.AddArbitro(arbitraTorneo.IDArbitro,arbitraTorneo.IDTorneo,arbitraTorneo.MezzaGiornata))
+                    return Ok(new InfoMsg(DateTime.Today, $"Arbitro aggiunto al torneo con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta dell'arbitro al torneo"));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
+        }
+
+        [HttpGet("GetArbitriTorneo/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        public JsonResult GetArbitriTorneo(int idTorneo)
+        {
+            return Json(new { output = db.GetArbitriTorneo(idTorneo) });
+        }
     }
 }

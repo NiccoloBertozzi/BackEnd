@@ -16,6 +16,7 @@ namespace TEST.Models
     {
         public int IDTorneo { get; set; }
         public int IDDelegato { get; set; }
-        public Nullable<bool> MezzaGiornata { get; set; }
+        public bool MezzaGiornata { get; set; }
+        public int IDArbitro { get; set; }
     }
 }

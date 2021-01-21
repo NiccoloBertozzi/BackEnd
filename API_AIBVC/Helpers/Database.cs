@@ -987,7 +987,7 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT NomeParametro " +
             "FROM ParametroQualita, ParametroTorneo, Torneo " +
-            "WHERE Torneo.IDTorneo=@IDTorneo AND ParametroTorneo.idtorneo = Torneo.idtorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
+            "WHERE Torneo.IDTorneo=@IDTorneo AND ParametroTorneo.idtorneo = @IDTorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
             ris2 = new DataTable();
@@ -1023,7 +1023,7 @@ namespace WebAPIAuthJWT.Helpers
             risultati[0] = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
-            adapter.Fill(query);
+            adapter.Fill(risultati[0]);
             conn.Close();
             sql = "";
             sql += "SELECT NomeParametro " +
@@ -1770,6 +1770,7 @@ namespace WebAPIAuthJWT.Helpers
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale,IDDirettoreCompetizione=@IDDirettore ";
                     sql += "WHERE IDTorneo=@IDTorneo";
+                    comando = new SqlCommand(sql, conn);
                     parametro = new SqlParameter("IDSupervisore", idSupervisore);
                     comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("IDSupArbitrale", idSupArbitrale);
@@ -2147,6 +2148,44 @@ namespace WebAPIAuthJWT.Helpers
                 string errore = e.Message;
                 return false;
             }
+        }
+        public bool AddArbitro(int idDelegato, int idTorneo, bool mezzaGiornata)
+        {
+            //Metodo che aggiunge un arbitro al torneo
+            try
+            {
+                sql = "";
+                sql += "INSERT INTO ArbitraTorneo(IDTorneo,IDDelegato,MezzaGiornata) " +
+                    "VALUES(@IDTorneo,@IDDelegato,@MezzaGiornata)";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("IDDelegato", idDelegato));
+                comando.Parameters.Add(new SqlParameter("MezzaGiornata", mezzaGiornata));
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch(Exception e)
+            {
+                string errore = e.Message;
+                return false;
+            }
+        }
+        public DataTable GetArbitriTorneo(int idTorneo)
+        {
+            sql = "";
+            sql += "SELECT CONCAT(DelegatoTecnico.Nome,' ',DelegatoTecnico.Cognome) AS Arbitro ";
+            sql += "FROM DelegatoTecnico,ArbitraTorneo ";
+            sql += "WHERE ArbitraTorneo.IDTorneo=@IDTorneo AND ArbitraTorneo.IDDelegato=DelegatoTecnico.IDDelegato";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
         }
     }
 }
