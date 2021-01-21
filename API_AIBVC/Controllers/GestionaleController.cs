@@ -38,6 +38,8 @@ namespace API_AIBVC.Controllers
         public DataTable GetClassificaMaschile(string sesso)
         {
             HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetClassifica(sesso);
         }
     }

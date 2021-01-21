@@ -1057,7 +1057,7 @@ namespace WebAPIAuthJWT.Helpers
             risultati[0] = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
-            adapter.Fill(query);
+            adapter.Fill(risultati[0]);
             conn.Close();
             sql = "";
             sql += "SELECT NomeParametro " +
@@ -1798,12 +1798,14 @@ namespace WebAPIAuthJWT.Helpers
         {
             try
             {
+                
                 sql = "";
-                if (idSupArbitrale != null && idDirettore != null)
+                if (idSupArbitrale != 0 && idDirettore != 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale,IDDirettoreCompetizione=@IDDirettore ";
                     sql += "WHERE IDTorneo=@IDTorneo";
+                    comando = new SqlCommand(sql, conn);
                     parametro = new SqlParameter("IDSupervisore", idSupervisore);
                     comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("IDSupArbitrale", idSupArbitrale);
@@ -1813,7 +1815,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                if (idSupArbitrale == null && idDirettore == null)
+                if (idSupArbitrale == 0 && idDirettore == 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore ";
@@ -1824,7 +1826,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                else if (idSupArbitrale == null)
+                else if (idSupArbitrale == 0)
 
                 {
                     sql += "UPDATE Torneo ";
@@ -1838,7 +1840,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                else if (idDirettore == null)
+                else if (idDirettore == 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale ";
