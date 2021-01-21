@@ -37,6 +37,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         public DataTable GetClassificaMaschile(string sesso)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
             return db.GetClassifica(sesso);
         }
     }
