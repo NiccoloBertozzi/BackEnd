@@ -103,25 +103,25 @@ namespace API_AIBVC.Controllers
         }
 
         //ritorna allenatore in base alla tessera
-        [HttpPost("AllenatoriTessera/{tessera}")]
+        [HttpPost("AllenatoriTessera/{tessera}/Societa/{Societa}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public string GetAllenatoreTessera(string tessera)
+        public string GetAllenatoreTessera(string tessera,int Societa)
         {
-            return db.GetAllenatoreByTessera(tessera);
+            return db.GetAllenatoreByTessera(tessera,Societa);
         }
 
         //ritorna atleta in base alla tessera
-        [HttpPost("AtletaTessera/{tessera}")]
+        [HttpPost("AtletaTessera/{tessera}/Societa/{Societa}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public string GetAtletaTessera(string tessera)
+        public string GetAtletaTessera(string tessera, int Societa)
         {
-            return db.GetAtletaByTessera(tessera);
+            return db.GetAtletaByTessera(tessera,Societa);
         }
 
         //Restituisce tornei prima della data inserita

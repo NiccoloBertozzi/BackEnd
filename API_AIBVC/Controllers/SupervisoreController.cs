@@ -60,5 +60,31 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTorneoByID(id)[0];
         }
+        //ritorna nome cognome e id di un supervisore in base al cf
+        [HttpGet("GetIDSupervisore/{CF}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetNomeCognomeSupervisore(string CF)
+        {
+            return db.GetNomeCognomeSupervisore(CF);
+        }
+
+        //ritorna nome cognome e id di un arbitro in base al cf
+        [HttpGet("GetIDArbitro/{CF}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetNomeCognomeArbitro(string CF)
+        {
+            return db.GetNomeCognomeArbitro(CF);
+        }
+
+        //ritorna nome cognome e id di un direttore in base al cf
+        [HttpGet("GetIDDirettore/{CF}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetNomeCognomeDirettore(string CF)
+        {
+            return db.GetNomeCognomeDirettore(CF);
+        }
     }
 }

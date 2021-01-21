@@ -232,22 +232,56 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return Convert.ToInt32(query.Rows[0]["IDDelegato"]);
         }
-        public int GetNomeCognomeSupervisore(int tessera)
+        public DataTable GetNomeCognomeSupervisore(string cf)
         {
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Nome.' '.Cognome) ";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE Codicetessera=@Tessera AND Supervisore=True";
+            sql += "WHERE CF=@Codicefiscale AND Supervisore=1";
             comando = new SqlCommand(sql, conn);
-            comando.Parameters.Add(new SqlParameter("Tessera", tessera.ToString()));
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
             conn.Close();
             int p = query.Rows.Count;
-            return Convert.ToInt32(query.Rows[0]["IDDelegato"]);
+            return query;
+        }
+        public DataTable GetNomeCognomeArbitro(string cf)
+        {
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE CF=@Codicefiscale AND Arbitro=1";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public DataTable GetNomeCognomeDirettore(string cf)
+        {
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE CF=@Codicefiscale";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
         }
         public DataTable GetIDSocieta(string nomeSocieta)
         {
@@ -1764,8 +1798,9 @@ namespace WebAPIAuthJWT.Helpers
         {
             try
             {
+                
                 sql = "";
-                if (idSupArbitrale != null && idDirettore != null)
+                if (idSupArbitrale != 0 && idDirettore != 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale,IDDirettoreCompetizione=@IDDirettore ";
@@ -1780,7 +1815,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                if (idSupArbitrale == null && idDirettore == null)
+                if (idSupArbitrale == 0 && idDirettore == 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore ";
@@ -1791,7 +1826,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                else if (idSupArbitrale == null)
+                else if (idSupArbitrale == 0)
 
                 {
                     sql += "UPDATE Torneo ";
@@ -1805,7 +1840,7 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("IDTorneo", idTorneo);
                     comando.Parameters.Add(parametro);
                 }
-                else if (idDirettore == null)
+                else if (idDirettore == 0)
                 {
                     sql += "UPDATE Torneo ";
                     sql += "SET IDSupervisore=@IDSupervisore,IDSupervisoreArbitrale=@IDSupArbitrale ";
@@ -1869,12 +1904,13 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }//torna lista allenatori di una societa
-        public string GetAtletaByTessera(string tessera)
+        public string GetAtletaByTessera(string tessera,int idsocieta)
         {
             sql = "";
-            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=@Tessera;";
+            sql += "SELECT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta FROM Atleta WHERE Atleta.CodiceTessera=@Tessera AND Atleta.IDSocieta=@idSocieta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Tessera", tessera));
+            comando.Parameters.Add(new SqlParameter("idSocieta", idsocieta));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
@@ -1882,12 +1918,13 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query.Rows[0]["Atleta"].ToString();
         } //torna nome cognome atleta con la tessera
-        public string GetAllenatoreByTessera(string tessera)
+        public string GetAllenatoreByTessera(string tessera,int idsocieta)
         {
             sql = "";
-            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera=@Tessera;";
+            sql += "SELECT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore FROM Allenatore WHERE Allenatore.CodiceTessera=@Tessera AND Allenatore.IDSocieta=@idSocieta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Tessera", tessera));
+            comando.Parameters.Add(new SqlParameter("idSocieta", idsocieta));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
