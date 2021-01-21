@@ -35,7 +35,6 @@ namespace API_AIBVC.Controllers
         //in base al sesso passato ritorna la classifica
         [HttpGet("GetClassifica/{sesso}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore")]
         public DataTable GetClassificaMaschile(string sesso)
         {
             return db.GetClassifica(sesso);
