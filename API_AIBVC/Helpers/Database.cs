@@ -2433,5 +2433,26 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
+
+        public DataTable GetImpiantiSocieta(int idSocieta)
+        {
+            //Metodo che restituisce gli impianti di una società
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            string sql;
+            sql = "";
+            sql += "Select Impianto.NomeImpianto,Comune.Citta as Città,numerocampi,cap,Impianto.Descrizione,Impianto.Email,Impianto.Sito,Impianto.Tel " +
+                   "From Impianto, ImpiantoSocieta, Comune " +
+                   "Where ImpiantoSocieta.IDSocieta = @IDSocieta AND Impianto.IDImpianto = ImpiantoSocieta.IDImpianto And Comune.IDComune = Impianto.IDComune";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
     }
 }
