@@ -229,6 +229,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Delegato")]
         public ActionResult<InfoMsg> EliminaSquadra([FromBody]EliminaTeam eliminaTeam)
         {
+            //Eliminazione della squadra da parte del supervisore del torneo
             if (db.ControlloSupervisore(eliminaTeam.IdDelegato, eliminaTeam.IdTorneo))
             {
                 if (db.EliminaTeam(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra))
@@ -274,7 +275,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Delegato")]
+        [Authorize(Roles = "Delegato,Admin")]
         public ActionResult<InfoMsg> AddArbitriTorneo([FromBody]ArbitraTorneo arbitraTorneo)
         {
             if (db.ControlloSupervisore(arbitraTorneo.IDDelegato, arbitraTorneo.IDTorneo))
@@ -292,10 +293,29 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        [Authorize(Roles = "Atleta,Societa,Delegato,Allenatore,Admin")]
         public JsonResult GetArbitriTorneo(int idTorneo)
         {
             return Json(new { output = db.GetArbitriTorneo(idTorneo) });
+        }
+
+        [HttpPost("GeneraListaIngresso/{IDTorneo}/{IDSupervisore}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> GeneraListaIngresso(int idTorneo,int idSupervisore)
+        {
+            //Metodo che crea la lista d'ingresso definitiva del torneo
+            if (db.ControlloSupervisore(idSupervisore,idTorneo))
+            {
+                if(db.CreaListaIngresso(idTorneo))
+                    return Ok(new InfoMsg(DateTime.Today, $"Lista di ingresso creata con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione della lista di ingresso"));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
         }
     }
 }
