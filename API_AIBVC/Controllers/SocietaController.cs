@@ -57,5 +57,16 @@ namespace API_AIBVC.Controllers
         {
             return db.GetAnagraficaSocieta(Societa_Id);
         }
+
+        //Restituisce gli impianti di una società
+        [HttpGet("GetImpianti/{IDSocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Delegato,Admin")]
+        public JsonResult GetImpianti(int idSocieta)
+        {
+            return Json(new { output = db.GetImpiantiSocieta(idSocieta) });
+        }
     }
 }
