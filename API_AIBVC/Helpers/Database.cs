@@ -248,7 +248,7 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return Convert.ToInt32(query.Rows[0]["IDDelegato"]);
         }
-        public DataTable GetNomeCognomeSupervisore(string cf)
+        public DataTable GetNomeCognomeSupervisore(string cf,string nome,string cognome)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -258,9 +258,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE CF=@Codicefiscale AND Supervisore=1";
+            sql += "WHERE CF=@Codicefiscale AND Supervisore=1 AND Nome=@nome AND Cognome=@cognome";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            comando.Parameters.Add(new SqlParameter("nome", nome));
+            comando.Parameters.Add(new SqlParameter("cognome", cognome));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
@@ -268,7 +270,7 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-        public DataTable GetNomeCognomeArbitro(string cf)
+        public DataTable GetNomeCognomeArbitro(string cf, string nome, string cognome)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -278,9 +280,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE CF=@Codicefiscale AND Arbitro=1";
+            sql += "WHERE CF=@Codicefiscale AND Arbitro=1 AND Nome=@nome AND Cognome=@cognome";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            comando.Parameters.Add(new SqlParameter("nome", nome));
+            comando.Parameters.Add(new SqlParameter("cognome", cognome));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);
@@ -288,7 +292,7 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-        public DataTable GetNomeCognomeDirettore(string cf)
+        public DataTable GetNomeCognomeDirettore(string cf, string nome, string cognome)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -298,9 +302,11 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE CF=@Codicefiscale";
+            sql += "WHERE CF=@Codicefiscale AND Nome=@nome AND Cognome=@cognome";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
+            comando.Parameters.Add(new SqlParameter("nome", nome));
+            comando.Parameters.Add(new SqlParameter("cognome", cognome));
             query = new DataTable();
             adapter = new SqlDataAdapter(comando);
             adapter.Fill(query);

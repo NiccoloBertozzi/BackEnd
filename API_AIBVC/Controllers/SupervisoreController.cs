@@ -70,21 +70,21 @@ namespace API_AIBVC.Controllers
         }
 
         //ritorna nome cognome e id di un arbitro in base al cf
-        [HttpGet("GetIDArbitro/{CF}")]
+        [HttpGet("GetIDArbitro/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public DataTable GetNomeCognomeArbitro(string CF)
+        public DataTable GetNomeCognomeArbitro(string CF, string Nome, string Cognome)
         {
-            return db.GetNomeCognomeArbitro(CF);
+            return db.GetNomeCognomeArbitro(CF, Nome, Cognome);
         }
 
         //ritorna nome cognome e id di un direttore in base al cf
-        [HttpGet("GetIDDirettore/{CF}")]
+        [HttpGet("GetIDDirettore/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public DataTable GetNomeCognomeDirettore(string CF)
+        public DataTable GetNomeCognomeDirettore(string CF, string Nome, string Cognome)
         {
-            return db.GetNomeCognomeDirettore(CF);
+            return db.GetNomeCognomeDirettore(CF, Nome, Cognome);
         }
     }
 }
