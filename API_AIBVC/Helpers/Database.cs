@@ -2554,5 +2554,56 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
+        public List<DataTable> GetTorneiDisputatiByDelegato(int idDelegato)
+        {
+            //Metodo che retituisce i tornei a cui ha partecipato un supervisore
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            List<DataTable> risultati = new List<DataTable>();
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumTeamTabellone,Torneo.NumTeamQualifiche " +
+            "FROM(((((((((Torneo Left join TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)Left Join DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT join ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT join DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)Left join DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT Join FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)Left Join ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)left join Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)Left Join Comune On Impianto.IDComune = Comune.IDComune) " +
+            "WHERE Torneo.IDSupervisore=@IDDelegato OR Torneo.IDSupervisoreArbitrale=@IDDelegato or Torneo.IDDirettoreCompetizione=@IDDelegato";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDDelegato", idDelegato));
+            risultati.Add(new DataTable());
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultati[0]);
+            conn.Close();
+            if (risultati[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < risultati[0].Rows.Count; i++)
+                {
+                    sql = "";
+                    sql += "SELECT Titolo,NomeParametro " +
+                    "FROM ParametroQualita, ParametroTorneo, Torneo " +
+                    "WHERE Torneo.IDTorneo=@IDTorneo AND ParametroTorneo.idtorneo = Torneo.idtorneo AND ParametroTorneo.IDParametro = ParametroQualita.IDParametro";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDTorneo", risultati[0].Rows[i]["IDTorneo"]));
+                    risultati.Add(new DataTable());
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(risultati[i + 1]);
+                    conn.Close();
+                }
+                for (int i = 0; i < risultati[0].Rows.Count; i++)
+                {
+                    sql = "";
+                    sql += "SELECT NomeImpianto,Citta ";
+                    sql += "FROM ((Impianto LEFT JOIN ImpiantoTorneo ON Impianto.IDImpianto=ImpiantoTorneo.IDImpianto)LEFT JOIN Comune ON Impianto.IDComune=Comune.IDComune) ";
+                    sql += "WHERE ImpiantoTorneo.IDTorneo=@IDTorneo";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDTorneo", risultati[0].Rows[i]["IDTorneo"]));
+                    risultati.Add(new DataTable());
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(risultati[i + 1]);
+                    conn.Close();
+                }
+            }
+            return risultati;
+        }
     }
 }

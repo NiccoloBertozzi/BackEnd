@@ -317,5 +317,16 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
         }
+
+        [HttpGet("GetTorneiSvoltiBySupervisore/{IDSupervisore}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public JsonResult GetTorneiSvoltiBySupervisore(int idSupervisore)
+        {
+            //Metodo che restituisce i torni a cui ha partecipato un supervisore
+            return Json(new { output = db.GetTorneiDisputatiByDelegato(idSupervisore) });
+        }
     }
 }
