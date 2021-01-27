@@ -86,5 +86,31 @@ namespace API_AIBVC.Controllers
         {
             return db.GetNomeCognomeDirettore(CF, Nome, Cognome);
         }
+
+        //ritorna la lista dei supervisori
+        [HttpGet("GetSupervisori")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoSupervisore()
+        {
+            return db.GetInfoSupervisore();
+        }
+
+        //ritorna la lista dei arbitri
+        [HttpGet("GetArbitri")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoArbitro()
+        {
+            return db.GetInfoArbitro();
+        }
+        //ritorna la lista dei supervisori
+        [HttpGet("GetDirettori")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoDirettore()
+        {
+            return db.GetInfoDirettore();
+        }
     }
 }

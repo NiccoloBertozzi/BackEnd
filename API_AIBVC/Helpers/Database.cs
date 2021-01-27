@@ -314,6 +314,54 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public DataTable GetInfoDirettore()
+        {
+            SqlDataAdapter adapter;
+            DataTable query;
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
+            sql += "FROM DelegatoTecnico";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+        public DataTable GetInfoSupervisore()
+        {
+            SqlDataAdapter adapter;
+            DataTable query;
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE Supervisore=1";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+
+        public DataTable GetInfoArbitro()
+        {
+            SqlDataAdapter adapter;
+            DataTable query;
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE Arbitro=1";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
         public DataTable GetIDSocieta(string nomeSocieta)
         {
             SqlDataAdapter adapter;
