@@ -340,5 +340,17 @@ namespace API_AIBVC.Controllers
             //Metodo che restituisce i torni a cui ha partecipato un supervisore
             return db.SquadreTorneo(IdTorneo);
         }
+
+        //torna infosquadra
+        [HttpGet("Squadra/{Idsquadra}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        public DataTable GetSquadra(int Idsquadra)
+        {
+            //Metodo che restituisce i torni a cui ha partecipato un supervisore
+            return db.GetSquadra(Idsquadra);
+        }
     }
 }

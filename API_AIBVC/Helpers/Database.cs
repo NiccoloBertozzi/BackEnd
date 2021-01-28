@@ -2677,5 +2677,33 @@ namespace WebAPIAuthJWT.Helpers
                 return null;
             }
         }
+
+        public DataTable GetSquadra(int idsquadra)
+        {
+            try
+            {
+                SqlDataAdapter adapter;
+                SqlCommand comando;
+                DataTable query;
+                string sql;
+                sql = "";
+                sql += "SELECT DISTINCT Squadra.IDSquadra,Squadra.NomeTeam, CONCAT(Atleta1.Nome,' ',Atleta1.Cognome) as Atleta1, CONCAT(Atleta2.Nome,' ',Atleta2.Cognome) as Atleta2 ";
+                sql += "FROM Squadra, Atleta as Atleta1, Atleta as Atleta2 ";
+                sql += "WHERE Squadra.IDSquadra=@IDSquadra AND Squadra.IDAtleta1 = Atleta1.IDAtleta AND Squadra.IDAtleta2 = Atleta2.IDAtleta; ";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDSquadra", idsquadra));
+                adapter = new SqlDataAdapter(comando);
+                query = new DataTable();
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                return query;
+            }
+            catch (Exception e)
+            {
+                string error = e.Message;
+                return null;
+            }
+        }
     }
 }
