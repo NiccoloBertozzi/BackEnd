@@ -302,7 +302,7 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDDelegato, CONCAT(Nome,' ',Cognome)AS Delegato ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE CF=@Codicefiscale AND Nome=@nome AND Cognome=@cognome";
+            sql += "WHERE CF=@Codicefiscale AND Nome=@nome AND Cognome=@cognome ";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Codicefiscale", cf));
             comando.Parameters.Add(new SqlParameter("nome", nome));
@@ -321,8 +321,9 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
-            sql += "FROM DelegatoTecnico";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "ORDER BY Delegato ASC";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
@@ -336,9 +337,10 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE Supervisore=1";
+            sql += "WHERE Supervisore=1 ";
+            sql += "ORDER BY Delegato ASC";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
@@ -353,9 +355,10 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Nome,' ',Cognome)AS Delegato, CF ";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
             sql += "FROM DelegatoTecnico ";
-            sql += "WHERE Arbitro=1";
+            sql += "WHERE Arbitro=1 ";
+            sql += "ORDER BY Delegato ASC";
             query = new DataTable();
             adapter = new SqlDataAdapter(sql, conn);
             adapter.Fill(query);
