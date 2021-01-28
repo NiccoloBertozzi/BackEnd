@@ -323,10 +323,10 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public JsonResult GetTorneiSvoltiBySupervisore(int idSupervisore)
+        public DataTable GetTorneiSvoltiBySupervisore(int idSupervisore)
         {
             //Metodo che restituisce i torni a cui ha partecipato un supervisore
-            return Json(new { output = db.GetTorneiDisputatiByDelegato(idSupervisore) });
+            return db.GetTorneiDisputatiByDelegato(idSupervisore);
         }
     }
 }
