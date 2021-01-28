@@ -112,5 +112,15 @@ namespace API_AIBVC.Controllers
         {
             return db.GetInfoDirettore();
         }
+        //ritorna anagrafica supervisore
+        [HttpGet("GetAnagraficaDelegato/{Supervisori_Id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public DataTable GetAnagraficaDelegato(int Supervisori_Id)
+        {
+            return db.GetAnagraficaDelegato(Supervisori_Id);
+        }
     }
 }

@@ -425,6 +425,26 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public DataTable GetAnagraficaDelegato(int id_Delegato)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            string sql;
+            conn.Open();
+            sql = "";
+            sql += "SELECT * ";
+            sql += "FROM DelegatoTecnico ";
+            sql += "WHERE IDDelegato=@IDDelegato";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDDelegato", id_Delegato));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
         public DataTable GetIscrizioni(int idAtleta)
         {
             SqlDataAdapter adapter;
