@@ -30,7 +30,7 @@ namespace TEST.Models
         public System.DateTime DataInizio { get; set; }
         public System.DateTime DataFine { get; set; }
         public string Gender { get; set; }
-        public int NumTeamTabellone { get; set; }
-        public int NumTeamQualifiche { get; set; }
+        public int NumMaxTeamMainDraw { get; set; }
+        public int NumMaxTeamQualifiche { get; set; }
     }
 }
