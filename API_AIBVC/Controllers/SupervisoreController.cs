@@ -61,30 +61,66 @@ namespace API_AIBVC.Controllers
             return db.GetTorneoByID(id)[0];
         }
         //ritorna nome cognome e id di un supervisore in base al cf
-        [HttpGet("GetIDSupervisore/{CF}")]
+        [HttpGet("GetIDSupervisore/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public DataTable GetNomeCognomeSupervisore(string CF)
+        public DataTable GetNomeCognomeSupervisore(string CF, string Nome, string Cognome)
         {
-            return db.GetNomeCognomeSupervisore(CF);
+            return db.GetNomeCognomeSupervisore(CF,Nome,Cognome);
         }
 
         //ritorna nome cognome e id di un arbitro in base al cf
-        [HttpGet("GetIDArbitro/{CF}")]
+        [HttpGet("GetIDArbitro/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public DataTable GetNomeCognomeArbitro(string CF)
+        public DataTable GetNomeCognomeArbitro(string CF, string Nome, string Cognome)
         {
-            return db.GetNomeCognomeArbitro(CF);
+            return db.GetNomeCognomeArbitro(CF, Nome, Cognome);
         }
 
         //ritorna nome cognome e id di un direttore in base al cf
-        [HttpGet("GetIDDirettore/{CF}")]
+        [HttpGet("GetIDDirettore/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public DataTable GetNomeCognomeDirettore(string CF)
+        public DataTable GetNomeCognomeDirettore(string CF, string Nome, string Cognome)
         {
-            return db.GetNomeCognomeDirettore(CF);
+            return db.GetNomeCognomeDirettore(CF, Nome, Cognome);
+        }
+
+        //ritorna la lista dei supervisori
+        [HttpGet("GetSupervisori")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoSupervisore()
+        {
+            return db.GetInfoSupervisore();
+        }
+
+        //ritorna la lista dei arbitri
+        [HttpGet("GetArbitri")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoArbitro()
+        {
+            return db.GetInfoArbitro();
+        }
+        //ritorna la lista dei supervisori
+        [HttpGet("GetDirettori")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetInfoDirettore()
+        {
+            return db.GetInfoDirettore();
+        }
+        //ritorna anagrafica supervisore
+        [HttpGet("GetAnagraficaDelegato/{Supervisori_Id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public DataTable GetAnagraficaDelegato(int Supervisori_Id)
+        {
+            return db.GetAnagraficaDelegato(Supervisori_Id);
         }
     }
 }

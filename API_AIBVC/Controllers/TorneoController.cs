@@ -17,16 +17,16 @@ namespace API_AIBVC.Controllers
     public class TorneoController : Controller
     {
         Database db = new Database();
-
+    
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTornei/{Data}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public JsonResult GetTornei(DateTime Data)
+        public DataTable GetTornei(DateTime Data)
         {
-            return Json(new { output = db.GetTorneiEntroData(Data) });
+            return db.GetTorneiEntroData(Data);
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiNonAutorizzati/{Data}")]
@@ -46,7 +46,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta,torneo.NumTeamQualificati,torneo.NumWildCard))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumMaxTeamMainDraw, torneo.NumMaxTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
@@ -66,7 +66,7 @@ namespace API_AIBVC.Controllers
             else
                 return null;
         }
-        //iscrive una squadra ad un torneo
+        //iscrive una suadra ad un torneo
         [HttpPost("IscriviSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -253,6 +253,18 @@ namespace API_AIBVC.Controllers
             return Ok(new InfoMsg(DateTime.Today, db.EliminaTeamByAtleta(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra)));
         }
 
+        //elimina la squdra da parte di un supervisore
+        [HttpDelete("EliminaSquadraBySupervisore")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> EliminaSquadraBySupervisore([FromBody]EliminaTeam eliminaTeam)
+        {
+            //ritorno risposta
+            return Ok(new InfoMsg(DateTime.Today, db.EliminaSquadraBySupervisore(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra,eliminaTeam.IdSupervisore)));
+        }
+
         [HttpPut("AssegnaWildCard/{IDTorneo}/{IDDelegato}/{IDSquadra}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -323,10 +335,34 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public JsonResult GetTorneiSvoltiBySupervisore(int idSupervisore)
+        public DataTable GetTorneiSvoltiBySupervisore(int idSupervisore)
         {
             //Metodo che restituisce i torni a cui ha partecipato un supervisore
-            return Json(new { output = db.GetTorneiDisputatiByDelegato(idSupervisore) });
+            return db.GetTorneiDisputatiByDelegato(idSupervisore);
+        }
+
+        //torna squadre di un torneo
+        [HttpGet("SquadreTorneo/{IdTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        public DataTable SquadreTorneo(int IdTorneo)
+        {
+            //Metodo che restituisce i torni a cui ha partecipato un supervisore
+            return db.SquadreTorneo(IdTorneo);
+        }
+
+        //torna infosquadra
+        [HttpGet("Squadra/{Idsquadra}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        public DataTable GetSquadra(int Idsquadra)
+        {
+            //Metodo che restituisce i torni a cui ha partecipato un supervisore
+            return db.GetSquadra(Idsquadra);
         }
     }
 }
