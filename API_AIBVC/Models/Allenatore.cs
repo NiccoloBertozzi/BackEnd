@@ -20,7 +20,7 @@ namespace TEST.Models
         public string Grado { get; set; }
         public string Nome { get; set; }
         public string Cognome { get; set; }
-        public string Sesso { get; set; }
+        public char Sesso { get; set; }
         public string CF { get; set; }
         public DateTime DataNascita { get; set; }
         public string IDComuneNascita { get; set; }

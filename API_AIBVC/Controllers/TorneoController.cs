@@ -24,9 +24,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public DataTable GetTornei(DateTime Data)
+        public JsonResult GetTornei(DateTime Data)
         {
-            return db.GetTorneiEntroData(Data);
+            return Json(new { output = db.GetTorneiEntroData(Data) });
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiNonAutorizzati/{Data}")]
@@ -46,7 +46,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumTeamTabellone, torneo.NumTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta,torneo.NumTeamQualificati,torneo.NumWildCard))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
@@ -66,7 +66,7 @@ namespace API_AIBVC.Controllers
             else
                 return null;
         }
-        //iscrive una suadra ad un torneo
+        //iscrive una squadra ad un torneo
         [HttpPost("IscriviSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

@@ -22,5 +22,7 @@ namespace API_AIBVC.Models
         public string TipoTorneo { get; set; }
         public string[] Impianti { get; set; }
         public int IDSocieta { get; set; }
+        public int NumTeamQualificati { get; set; }
+        public int NumWildCard { get; set; }
     }
 }
