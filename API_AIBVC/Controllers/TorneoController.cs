@@ -253,6 +253,18 @@ namespace API_AIBVC.Controllers
             return Ok(new InfoMsg(DateTime.Today, db.EliminaTeamByAtleta(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra)));
         }
 
+        //elimina la squdra da parte di un supervisore
+        [HttpDelete("EliminaSquadraBySupervisore")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> EliminaSquadraBySupervisore([FromBody]EliminaTeam eliminaTeam)
+        {
+            //ritorno risposta
+            return Ok(new InfoMsg(DateTime.Today, db.EliminaSquadraBySupervisore(eliminaTeam.IdTorneo, eliminaTeam.IdSquadra,eliminaTeam.IdSupervisore)));
+        }
+
         [HttpPut("AssegnaWildCard/{IDTorneo}/{IDDelegato}/{IDSquadra}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

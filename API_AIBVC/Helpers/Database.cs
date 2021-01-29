@@ -2360,7 +2360,47 @@ namespace WebAPIAuthJWT.Helpers
                 sql = "SELECT IDTorneo FROM Torneo WHERE IDTorneo=@idTorneo AND CAST(DataChiusuraIscrizioni as DATE) >= @Data";
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("idTorneo", idTorneo));
-                comando.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date.ToString("MM-dd-yyyy")));
+                comando.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date.ToString("yyyy-MM-dd")));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                // la data di iscrizione è ancora aperta
+                if (query.Rows.Count > 0)
+                {
+                    //Elimino la squadra
+                    sql = "";
+                    sql += "DELETE FROM ListaIscritti WHERE IDSquadra=@IDSquadra AND IDTorneo=@IDtorneo";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDSquadra", idSquadra));
+                    comando.Parameters.Add(new SqlParameter("IDtorneo", idTorneo));
+                    query = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(query);
+                    conn.Close();
+                    return "Squadra eliminata con successo";
+                }
+                else return "Data di iscrizione chiusa.";
+            }
+            catch { return "Errore nell'eliminazione della squadra."; }
+        }//elimina una squadra da un torneo by atleta 
+        public string EliminaSquadraBySupervisore(int idTorneo, int idSquadra, int idsupervisore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            string sql;
+            try
+            {
+                //controllo che la data di iscrizione sia ancora aperta
+                sql = "";
+                sql = "SELECT IDTorneo FROM Torneo WHERE IDTorneo=@idTorneo AND IDSupervisore=@idSupervisore AND CAST(DataInizio as DATE) >= @Data";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("idSupervisore", idsupervisore));
+                comando.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date.ToString("yyyy-MM-dd")));
                 query = new DataTable();
                 adapter = new SqlDataAdapter(comando);
                 conn.Open();
