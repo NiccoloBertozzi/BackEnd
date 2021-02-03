@@ -171,3 +171,4 @@ C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBV
 C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.dll
 C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
 C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
+C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\RestSharp.dll

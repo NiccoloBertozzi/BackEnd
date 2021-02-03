@@ -24,9 +24,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public DataTable GetTornei(DateTime Data)
+        public JsonResult GetTornei(DateTime Data)
         {
-            return db.GetTorneiEntroData(Data);
+            return Json(new { output = db.GetTorneiEntroData(Data) });
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiNonAutorizzati/{Data}")]
