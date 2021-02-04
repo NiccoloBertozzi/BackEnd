@@ -553,7 +553,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(new SqlParameter("cognome", delegatoTecnico.Cognome));
                 comando.Parameters.Add(new SqlParameter("sesso", delegatoTecnico.Sesso));
                 comando.Parameters.Add(new SqlParameter("cf", delegatoTecnico.CF));
-                comando.Parameters.Add(new SqlParameter("datafondazione", delegatoTecnico.DataNascita));
+                comando.Parameters.Add(new SqlParameter("datanascita", delegatoTecnico.DataNascita));
                 comando.Parameters.Add(new SqlParameter("idcomnascita", delegatoTecnico.IDComuneNascita));
                 comando.Parameters.Add(new SqlParameter("idcomresidenza", delegatoTecnico.IDComuneResidenza));
                 comando.Parameters.Add(new SqlParameter("indirizzo", delegatoTecnico.Indirizzo));
@@ -910,7 +910,7 @@ namespace WebAPIAuthJWT.Helpers
             }
             return regRiuscita;
         }
-        public bool RegisterDelegato(string nome, string cognome, char sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
+        public bool RegisterDelegato(string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
