@@ -46,7 +46,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody]AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumMaxTeamMainDraw, torneo.NumMaxTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta))
+            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumMaxTeamMainDraw, torneo.NumMaxTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.Impianti,torneo.QuotaIscrizione,torneo.IDSocieta,torneo.NumTeamQualificati,torneo.NumWildCard))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
