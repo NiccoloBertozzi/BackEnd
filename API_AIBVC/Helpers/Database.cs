@@ -393,9 +393,11 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT Nome,Cognome,DataNascita,Email,Tel,Sesso ";
+            sql += "SELECT Atleta.CodiceTessera,Societa.NomeSocieta,Atleta.Nome,Atleta.Cognome,Atleta.Sesso,Atleta.CF,Atleta.DataNascita,Comune.SiglaProvincia as ComuneNascita,Comune.SiglaProvincia as ComuneResidenza,Atleta.Indirizzo,Atleta.CAP,Atleta.Email,Atleta.Tel,Atleta.Altezza,Atleta.Peso,Atleta.DataScadenzaCertificato ";
             sql += "FROM Atleta ";
-            sql += "WHERE IDAtleta=@IDAtleta";
+            sql += "LEFT JOIN Societa ON Atleta.IDSocieta=Societa.IDSocieta " +
+                "LEFT JOIN Comune ON Atleta.IDComuneNascita = Comune.IDComune AND Atleta.IDComuneResidenza = Comune.IDComune ";
+            sql += "WHERE IDAtleta=@IDAtleta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", id_Atleta));
             query = new DataTable();
@@ -404,6 +406,47 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             int p = query.Rows.Count;
             return query;
+        }
+        public bool UpdateAnagraficaAtleta(Atleta atleta)
+        {
+            try
+            {
+                SqlDataAdapter adapter;
+                SqlCommand comando;
+                DataTable query;
+                string sql;
+                conn.Open();
+                sql = "";
+                sql += "UPDATE Atleta SET IDSocieta=@idsocieta,Nome=@idnome,Cognome=@idcognome,Sesso=@sesso,CF=@cf,DataNascita=@datanascita,IDComuneResidenza=@idcomuneresidenza,IDComuneNascita=@idcomunenascita,Indirizzo=@indirizzo,CAP=@cap,Email=@email,Tel=@tel,Altezza=@altezza,Peso=@peso,DataScadenzaCertificato=@datascadenzacertificato " +
+                    "WHERE Atleta.IDAtleta=@idatleta;";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idsocieta", atleta.IDSocieta));
+                comando.Parameters.Add(new SqlParameter("idnome", atleta.Nome));
+                comando.Parameters.Add(new SqlParameter("idcognome", atleta.Cognome));
+                comando.Parameters.Add(new SqlParameter("sesso", atleta.Sesso));
+                comando.Parameters.Add(new SqlParameter("cf", atleta.CF));
+                comando.Parameters.Add(new SqlParameter("datanascita", atleta.DataNascita));
+                comando.Parameters.Add(new SqlParameter("idcomuneresidenza", atleta.IDComuneResidenza));
+                comando.Parameters.Add(new SqlParameter("idcomunenascita", atleta.IDComuneNascita));
+                comando.Parameters.Add(new SqlParameter("cap", atleta.CAP));
+                comando.Parameters.Add(new SqlParameter("indirizzo", atleta.Indirizzo));
+                comando.Parameters.Add(new SqlParameter("email", atleta.Email));
+                comando.Parameters.Add(new SqlParameter("tel", atleta.Tel));
+                comando.Parameters.Add(new SqlParameter("altezza", atleta.Altezza));
+                comando.Parameters.Add(new SqlParameter("peso", atleta.Peso));
+                comando.Parameters.Add(new SqlParameter("datascadenzacertificato", atleta.DataScadenzaCertificato));
+                comando.Parameters.Add(new SqlParameter("idatleta", atleta.IDAtleta));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+                conn.Close();
+                int p = query.Rows.Count;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
         public DataTable GetAnagraficaSocieta(int id_Societa)
         {
@@ -2511,7 +2554,7 @@ namespace WebAPIAuthJWT.Helpers
                     conn.Close();
                     return "Squadra eliminata con successo";
                 }
-                else return "Data di iscrizione chiusa.";
+                else return "Il torneo è gia iniziato.";
             }
             catch { return "Errore nell'eliminazione della squadra."; }
         }//elimina una squadra da un torneo by atleta 
