@@ -468,6 +468,51 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public bool UpdateAnagraficaSocieta(Societa societa)
+        {
+            try
+            {
+                SqlDataAdapter adapter;
+                SqlCommand comando;
+                DataTable query;
+                string sql;
+                conn.Open();
+                sql = "";
+                sql += "UPDATE Societa SET IDComune=@idcomune,NomeSocieta=@nomeSocieta,Indirizzo=@indirizzo," +
+                    "CAP = @cap,DataFondazione = @datafondazione,DataAffiliazione = @dataaffiliazione," +
+                    "CodiceAffiliazione = @codiceaffiliazione,Affiliata = @affiliata,Email = @email,Sito = @sito,Tel1 = @tel1," +
+                    "Tel2 = @tel2,Pec = @pec,PIVA = @piva,CF = @cf,CU = @cu" +
+                    " WHERE Societa.IDSocieta = @idsocieta;";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idcomune", societa.IDComune));
+                comando.Parameters.Add(new SqlParameter("nomeSocieta", societa.NomeSocieta));
+                comando.Parameters.Add(new SqlParameter("indirizzo", societa.Indirizzo));
+                comando.Parameters.Add(new SqlParameter("cap", societa.CAP));
+                comando.Parameters.Add(new SqlParameter("datafondazione", societa.DataFondazione));
+                comando.Parameters.Add(new SqlParameter("dataaffiliazione", societa.DataAffiliazione));
+                comando.Parameters.Add(new SqlParameter("codiceaffiliazione", societa.CodiceAffiliazione));
+                comando.Parameters.Add(new SqlParameter("affiliata", societa.Affiliata));
+                comando.Parameters.Add(new SqlParameter("email", societa.Email));
+                comando.Parameters.Add(new SqlParameter("sito", societa.Sito));
+                comando.Parameters.Add(new SqlParameter("tel1", societa.Tel1));
+                comando.Parameters.Add(new SqlParameter("tel2", societa.Tel2));
+                comando.Parameters.Add(new SqlParameter("pec", societa.Pec));
+                comando.Parameters.Add(new SqlParameter("piva", societa.PIVA));
+                comando.Parameters.Add(new SqlParameter("cf", societa.CF));
+                comando.Parameters.Add(new SqlParameter("cu", societa.CU));
+                comando.Parameters.Add(new SqlParameter("idsocieta", societa.IDSocieta));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+                conn.Close();
+                int p = query.Rows.Count;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public DataTable GetAnagraficaDelegato(int id_Delegato)
         {
             SqlDataAdapter adapter;
@@ -487,6 +532,50 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             int p = query.Rows.Count;
             return query;
+        }
+        public bool UpdateAnagraficaDelegato(DelegatoTecnico delegatoTecnico)
+        {
+            try
+            {
+                SqlDataAdapter adapter;
+                SqlCommand comando;
+                DataTable query;
+                string sql;
+                conn.Open();
+                sql = "";
+                sql += "UPDATE DelegatoTecnico SET Nome=@nome,Cognome=@cognome,Sesso=@sesso," +
+                    "CF = @cf,DataNascita = @datanascita, IDComuneNascita = @idcomnascita," +
+                    "IDComuneResidenza = @idcomresidenza,Indirizzo = @indirizzo,CAP = @cap,Email = @email,Tel = @tel," +
+                    "Arbitro = @arbitro,Supervisore = @supervisore,CodiceTessera = @codtessera " +
+                    " WHERE DelegatoTecnico.IDDelegato = @iddelegato;";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("nome", delegatoTecnico.Nome));
+                comando.Parameters.Add(new SqlParameter("cognome", delegatoTecnico.Cognome));
+                comando.Parameters.Add(new SqlParameter("sesso", delegatoTecnico.Sesso));
+                comando.Parameters.Add(new SqlParameter("cf", delegatoTecnico.CF));
+                comando.Parameters.Add(new SqlParameter("datafondazione", delegatoTecnico.DataNascita));
+                comando.Parameters.Add(new SqlParameter("idcomnascita", delegatoTecnico.IDComuneNascita));
+                comando.Parameters.Add(new SqlParameter("idcomresidenza", delegatoTecnico.IDComuneResidenza));
+                comando.Parameters.Add(new SqlParameter("indirizzo", delegatoTecnico.Indirizzo));
+                comando.Parameters.Add(new SqlParameter("cap", delegatoTecnico.CAP));
+                comando.Parameters.Add(new SqlParameter("email", delegatoTecnico.Email));
+                comando.Parameters.Add(new SqlParameter("tel", delegatoTecnico.Tel));
+                comando.Parameters.Add(new SqlParameter("arbitro", delegatoTecnico.Arbitro));
+                comando.Parameters.Add(new SqlParameter("supervisore", delegatoTecnico.Supervisore));
+                comando.Parameters.Add(new SqlParameter("codtessera", delegatoTecnico.CodiceTessera));
+                comando.Parameters.Add(new SqlParameter("iddelegato", delegatoTecnico.IDDelegato));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+                conn.Close();
+                int p = query.Rows.Count;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var x = ex;
+                return false;
+            }
         }
         public DataTable GetIscrizioni(int idAtleta)
         {
@@ -2827,7 +2916,7 @@ namespace WebAPIAuthJWT.Helpers
                             sql = "";
                             sql += "INSERT INTO ParametroTorneo(IDTorneo,IDParametro) VALUES(@IDTorneo,@IDParametro)";
                             comando = new SqlCommand(sql, conn);
-                            parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0]["IDTorneo"]);//Da guardare il metodo consigliato
+                            //parametro = new SqlParameter("IDTorneo", idTorneo.Rows[0]["IDTorneo"]);//Da guardare il metodo consigliato
                             comando.Parameters.Add(parametro);
                             parametro = new SqlParameter("IDParametro", torneoPrincipale[1].Rows[i]["IDParametro"]);
                             comando.Parameters.Add(parametro);

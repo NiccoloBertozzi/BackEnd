@@ -32,5 +32,6 @@ namespace TEST.Models
         public string Tel { get; set; }
         public bool Arbitro { get; set; }
         public bool Supervisore { get; set; }
+        public string CodiceTessera { get; set; }
     }
 }

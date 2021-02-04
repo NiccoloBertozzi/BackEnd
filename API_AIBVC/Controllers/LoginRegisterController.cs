@@ -24,7 +24,8 @@ namespace API_AIBVC.Controllers
         {
             string[] risposta;
             string tokenJWT = "";
-            if (db.Authenticate(credenziali.Email, credenziali.Password)) {
+            if (db.Authenticate(credenziali.Email, credenziali.Password))
+            {
                 risposta = db.GetToken(credenziali.Email);
                 tokenJWT = risposta[0];
                 //Set cookie con ruolo
@@ -68,7 +69,7 @@ namespace API_AIBVC.Controllers
                 atletalogin.atleta.IDSocieta = Convert.ToInt32(db.GetIDSocieta(atletalogin.cred.NomeSocieta).Rows[0][0]);
                 atletalogin.atleta.IDComuneNascita = "";
                 atletalogin.atleta.IDComuneResidenza = "";
-                if(atletalogin.cred.ComuneNascita!=null)if(db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows[0][0].ToString();
+                if (atletalogin.cred.ComuneNascita != null) if (db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.cred.ComuneNascita).Rows[0][0].ToString();
                 if (atletalogin.cred.ComuneResidenza != null) if (db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows.Count > 0) atletalogin.atleta.IDComuneResidenza = db.GetIDComuneResidenza(atletalogin.cred.ComuneResidenza).Rows[0][0].ToString();
                 //registro
                 if (db.RegisterAtleta(atletalogin.atleta.IDSocieta, atletalogin.atleta.CodiceTessera, atletalogin.atleta.Nome, atletalogin.atleta.Cognome, atletalogin.atleta.Sesso, atletalogin.atleta.CF, atletalogin.atleta.DataNascita, atletalogin.atleta.IDComuneNascita, atletalogin.atleta.IDComuneResidenza, atletalogin.atleta.Indirizzo, atletalogin.atleta.CAP, atletalogin.atleta.Email, atletalogin.atleta.Tel, atletalogin.atleta.Altezza, atletalogin.atleta.Peso, atletalogin.atleta.DataScadenzaCertificato, atletalogin.cred.Password))
@@ -164,6 +165,46 @@ namespace API_AIBVC.Controllers
             }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Società non trovata."));
+        }
+
+        [HttpPut("UpdateSocieta")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Societa,Admin")]
+        public ActionResult<InfoMsg> UpdateSocieta([FromBody] UpdateSocieta societalogin)
+        {
+            if (societalogin.ComuneSocieta != null) 
+                if (db.GetIDComuneNascita(societalogin.ComuneSocieta).Rows.Count > 0)
+                    societalogin.societa.IDComune = db.GetIDComuneNascita(societalogin.ComuneSocieta).Rows[0][0].ToString();
+            if (db.UpdateAnagraficaSocieta(societalogin.societa))
+                return Ok(new InfoMsg(DateTime.Today, $"Modifica società {societalogin.societa.NomeSocieta} eseguito con successo."));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori nella modifica della società {societalogin.societa.NomeSocieta}."));
+        }
+
+        [HttpPut("UpdateDelegatoTecnico")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> UpdateDelegatoTecnico([FromBody] UpdateDelegatoTecnico delegatologin)
+        {
+            //ritorna null
+            delegatologin.delegato.IDComuneNascita = "";
+            delegatologin.delegato.IDComuneResidenza = "";
+            if (delegatologin.ComuneNascita != null) 
+                if (db.GetIDComuneNascita(delegatologin.ComuneNascita).Rows.Count > 0) 
+                    delegatologin.delegato.IDComuneNascita = db.GetIDComuneNascita(delegatologin.ComuneNascita).Rows[0][0].ToString();
+            if (delegatologin.ComuneResidenza != null) 
+                if (db.GetIDComuneResidenza(delegatologin.ComuneResidenza).Rows.Count > 0) 
+                    delegatologin.delegato.IDComuneResidenza = db.GetIDComuneResidenza(delegatologin.ComuneResidenza).Rows[0][0].ToString();
+            if (db.UpdateAnagraficaDelegato(delegatologin.delegato))
+                return Ok(new InfoMsg(DateTime.Today, $"Modifica del delegato {delegatologin.delegato.Nome} eseguito con successo."));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori nella modifica del delegato {delegatologin.delegato.Nome}."));
         }
     }
 }
