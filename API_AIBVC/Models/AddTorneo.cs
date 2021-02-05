@@ -20,9 +20,10 @@ namespace API_AIBVC.Models
         public int NumMaxTeamQualifiche { get; set; }
         public string[] ParametriTorneo { get; set; }
         public string TipoTorneo { get; set; }
-        public string[] Impianti { get; set; }
         public int IDSocieta { get; set; }
         public int NumTeamQualificati { get; set; }
         public int NumWildCard { get; set; }
+        public int IDImpianto { get; set; }
+        public bool Outdoor { get; set; }
     }
 }
