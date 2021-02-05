@@ -23,20 +23,19 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public JsonResult GetTornei(DateTime Data)
+        public DataTable GetTornei(DateTime Data)
         {
-            return Json(new { output = db.GetTorneiEntroData(Data) });
+            return db.GetTorneiEntroData(Data);
         }
         //Restituisce tornei prima della data inserita
-        [HttpGet("GetTorneiNonAutorizzati/{Data}")]
+        [HttpGet("GetTorneiNonAutorizzati")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-        public DataTable GetTorneiNonAutorizzati(DateTime Data)
+        [Authorize(Roles = "Admin")]
+        public DataTable GetTorneiNonAutorizzati()
         {
-            return db.GetTorneiNonAutorizzatiEntroData(Data);
+            return db.GetTorneiNonAutorizzatiEntroData();
         }
 
         [HttpPost("CreaTorneo")]
