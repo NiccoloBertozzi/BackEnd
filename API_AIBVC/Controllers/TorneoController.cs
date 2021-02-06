@@ -17,7 +17,7 @@ namespace API_AIBVC.Controllers
     public class TorneoController : Controller
     {
         Database db = new Database();
-    
+
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTornei/{Data}")]
         [ProducesResponseType(400)]
@@ -26,6 +26,16 @@ namespace API_AIBVC.Controllers
         public DataTable GetTornei(DateTime Data)
         {
             return db.GetTorneiEntroData(Data);
+        }        //Restituisce tornei prima della data inserita
+
+        //get Tornei Iniziati
+        [HttpGet("GetIscrizioniIniziate/{idAtleta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetIscrizioniIniziate(int idAtleta)
+        {
+            return db.GetIscrizioniIniziate(idAtleta);
         }
         //Restituisce tornei prima della data inserita
         [HttpGet("GetTorneiNonAutorizzati")]
