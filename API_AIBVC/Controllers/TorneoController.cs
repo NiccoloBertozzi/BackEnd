@@ -33,6 +33,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atleta,Admin")]
         public DataTable GetIscrizioniIniziate(int idAtleta)
         {
             return db.GetIscrizioniIniziate(idAtleta);
