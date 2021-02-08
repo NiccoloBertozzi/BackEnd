@@ -25,5 +25,7 @@ namespace API_AIBVC.Models
         public int NumWildCard { get; set; }
         public int IDImpianto { get; set; }
         public bool Outdoor { get; set; }
+        public bool RiunioneTecnica { get; set; }
+        public string OraInizio { get; set; }
     }
 }
