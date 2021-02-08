@@ -393,10 +393,10 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT Atleta.CodiceTessera,Societa.NomeSocieta,Atleta.Nome,Atleta.Cognome,Atleta.Sesso,Atleta.CF,Atleta.DataNascita,Comune.SiglaProvincia as ComuneNascita,Comune.SiglaProvincia as ComuneResidenza,Atleta.Indirizzo,Atleta.CAP,Atleta.Email,Atleta.Tel,Atleta.Altezza,Atleta.Peso,Atleta.DataScadenzaCertificato ";
-            sql += "FROM Atleta ";
+            sql += "SELECT Atleta.CodiceTessera,Societa.NomeSocieta,Atleta.Nome,Atleta.Cognome,Atleta.Sesso,Atleta.CF,Atleta.DataNascita,ComuneNascita.Citta as ComuneNascita,ComuneResidenza.Citta as ComuneResidenza,Atleta.Indirizzo,Atleta.CAP,Atleta.Email,Atleta.Tel,Atleta.Altezza,Atleta.Peso,Atleta.DataScadenzaCertificato ";
+            sql += "FROM Atleta, Comune as ComuneNascita, Comune as ComuneResidenza ";
             sql += "LEFT JOIN Societa ON Atleta.IDSocieta=Societa.IDSocieta " +
-                "LEFT JOIN Comune ON Atleta.IDComuneNascita = Comune.IDComune AND Atleta.IDComuneResidenza = Comune.IDComune ";
+                "LEFT JOIN Comune ON Atleta.IDComuneNascita = ComuneNascita.IDComune AND Atleta.IDComuneResidenza = ComuneResidenza.IDComune ";
             sql += "WHERE IDAtleta=@IDAtleta;";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", id_Atleta));
@@ -425,7 +425,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(new SqlParameter("idcognome", atleta.Cognome));
                 comando.Parameters.Add(new SqlParameter("sesso", atleta.Sesso));
                 comando.Parameters.Add(new SqlParameter("cf", atleta.CF));
-                comando.Parameters.Add(new SqlParameter("datanascita", atleta.DataNascita));
+                comando.Parameters.Add(new SqlParameter("datanascita", atleta.DataNascita.Date));
                 comando.Parameters.Add(new SqlParameter("idcomuneresidenza", atleta.IDComuneResidenza));
                 comando.Parameters.Add(new SqlParameter("idcomunenascita", atleta.IDComuneNascita));
                 comando.Parameters.Add(new SqlParameter("cap", atleta.CAP));
@@ -434,7 +434,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(new SqlParameter("tel", atleta.Tel));
                 comando.Parameters.Add(new SqlParameter("altezza", atleta.Altezza));
                 comando.Parameters.Add(new SqlParameter("peso", atleta.Peso));
-                comando.Parameters.Add(new SqlParameter("datascadenzacertificato", atleta.DataScadenzaCertificato));
+                comando.Parameters.Add(new SqlParameter("datascadenzacertificato", atleta.DataScadenzaCertificato.Date));
                 comando.Parameters.Add(new SqlParameter("idatleta", atleta.IDAtleta));
                 query = new DataTable();
                 adapter = new SqlDataAdapter(comando);
@@ -443,7 +443,7 @@ namespace WebAPIAuthJWT.Helpers
                 int p = query.Rows.Count;
                 return true;
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
@@ -456,8 +456,9 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT * ";
+            sql += "SELECT IDSocieta,Comune.Citta,NomeSocieta,Indirizzo,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Sito,Tel1,Tel2,Pec,PIVA,CF,CU ";
             sql += "FROM Societa ";
+            sql += "LEFT JOIN Comune ON Societa.IDComune = Comune.IDComune ";
             sql += "WHERE IDSocieta=@IDSocieta";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDSocieta", id_Societa));
@@ -521,9 +522,9 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT * ";
-            sql += "FROM DelegatoTecnico ";
-            sql += "WHERE IDDelegato=@IDDelegato";
+            sql += "SELECT IDDelegato,Nome,Cognome,Sesso,CF,DataNascita,ComuneNascita.Citta as ComuneNascita, ComuneResidenza.Citta as ComuneResidenza, Indirizzo,CAP,Email,Tel,Arbitro,Supervisore,CodiceTessera  ";
+            sql += "FROM DelegatoTecnico, Comune as ComuneNascita, Comune as ComuneResidenza ";
+            sql += "WHERE DelegatoTecnico.IDComuneNascita = ComuneNascita.IDComune AND DelegatoTecnico.IDComuneResidenza = ComuneResidenza.IDComune AND IDDelegato=@IDDelegato";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDDelegato", id_Delegato));
             query = new DataTable();
@@ -681,7 +682,33 @@ namespace WebAPIAuthJWT.Helpers
                 }
             }*/
         }
-        public DataTable GetTorneiNonAutorizzatiEntroData()
+
+        public DataTable GetTorneiFinitiAtleta(int idatleta)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable risultato;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome, ' ', Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome, ' ', SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale, CONCAT(DirettoreCompetizione.Nome, ' ', DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,NumTeamQualificati,NumWildCard " +
+                "FROM((((((Torneo " +
+                "LEFT JOIN TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo) " +
+                "LEFT JOIN DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato) " +
+                "LEFT JOIN ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale) " +
+                "LEFT JOIN DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato) " +
+                "LEFT JOIN DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato) " +
+                "LEFT JOIN FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula) " +
+                "WHERE CAST(Torneo.DataFine as DATE) <= GETDATE() AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra AND (Squadra.IDAtleta1= @IDAtleta OR Squadra.IDAtleta2= @IDAtleta))";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+            risultato = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultato);
+            conn.Close();
+            return risultato;
+        }
+            public DataTable GetTorneiNonAutorizzatiEntroData()
         {
             SqlDataAdapter adapter;
             DataTable query;
@@ -2293,7 +2320,9 @@ namespace WebAPIAuthJWT.Helpers
             DataTable query;
             string sql;
             sql = "";
-            sql += "SELECT Atleta.CodiceTessera FROM Atleta,Societa WHERE Atleta.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=@IDSocieta;";
+            sql += "SELECT Atleta.IDAtleta,Atleta.IDSocieta,Atleta.CodiceTessera,Atleta.Nome,Atleta.Cognome,Atleta.Sesso,Atleta.CF,Atleta.DataNascita,Comune.Citta as ComuneNascita,Comune.Citta as ComuneResidenza,Atleta.Indirizzo,Atleta.CAP,Atleta.Email,Atleta.Tel,Atleta.Altezza,Atleta.Peso,Atleta.DataScadenzaCertificato " +
+            "FROM(Atleta LEFT JOIN Comune ON Atleta.IDComuneNascita = Comune.IDComune AND Atleta.IDComuneResidenza = Comune.IDComune) " +
+            "WHERE Atleta.IDSocieta = @IDSocieta";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDSocieta", idsocieta));
             query = new DataTable();
@@ -2310,7 +2339,9 @@ namespace WebAPIAuthJWT.Helpers
             DataTable query;
             string sql;
             sql = "";
-            sql += "SELECT Allenatore.CodiceTessera FROM Allenatore,Societa WHERE Allenatore.IDSocieta=Societa.IDSocieta AND Societa.IDSocieta=@IDSocieta;";
+            sql += "SELECT Allenatore.IDAllenatore,Allenatore.CodiceTessera,Allenatore.Nome,Allenatore.Cognome,Allenatore.Sesso,Allenatore.CF,Allenatore.DataNascita,Comune.Citta as ComuneNascita,Comune.Citta as ComuneResidenza,Allenatore.Indirizzo,Allenatore.CAP,Allenatore.Email,Allenatore.Tel " +
+                "FROM(Allenatore LEFT JOIN Comune ON Allenatore.IDComuneNascita = Comune.IDComune AND Allenatore.IDComuneResidenza = Comune.IDComune) " +
+                "WHERE Allenatore.IDSocieta = @IDSocieta";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDSocieta", idsocieta));
             query = new DataTable();
