@@ -443,7 +443,65 @@ namespace WebAPIAuthJWT.Helpers
                 int p = query.Rows.Count;
                 return true;
             }
-            catch (Exception e)
+            catch
+            {
+                return false;
+            }
+        }
+        public DataTable GetAnagraficaAllenatore(int id_Allenatore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            string sql;
+            conn.Open();
+            sql = "";
+            sql += "SELECT Allenatore.CodiceTessera,Allenatore.Grado,Societa.NomeSocieta,Allenatore.Nome,Allenatore.Cognome,Allenatore.Sesso,Allenatore.CF,Allenatore.DataNascita,ComuneNascita.Citta as ComuneNascita,ComuneResidenza.Citta as ComuneResidenza,Allenatore.Indirizzo,Allenatore.CAP,Allenatore.Email,Allenatore.Tel FROM Allenatore, Comune as ComuneNascita, Comune as ComuneResidenza ,Societa WHERE Allenatore.IDSocieta = Societa.IDSocieta AND Allenatore.IDComuneNascita = ComuneNascita.IDComune AND Allenatore.IDComuneResidenza = ComuneResidenza.IDComune AND Allenatore.IDAllenatore =@IDAllenatore;  ";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("IDAllenatore", id_Allenatore));
+            query = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            adapter.Fill(query);
+            conn.Close();
+            int p = query.Rows.Count;
+            return query;
+        }
+        public bool UpdateAnagraficaAllenatore(Allenatore allenatore)
+        {
+            try
+            {
+                SqlDataAdapter adapter;
+                SqlCommand comando;
+                DataTable query;
+                string sql;
+                conn.Open();
+                sql = "";
+                sql += "UPDATE Allenatore SET IDSocieta=@idsocieta,Nome=@idnome,Cognome=@idcognome,Sesso=@sesso,CF=@cf,DataNascita=@datanascita,IDComuneResidenza=@idcomuneresidenza,IDComuneNascita=@idcomunenascita,Indirizzo=@indirizzo,CAP=@cap,Email=@email,Tel=@tel,Grado=@grado,CodiceTessera=@codicetessera " +
+                    "WHERE Allenatore.IDAllenatore=@idallenatore;";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idsocieta", allenatore.IDSocieta));
+                comando.Parameters.Add(new SqlParameter("idnome", allenatore.Nome));
+                comando.Parameters.Add(new SqlParameter("idcognome", allenatore.Cognome));
+                comando.Parameters.Add(new SqlParameter("sesso", allenatore.Sesso));
+                comando.Parameters.Add(new SqlParameter("cf", allenatore.CF));
+                comando.Parameters.Add(new SqlParameter("datanascita", allenatore.DataNascita.Date));
+                comando.Parameters.Add(new SqlParameter("idcomuneresidenza", allenatore.IDComuneResidenza));
+                comando.Parameters.Add(new SqlParameter("idcomunenascita", allenatore.IDComuneNascita));
+                comando.Parameters.Add(new SqlParameter("cap", allenatore.CAP));
+                comando.Parameters.Add(new SqlParameter("indirizzo", allenatore.Indirizzo));
+                comando.Parameters.Add(new SqlParameter("email", allenatore.Email));
+                comando.Parameters.Add(new SqlParameter("tel", allenatore.Tel));
+                comando.Parameters.Add(new SqlParameter("grado", allenatore.Grado));
+                comando.Parameters.Add(new SqlParameter("codicetessera", allenatore.CodiceTessera));
+                comando.Parameters.Add(new SqlParameter("idallenatore", allenatore.IDAllenatore));
+                query = new DataTable();
+                adapter = new SqlDataAdapter(comando);
+                adapter.Fill(query);
+                conn.Close();
+                int p = query.Rows.Count;
+                return true;
+            }
+            catch
             {
                 return false;
             }
@@ -572,9 +630,8 @@ namespace WebAPIAuthJWT.Helpers
                 int p = query.Rows.Count;
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                var x = ex;
                 return false;
             }
         }
