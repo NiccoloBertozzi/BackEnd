@@ -55,7 +55,6 @@ namespace API_AIBVC.Controllers
         }
         [HttpGet("GetTorneoById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetTorneoByID(int id)
         {
             return db.GetTorneoByID(id)[0];
