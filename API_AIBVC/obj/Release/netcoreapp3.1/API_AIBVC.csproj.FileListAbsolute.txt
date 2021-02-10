@@ -28,7 +28,6 @@ E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\w
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win-x86\native\sni.dll
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
-E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csprojAssemblyReference.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache
@@ -172,3 +171,4 @@ C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBV
 C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
 C:\Users\Alex\Desktop\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
 C:\Users\rigon\Desktop\PROGETTO AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\RestSharp.dll
+E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csprojAssemblyReference.cache

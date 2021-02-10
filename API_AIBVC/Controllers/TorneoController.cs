@@ -385,7 +385,7 @@ namespace API_AIBVC.Controllers
             return db.GetSquadra(Idsquadra);
         }
 
-        [HttpGet("GetTorneiFinitiByAtleta/{IDAtleta")]
+        [HttpGet("GetTorneiFinitiByAtleta/{IDAtleta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
