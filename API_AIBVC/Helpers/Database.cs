@@ -1513,7 +1513,7 @@ namespace WebAPIAuthJWT.Helpers
             adapter.Fill(risultati[1]);
             conn.Close();
             sql = "";
-            sql += "SELECT Impianto.IDImpianto,NomeImpianto,Citta ";
+            sql += "SELECT Impianto.IDImpianto,NomeImpianto,Impianto.Citta ";
             sql += "FROM ((Impianto LEFT JOIN ImpiantoTorneo ON Impianto.IDImpianto=ImpiantoTorneo.IDImpianto)LEFT JOIN Comune ON Impianto.IDComune=Comune.IDComune) ";
             sql += "WHERE ImpiantoTorneo.IDTorneo=@IDTorneo";
             comando = new SqlCommand(sql, conn);
