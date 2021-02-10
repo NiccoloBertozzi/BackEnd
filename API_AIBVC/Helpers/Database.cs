@@ -3049,10 +3049,20 @@ namespace WebAPIAuthJWT.Helpers
                         comando.ExecuteNonQuery();
                         conn.Close();
                     }
-                    //Creo le partite di qualifica in base al numero di team che si qualifica al torneo
-                    switch(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati "]))
+                    //Creo le partite di qualifica in base al numero di team che si qualificano al torneo
+                    switch(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]))
                     {
-                        
+                        case 8:
+
+                            break;
+
+                        case 4:
+
+                            break;
+
+                        case 6:
+
+                            break;
                     }
                     return true;
                 }
@@ -3139,6 +3149,26 @@ namespace WebAPIAuthJWT.Helpers
                 string error = e.Message;
                 return null;
             }
+        }
+        public DataTable GetTorneiFinitiByAtleta(int idAtleta)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumMaxTeamMainDraw,Torneo.NumMaxTeamQualifiche,Torneo.NumTeamQualificati,Torneo.NumWildCard,Outdoor,RiunioneTecnica,OraInizio " +
+            "FROM(((((((((((((Torneo LEFT JOIN TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)LEFT JOIN DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT JOIN ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT JOIN DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)LEFT JOIN DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT JOIN FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)LEFT JOIN ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)LEFT JOIN Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)LEFT JOIN Comune On Impianto.IDComune = Comune.IDComune)LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo = Torneo.IDTorneo)LEFT JOIN Squadra ON Squadra.IDSquadra = ListaIscritti.IDSquadra)LEFT JOIN Atleta Atleta1 ON Squadra.IDAtleta1 = Atleta1.IDAtleta OR Squadra.IDAtleta2 = Atleta1.IDAtleta)LEFT JOIN Atleta Atleta2 ON Squadra.IDAtleta1 = Atleta2.IDAtleta OR Squadra.IDAtleta2 = Atleta2.IDAtleta) " +
+            "WHERE CAST(Torneo.DataFine as DATE) <= @Data AND(Squadra.IDAtleta1 = @IDAtleta OR Squadra.IDAtleta2 = @IDAtleta)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));
+            comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
         }
     }
 }

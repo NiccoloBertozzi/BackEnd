@@ -382,8 +382,17 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
         public DataTable GetSquadra(int Idsquadra)
         {
-            //Metodo che restituisce i torni a cui ha partecipato un supervisore
             return db.GetSquadra(Idsquadra);
+        }
+
+        [HttpGet("GetTorneiFinitiByAtleta/{IDAtleta")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Atltea,Admin")]
+        public JsonResult GetTorneiFinitiByAtleta(int idAtleta)
+        {
+            return Json(new { output = db.GetTorneiFinitiByAtleta(idAtleta) });
         }
     }
 }
