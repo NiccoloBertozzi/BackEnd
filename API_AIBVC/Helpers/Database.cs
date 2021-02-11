@@ -208,7 +208,7 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-        public int GetIDAllenatore(int tessera)
+        public int GetIDAllenatore(string tessera)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -1985,7 +1985,7 @@ namespace WebAPIAuthJWT.Helpers
                 return 0;
             }
         }
-        public bool IscriviSquadra(int idTorneo, int idSquadra, int idAllenatore)
+        public bool IscriviSquadra(int idTorneo, int idSquadra, string idAllenatore)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -2052,7 +2052,7 @@ namespace WebAPIAuthJWT.Helpers
                                     if (GetIDAllenatore(idAllenatore) > 0)
                                     {
                                         //trasformo il codice della tessera dell'allenatore ricevuto con id 
-                                        idAllenatore = GetIDAllenatore(idAllenatore);
+                                        int idAllenatore1 = GetIDAllenatore(idAllenatore);
                                         sql = "";
                                         sql += "INSERT INTO ListaIscritti(IDSquadra,IDTorneo,IDAllenatore,DataIscrizione,Cancellata)VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@DataIscrizione,@Cancellata)";
                                         comando = new SqlCommand(sql, conn);
@@ -2060,8 +2060,8 @@ namespace WebAPIAuthJWT.Helpers
                                         comando.Parameters.Add(parametro);
                                         parametro = new SqlParameter("IDTorneo", idTorneo);
                                         comando.Parameters.Add(parametro);
-                                        if (idAllenatore != 0)
-                                            parametro = new SqlParameter("IDAllenatore", idAllenatore);
+                                        if (idAllenatore1 != 0)
+                                            parametro = new SqlParameter("IDAllenatore", idAllenatore1);
                                         else
                                             parametro = new SqlParameter("IDAllenatore", DBNull.Value);
                                         comando.Parameters.Add(parametro);
