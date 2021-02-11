@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebAPIAuthJWT.Helpers;
 using API_AIBVC.Models;
 using TEST.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace API_AIBVC.Controllers
 {
@@ -25,6 +26,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(200, Type = typeof(DataTable))]
         public DataTable GetTornei(DateTime Data)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneiEntroData(Data);
         }        //Restituisce tornei prima della data inserita
 
