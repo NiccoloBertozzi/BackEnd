@@ -28,6 +28,17 @@ namespace API_AIBVC.Controllers
             return db.GetTorneiEntroData(Data);
         }        //Restituisce tornei prima della data inserita
 
+        //Restituisce tornei di un determinato tipo
+        [HttpGet("GetTorneiTipo/{idTipo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetTorneiTipo(int idTipo)
+        {
+            return db.GetTorneiTipo(idTipo);
+        }        //Restituisce tornei di un determinato tipo
+
         //get Tornei Iniziati
         [HttpGet("GetIscrizioniIniziate/{idAtleta}")]
         [ProducesResponseType(400)]
