@@ -57,6 +57,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         public DataTable GetTorneoByID(int id)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneoByID(id)[0];
         }
         //ritorna nome cognome e id di un supervisore in base al cf
