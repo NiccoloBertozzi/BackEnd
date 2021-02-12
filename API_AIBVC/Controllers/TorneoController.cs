@@ -106,24 +106,30 @@ namespace API_AIBVC.Controllers
         }
 
         //ritorna la lista degli atleti di una societa
-        [HttpPost("AtletiSocieta/{idsocieta}")]
+        [HttpGet("AtletiSocieta/{idsocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
         public DataTable GetAtletiSocieta(int idsocieta)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetAtletiSocieta(idsocieta);
         }
 
         //ritorna la lista degli allenatori di una societa
-        [HttpPost("AllenatoriSocieta/{idSocieta}")]
+        [HttpGet("AllenatoriSocieta/{idSocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
         public DataTable GetAllenatoriSocieta(int idsocieta)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetAllenatoreSocieta(idsocieta);
         }
 
@@ -208,6 +214,17 @@ namespace API_AIBVC.Controllers
         public DataTable GetTorneiFinitiAtleta(int idAtleta)
         {
             return db.GetTorneiFinitiAtleta(idAtleta);
+        }
+
+        //Return Tornei atleta Finiti
+        [HttpGet("TorneInCorso/{idAtleta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Admin,Atleta")]
+        public DataTable GetTorneiInCorsoAlteta(int idAtleta)
+        {
+            return db.GetTorneiInCorsoAlteta(idAtleta);
         }
 
         //Return ParametriTorneo Iscritti

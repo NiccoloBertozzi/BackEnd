@@ -16,7 +16,7 @@ namespace TEST.Models
     {
         public int IDSquadra { get; set; }
         public int IDTorneo { get; set; }
-        public int IDAllenatore { get; set; }
+        public string IDAllenatore { get; set; }
         public System.DateTime DataIscrizione { get; set; }
         public bool Cancellata { get; set; }
     }
