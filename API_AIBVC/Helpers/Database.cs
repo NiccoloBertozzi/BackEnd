@@ -3235,5 +3235,19 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
+        public DataTable GetAllImpianti()
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            DataTable query;
+            sql = "";
+            sql += "SELECT IDImpianto,NomeImpianto FROM Impianto";
+            adapter = new SqlDataAdapter(sql, conn);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
     }
 }
