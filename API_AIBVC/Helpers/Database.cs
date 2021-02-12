@@ -647,7 +647,7 @@ namespace WebAPIAuthJWT.Helpers
             "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
             "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta)";
-            sql += "WHERE Squadra.IDAtleta1=@IDAtleta or Squadra.IDAtleta2=@IDAtleta";
+            sql += "WHERE(Squadra.IDAtleta1=@IDAtleta or Squadra.IDAtleta2=@IDAtleta) AND GETDATE()<CAST(Torneo.dataFine AS DATE)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
             query = new DataTable();
