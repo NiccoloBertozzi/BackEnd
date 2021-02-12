@@ -1807,11 +1807,8 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Outdoor", outdoor);
                 comando.Parameters.Add(parametro);
-                if (riunioneTecnica != false)
-                {
-                    parametro = new SqlParameter("RiunioneTecnica", riunioneTecnica);
-                    comando.Parameters.Add(parametro);
-                }
+                parametro = new SqlParameter("RiunioneTecnica", riunioneTecnica);
+                comando.Parameters.Add(parametro);
                 if (oraInizio != null)
                     parametro = new SqlParameter("OraInizio", oraInizio);
                 else
