@@ -3245,5 +3245,33 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
+
+        public bool AssegnaTessereBySocieta(int idAtleta, int idSocieta, string codiceTessera, string tipoTessera, DateTime dataTesseramento, int annoTesseramento, double importo)
+        {
+            string sql;
+            SqlCommand comando;
+            try
+            {
+                sql = "";
+                sql += "INSERT INTO StoricoTessereAtleti(IDAtleta,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
+                    "VALUES(@IDAtleta,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
+                comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
+                comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
+                comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
+                comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
+                comando.Parameters.Add(new SqlParameter("Importo", importo));
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
     }
 }
