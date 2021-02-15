@@ -115,5 +115,16 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTesseraInfo(idsocieta);
         }
+
+        //Informazioni Tessere Societa allenatori
+        [HttpGet("TessereSocietaAllenatore/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin")]
+        public DataTable GetTesseraInfoAllenatore(int idsocieta)
+        {
+            return db.GetTesseraInfoAllenatore(idsocieta);
+        }
     }
 }
