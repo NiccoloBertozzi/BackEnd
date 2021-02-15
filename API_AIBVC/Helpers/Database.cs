@@ -818,7 +818,7 @@ namespace WebAPIAuthJWT.Helpers
             "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
             "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
-                "WHERE CAST(Torneo.DataFine as DATE) <= GETDATE() AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra AND ListaIscritti.IDAllenatore=@idallenatore)";
+            "WHERE(ListaIscritti.IDAllenatore = @idallenatore) AND GETDATE() > CAST(Torneo.dataInizio AS DATE)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
             risultato = new DataTable();
