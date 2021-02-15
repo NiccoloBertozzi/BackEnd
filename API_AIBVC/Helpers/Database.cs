@@ -853,6 +853,30 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return risultato;
         }
+        public DataTable GetTorneiIscrittiAllenatore(int idallenatore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable risultato;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome, ' ', atleta1.cognome) AS Atleta1, CONCAT(atleta2.Nome, ' ', atleta2.cognome) AS Atleta2 "+
+            "FROM(((((Torneo "+
+            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo) " +
+            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo = Torneo.IDTorneo) " +
+            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra) " +
+            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta) " +
+            "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
+            "WHERE(ListaIscritti.IDAllenatore = 17) AND GETDATE()< CAST(Torneo.dataFine AS DATE)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
+            risultato = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultato);
+            conn.Close();
+            return risultato;
+        }
         public DataTable GetTorneiNonAutorizzatiEntroData()
         {
             SqlDataAdapter adapter;
