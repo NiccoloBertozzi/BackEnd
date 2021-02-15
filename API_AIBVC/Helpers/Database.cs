@@ -1648,7 +1648,7 @@ namespace WebAPIAuthJWT.Helpers
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
             "AND datediff(day,datafine,GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2 " +
             ") " +
-            "SELECT idatleta, cognome, nome, sum(punti) AS Punteggi " +
+            "SELECT idatleta, cognome, nome, sum(punti+Atleta.PuntiBase) AS Punteggi " +
             "FROM punteggi, atleta WHERE idatleta=idAtl AND atleta.sesso=@Sesso " +
             "GROUP BY idatleta,cognome,nome HAVING sum(punti)>0 ORDER BY sum(punti) DESC,Cognome,Nome";
             comando = new SqlCommand(sql, conn);
