@@ -843,7 +843,7 @@ namespace WebAPIAuthJWT.Helpers
             "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
             "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
-            "WHERE(GETDATE() BETWEEN CAST(Torneo.DataInizio as DATE) AND CAST(Torneo.DataFine as DATE)) AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra)AND(ListaIscritti.IdAllenatore = 1)";
+            "WHERE(GETDATE() BETWEEN CAST(Torneo.DataInizio as DATE) AND CAST(Torneo.DataFine as DATE)) AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra)AND(ListaIscritti.IdAllenatore = @idallenatore)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
             risultato = new DataTable();
@@ -3321,6 +3321,24 @@ namespace WebAPIAuthJWT.Helpers
             sql = "";
             sql += "SELECT IDImpianto,NomeImpianto FROM Impianto";
             adapter = new SqlDataAdapter(sql, conn);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+
+        public DataTable GetTesseraInfo(int idsocieta)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            sql = "";
+            sql += "SELECT DISTINCT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta,StoricoTessereAtleti.CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo FROM StoricoTessereAtleti,Atleta,Societa WHERE StoricoTessereAtleti.IDAtleta=Atleta.IDAtleta AND AnnoTesseramento= YEAR(GETDATE()) AND StoricoTessereAtleti.IDSocieta=@idsocieta;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idsocieta", idsocieta));
+            adapter = new SqlDataAdapter(comando);
             query = new DataTable();
             conn.Open();
             adapter.Fill(query);
