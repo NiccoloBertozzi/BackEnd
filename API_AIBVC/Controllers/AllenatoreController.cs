@@ -54,6 +54,16 @@ namespace API_AIBVC.Controllers
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Società non trovata."));
         }
 
+        [HttpGet("TorneiIscritti/{idAllenatore}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Admin,Allenatore")]
+        public DataTable GetTorneiIscrittiAllenatore(int idAllenatore)
+        {
+            return db.GetTorneiIscrittiAllenatore(idAllenatore);
+        }
+
         [HttpGet("TorneiInCorso/{idAllenatore}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

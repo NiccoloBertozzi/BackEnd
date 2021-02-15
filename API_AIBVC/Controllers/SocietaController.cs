@@ -104,19 +104,5 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta della tessera"));
         }
-
-        //Informazioni Tessere Societa
-        [HttpPost("AssegnaTessereBySocieta")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Societa,Admin")]
-        public ActionResult<InfoMsg> AssegnaTessereBySocieta([FromBody]AssegnaTessere assegnaTessere)
-        {
-            if (db.AssegnaTessereBySocieta(assegnaTessere.IDAtleta, assegnaTessere.IDSocieta, assegnaTessere.CodiceTessera, assegnaTessere.TipoTessera, assegnaTessere.DataTesseramento, assegnaTessere.AnnoTesseramento, assegnaTessere.Importo))
-                return Ok(new InfoMsg(DateTime.Today, $"Tessera aggiunta con successo"));
-            else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta della tessera"));
-        }
     }
 }
