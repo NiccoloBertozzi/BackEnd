@@ -3287,25 +3287,43 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "INSERT INTO StoricoTessereAtleti(IDAtleta,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
-                    "VALUES(@IDAtleta,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                sql += "UPDATE Atleta " +
+                    "SET CodiceTessera=@Codicetessera " +
+                    "WHERE IDAtleta=@idatleta";
                 comando = new SqlCommand(sql, conn);
-                comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
-                comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
-                comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
-                comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
-                comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
-                comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
-                comando.Parameters.Add(new SqlParameter("Importo", importo));
+                comando.Parameters.Add(new SqlParameter("idatleta", idAtleta));
+                comando.Parameters.Add(new SqlParameter("Codicetessera", codiceTessera));
                 conn.Open();
                 comando.ExecuteNonQuery();
                 conn.Close();
-                return true;
+                try
+                {
+                    sql = "";
+                    sql += "INSERT INTO StoricoTessereAtleti(IDAtleta,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
+                        "VALUES(@IDAtleta,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
+                    comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                    comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
+                    comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
+                    comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
+                    comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
+                    comando.Parameters.Add(new SqlParameter("Importo", importo));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
             }
             catch(Exception e)
             {
                 return false;
             }
+ 
         }
     }
 }
