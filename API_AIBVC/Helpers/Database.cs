@@ -647,7 +647,7 @@ namespace WebAPIAuthJWT.Helpers
             "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
             "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
             "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta)";
-            sql += "WHERE(Squadra.IDAtleta1=@IDAtleta or Squadra.IDAtleta2=@IDAtleta) AND GETDATE()<CAST(Torneo.dataFine AS DATE)";
+            sql += "WHERE(Squadra.IDAtleta1=@IDAtleta or Squadra.IDAtleta2=@IDAtleta) AND GETDATE()<CAST(Torneo.dataInizio AS DATE)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
             query = new DataTable();
@@ -770,7 +770,7 @@ namespace WebAPIAuthJWT.Helpers
                 "LEFT JOIN DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato) " +
                 "LEFT JOIN DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato) " +
                 "LEFT JOIN FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula) " +
-                "WHERE CAST(Torneo.DataFine as DATE) <= GETDATE() AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra AND (Squadra.IDAtleta1= @IDAtleta OR Squadra.IDAtleta2= @IDAtleta))";
+                "WHERE(ListaIscritti.IDAtleta = @IDAtleta) AND GETDATE() > CAST(Torneo.dataInizio AS DATE)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
             risultato = new DataTable();
