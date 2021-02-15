@@ -2910,7 +2910,7 @@ namespace WebAPIAuthJWT.Helpers
             SqlCommand comando;
             SqlDataAdapter adapter;
             SqlParameter parametro;
-            DataTable query, idTorneoQualifica,numTabelloneWildCard; //DataTable per raccogliere il numero di team del tabellone e il numero di wildcard
+            DataTable query, idTorneoQualifica,numTabelloneWildCard, squadreQualifica; //DataTable per raccogliere il numero di team del tabellone e il numero di wildcard
             DataTable[] torneoPrincipale;
             string sql;
             try
@@ -3040,8 +3040,10 @@ namespace WebAPIAuthJWT.Helpers
                     conn.Close();
                     //Prendo l'id del torneo di qualifica
                     sql = "";
-                    sql += "SELECT SCOPE_IDENTITY()";
-                    adapter = new SqlDataAdapter(sql, conn);
+                    sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@Titolo";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("Titolo", torneoPrincipale[0].Rows[0]["Titolo"] += " Qualifiche"));
+                    adapter = new SqlDataAdapter(comando);
                     idTorneoQualifica = new DataTable();
                     conn.Open();
                     adapter.Fill(idTorneoQualifica);
@@ -3053,7 +3055,7 @@ namespace WebAPIAuthJWT.Helpers
                             sql = "";
                             sql += "INSERT INTO ParametroTorneo(IDTorneo,IDParametro) VALUES(@IDTorneo,@IDParametro)";
                             comando = new SqlCommand(sql, conn);
-                            parametro = new SqlParameter("IDTorneo", idTorneoQualifica.Rows[0][0]);
+                            parametro = new SqlParameter("IDTorneo", idTorneoQualifica.Rows[0]["IDTorneo"]);
                             comando.Parameters.Add(parametro);
                             parametro = new SqlParameter("IDParametro", torneoPrincipale[1].Rows[i]["IDParametro"]);
                             comando.Parameters.Add(parametro);
@@ -3070,9 +3072,9 @@ namespace WebAPIAuthJWT.Helpers
                     comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
                     comando.Parameters.Add(new SqlParameter("NumeroTeamTabellone", Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamMainDraw"]) - Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumWildCard"])));
                     adapter = new SqlDataAdapter(comando);
-                    query = new DataTable();
+                    squadreQualifica = new DataTable();
                     conn.Open();
-                    adapter.Fill(query);
+                    adapter.Fill(squadreQualifica);
                     conn.Close();
                     //Collego le squadre al torneo di qualifica
                     for(int i = 0; i < query.Rows.Count; i++)
@@ -3080,13 +3082,13 @@ namespace WebAPIAuthJWT.Helpers
                         sql = "";
                         sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints) ";
                         sql += "VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints)";
-                        comando.Parameters.Add(new SqlParameter("IDSquadra", query.Rows[i]["IDSquadra"]));
+                        comando.Parameters.Add(new SqlParameter("IDSquadra", squadreQualifica.Rows[i]["IDSquadra"]));
                         comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica.Rows[0][0]));
                         if (query.Rows[i]["IDAllenatore"] != null)
-                            comando.Parameters.Add(new SqlParameter("IDAllenatore", query.Rows[i]["IDAllenatore"]));
+                            comando.Parameters.Add(new SqlParameter("IDAllenatore", squadreQualifica.Rows[i]["IDAllenatore"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", DBNull.Value));
-                        comando.Parameters.Add(new SqlParameter("EntryPoints", query.Rows[i]["EntryPoints"]));
+                        comando.Parameters.Add(new SqlParameter("EntryPoints", squadreQualifica.Rows[i]["EntryPoints"]));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3095,11 +3097,11 @@ namespace WebAPIAuthJWT.Helpers
                     switch(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]))
                     {
                         case 8:
-
+                            PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]),squadreQualifica);
                             break;
 
                         case 4:
-
+                            PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]), squadreQualifica);
                             break;
 
                         case 6:
@@ -3115,6 +3117,38 @@ namespace WebAPIAuthJWT.Helpers
             {
                 string errore = e.Message;
                 return false;
+            }
+        }
+        //Metodo che crea le partite per il torneo di qualifica con 4 o 8 NTQ (NumTeamQualificati) 
+        private void PartiteNTQ4_8(int numSquadreQualifiche, DataTable squadreQualifica)
+        {
+            SqlCommand comando;
+            SqlDataAdapter adapter;
+            string sql;
+            try
+            {
+                sql = "";
+                if (numSquadreQualifiche <= 8)
+                {
+                    //Prima partita
+                    sql += "INSERT INTO Partita()";
+                }
+                if(numSquadreQualifiche>8 || numSquadreQualifiche <= 16)
+                {
+
+                }
+                if (numSquadreQualifiche > 16 || numSquadreQualifiche <= 32)
+                {
+
+                }
+                if (numSquadreQualifiche > 32 || numSquadreQualifiche <= 64)
+                {
+
+                }
+            }
+            catch(Exception e)
+            {
+                string errore = e.Message;
             }
         }
         public DataTable GetTorneiDisputatiByDelegato(int idDelegato)
