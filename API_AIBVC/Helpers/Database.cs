@@ -3431,5 +3431,50 @@ namespace WebAPIAuthJWT.Helpers
             }
  
         }
+        public bool AssegnaTessereAllenatoreBySocieta(int idAtleta, int idSocieta, string codiceTessera, string tipoTessera, DateTime dataTesseramento, int annoTesseramento, double importo)
+        {
+            string sql;
+            SqlCommand comando;
+            try
+            {
+                sql = "";
+                sql += "UPDATE Allenatore " +
+                    "SET CodiceTessera=@Codicetessera " +
+                    "WHERE IDAllenatore=@idallenatore";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idallenatore", idAtleta));
+                comando.Parameters.Add(new SqlParameter("Codicetessera", codiceTessera));
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                try
+                {
+                    sql = "";
+                    sql += "INSERT INTO StoricoTessereAllenatori(IDAllenatore,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
+                        "VALUES(@IDAllenatore,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDAllenatore", idAtleta));
+                    comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                    comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
+                    comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
+                    comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
+                    comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
+                    comando.Parameters.Add(new SqlParameter("Importo", importo));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
     }
 }
