@@ -42,5 +42,12 @@ namespace API_AIBVC.Controllers
             HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetClassifica(sesso);
         }
+
+        [HttpGet("GetComuni")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        public DataTable GetComuni()
+        {
+            return db.GetComuni();
+        }
     }
 }

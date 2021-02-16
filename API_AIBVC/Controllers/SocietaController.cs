@@ -68,6 +68,15 @@ namespace API_AIBVC.Controllers
         {
             return Json(new { output = db.GetImpiantiSocieta(idSocieta) });
         }
+        //Restituisce tutte le societa
+        [HttpGet("GetAllSocieta")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public DataTable GetAllSocieta()
+        {
+            return db.GetAllSocieta();
+        }
 
         //Restituisce tutti i tornei della società
         [HttpGet("GetAllTorneiSocieta/{IDSocieta}")]

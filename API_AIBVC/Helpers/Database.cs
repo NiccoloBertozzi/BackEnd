@@ -385,6 +385,34 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
+        public DataTable GetComuni()
+        {
+            SqlDataAdapter adapter;
+            DataTable query;
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT Comune.IDComune, Comune.Citta FROM Comune ORDER BY Citta ASC";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+        public DataTable GetAllSocieta()
+        {
+            SqlDataAdapter adapter;
+            DataTable query;
+            conn.Open();
+            string sql;
+            sql = "";
+            sql += "SELECT Societa.IDSocieta, Societa.NomeSocieta FROM Societa ORDER BY NomeSocieta ASC";
+            query = new DataTable();
+            adapter = new SqlDataAdapter(sql, conn);
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
         public DataTable GetAnagrafica(int id_Atleta)
         {
             SqlDataAdapter adapter;
@@ -928,7 +956,10 @@ namespace WebAPIAuthJWT.Helpers
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("IDSocieta", idSocieta);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CodiceTessera", codTessera);
+                if (codTessera != null)
+                    parametro = new SqlParameter("CodiceTessera", codTessera);
+                else
+                    parametro = new SqlParameter("CodiceTessera", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Grado", grado);
                 comando.Parameters.Add(parametro);
@@ -1036,7 +1067,10 @@ namespace WebAPIAuthJWT.Helpers
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("IDSocieta", idSocieta);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CodiceTessera", codTessera);
+                if (codTessera != null)
+                    parametro = new SqlParameter("CodiceTessera", codTessera);
+                else
+                    parametro = new SqlParameter("CodiceTessera", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Nome", nome);
                 comando.Parameters.Add(parametro);
