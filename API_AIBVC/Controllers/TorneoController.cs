@@ -426,14 +426,15 @@ namespace API_AIBVC.Controllers
         {
             return Json(new { output = db.GetTorneiFinitiByAtleta(idAtleta) });
         }
+
         [HttpGet("GetPartiteTorneo/{IDTorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
-        public JsonResult GetPartiteTorneo(int idTorneo)
+        public DataTable GetPartiteTorneo(int idTorneo)
         {
-            return Json(new { output = db.GetPartiteTorneo(idTorneo) });
+            return db.GetPartiteTorneo(idTorneo);
         }
     }
 }
