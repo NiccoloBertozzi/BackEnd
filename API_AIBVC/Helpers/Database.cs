@@ -3195,14 +3195,29 @@ namespace WebAPIAuthJWT.Helpers
         {
             SqlCommand comando;
             SqlDataAdapter adapter;
+            DataTable squadreBye;
             string sql;
             try
             {
+                //Prendo le squadre bye
                 sql = "";
+                sql += "SELECT * FROM Squadra WHERE NomeTeam='Bye'";
+                adapter = new SqlDataAdapter(sql, conn);
+                squadreBye = new DataTable();
+                conn.Open();
+                adapter.Fill(squadreBye);
+                conn.Close();
+                //Partite
                 if (numSquadreQualifiche <= 8)
                 {
                     //Prima partita
-                    sql += "INSERT INTO Partita()";
+                    sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDArbitro1,IDArbitro2,IDTorneo,NumPartita,Fase,Campo,DataPartita,OraPartita,Risultato) " +
+                        "VALUES (@IDSQ1,@IDSQ2,@IDArbitro1,@IDArbitro2,@IDTorneo,@NumPartita,@Fase,@Campo,@DataPartita,@OraPartita,@Risultato)";
+                    comando = new SqlCommand(sql, conn);
+                    if (squadreQualifica.Rows[0]["IDSquadra"] != null)
+                        comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[0]["IDSquadra"]));
+                    else
+                        comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                 }
                 if(numSquadreQualifiche>8 || numSquadreQualifiche <= 16)
                 {
