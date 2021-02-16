@@ -780,7 +780,6 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return risultato;
         }
-
         public DataTable GetTorneiInCorsoAlteta(int idatleta)
         {
             SqlDataAdapter adapter;
@@ -798,6 +797,78 @@ namespace WebAPIAuthJWT.Helpers
             "WHERE (GETDATE() BETWEEN CAST(Torneo.DataInizio as DATE) AND CAST(Torneo.DataFine as DATE)) AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra AND (Squadra.IDAtleta1= @IDAtleta OR Squadra.IDAtleta2= @IDAtleta))AND (Squadra.IDAtleta1= @IDAtleta OR Squadra.IDAtleta2= @IDAtleta)";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDAtleta", idatleta));
+            risultato = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultato);
+            conn.Close();
+            return risultato;
+        }
+        public DataTable GetTorneiFinitiAllenatore(int idallenatore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable risultato;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome,' ',atleta1.cognome) AS Atleta1,CONCAT(atleta2.Nome,' ',atleta2.cognome) AS Atleta2 ";
+            sql += "FROM (((((Torneo " +
+            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)" +
+            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo=Torneo.IDTorneo)" +
+            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
+            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
+            "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
+            "WHERE(ListaIscritti.IDAllenatore = @idallenatore) AND GETDATE() > CAST(Torneo.dataFine AS DATE)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
+            risultato = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultato);
+            conn.Close();
+            return risultato;
+        }
+        public DataTable GetTorneiInCorsoAllenatore(int idallenatore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable risultato;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome,' ',atleta1.cognome) AS Atleta1,CONCAT(atleta2.Nome,' ',atleta2.cognome) AS Atleta2 ";
+            sql += "FROM (((((Torneo " +
+            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)" +
+            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo=Torneo.IDTorneo)" +
+            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra)" +
+            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta)" +
+            "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
+            "WHERE(GETDATE() BETWEEN CAST(Torneo.DataInizio as DATE) AND CAST(Torneo.DataFine as DATE)) AND Torneo.IDTorneo IN(SELECT DISTINCT ListaIscritti.IDTorneo FROM ListaIscritti, Squadra, Torneo WHERE Squadra.IDSquadra= ListaIscritti.IDSquadra)AND(ListaIscritti.IdAllenatore = @idallenatore)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
+            risultato = new DataTable();
+            adapter = new SqlDataAdapter(comando);
+            conn.Open();
+            adapter.Fill(risultato);
+            conn.Close();
+            return risultato;
+        }
+        public DataTable GetTorneiIscrittiAllenatore(int idallenatore)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable risultato;
+            sql = "";
+            sql += "SELECT DISTINCT Torneo.IDTorneo,Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,PuntiVittoria,Torneo.Montepremi,DataInizio,DataFine,Torneo.Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,Squadra.NomeTeam,CONCAT(atleta1.Nome, ' ', atleta1.cognome) AS Atleta1, CONCAT(atleta2.Nome, ' ', atleta2.cognome) AS Atleta2 "+
+            "FROM(((((Torneo "+
+            "LEFT JOIN TipoTorneo ON Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo) " +
+            "LEFT JOIN ListaIscritti ON ListaIscritti.IDTorneo = Torneo.IDTorneo) " +
+            "LEFT JOIN Squadra ON ListaIscritti.IDSquadra = Squadra.IDSquadra) " +
+            "LEFT JOIN Atleta atleta1 ON Squadra.IDAtleta1 = atleta1.IDAtleta) " +
+            "LEFT JOIN Atleta atleta2 ON Squadra.IDAtleta2 = atleta2.IDAtleta) " +
+            "WHERE(ListaIscritti.IDAllenatore = @idallenatore) AND GETDATE()< CAST(Torneo.dataInizio AS DATE)";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idallenatore", idallenatore));
             risultato = new DataTable();
             adapter = new SqlDataAdapter(comando);
             conn.Open();
@@ -1648,7 +1719,7 @@ namespace WebAPIAuthJWT.Helpers
             "Partecipa.idsquadra = Squadra.idsquadra AND Partecipa.idtorneo = Torneo.idtorneo " +
             "AND datediff(day,datafine,GETDATE()) BETWEEN 121 AND 365 GROUP BY idatleta2 " +
             ") " +
-            "SELECT idatleta, cognome, nome, sum(punti) AS Punteggi " +
+            "SELECT idatleta, cognome, nome, sum(punti+Atleta.PuntiBase) AS Punteggi " +
             "FROM punteggi, atleta WHERE idatleta=idAtl AND atleta.sesso=@Sesso " +
             "GROUP BY idatleta,cognome,nome HAVING sum(punti)>0 ORDER BY sum(punti) DESC,Cognome,Nome";
             comando = new SqlCommand(sql, conn);
@@ -3280,6 +3351,41 @@ namespace WebAPIAuthJWT.Helpers
             return query;
         }
 
+        public DataTable GetTesseraInfo(int idsocieta)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            sql = "";
+            sql += "SELECT DISTINCT CONCAT(Atleta.Nome,' ',Atleta.Cognome)as Atleta,StoricoTessereAtleti.CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo FROM StoricoTessereAtleti,Atleta,Societa WHERE StoricoTessereAtleti.IDAtleta=Atleta.IDAtleta AND AnnoTesseramento= YEAR(GETDATE()) AND StoricoTessereAtleti.IDSocieta=@idsocieta;";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idsocieta", idsocieta));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+        public DataTable GetTesseraInfoAllenatore(int idsocieta)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            sql = "";
+            sql += "SELECT DISTINCT CONCAT(Allenatore.Nome,' ',Allenatore.Cognome)as Allenatore,StoricoTessereAllenatori.CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo FROM StoricoTessereAllenatori,Allenatore,Societa WHERE StoricoTessereAllenatori.IDAllenatore=Allenatore.IDAllenatore AND AnnoTesseramento= YEAR(GETDATE()) AND StoricoTessereAllenatori.IDSocieta=@idsocieta";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idsocieta", idsocieta));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
+
         public bool AssegnaTessereBySocieta(int idAtleta, int idSocieta, string codiceTessera, string tipoTessera, DateTime dataTesseramento, int annoTesseramento, double importo)
         {
             string sql;
@@ -3287,25 +3393,88 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "INSERT INTO StoricoTessereAtleti(IDAtleta,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
-                    "VALUES(@IDAtleta,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                sql += "UPDATE Atleta " +
+                    "SET CodiceTessera=@Codicetessera " +
+                    "WHERE IDAtleta=@idatleta";
                 comando = new SqlCommand(sql, conn);
-                comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
-                comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
-                comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
-                comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
-                comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
-                comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
-                comando.Parameters.Add(new SqlParameter("Importo", importo));
+                comando.Parameters.Add(new SqlParameter("idatleta", idAtleta));
+                comando.Parameters.Add(new SqlParameter("Codicetessera", codiceTessera));
                 conn.Open();
                 comando.ExecuteNonQuery();
                 conn.Close();
-                return true;
+                try
+                {
+                    sql = "";
+                    sql += "INSERT INTO StoricoTessereAtleti(IDAtleta,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
+                        "VALUES(@IDAtleta,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDAtleta", idAtleta));
+                    comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                    comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
+                    comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
+                    comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
+                    comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
+                    comando.Parameters.Add(new SqlParameter("Importo", importo));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
             }
             catch(Exception e)
             {
                 return false;
             }
+ 
+        }
+        public bool AssegnaTessereAllenatoreBySocieta(int idAtleta, int idSocieta, string codiceTessera, string tipoTessera, DateTime dataTesseramento, int annoTesseramento, double importo)
+        {
+            string sql;
+            SqlCommand comando;
+            try
+            {
+                sql = "";
+                sql += "UPDATE Allenatore " +
+                    "SET CodiceTessera=@Codicetessera " +
+                    "WHERE IDAllenatore=@idallenatore";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("idallenatore", idAtleta));
+                comando.Parameters.Add(new SqlParameter("Codicetessera", codiceTessera));
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                try
+                {
+                    sql = "";
+                    sql += "INSERT INTO StoricoTessereAllenatori(IDAllenatore,IDSocieta,CodiceTessera,TipoTessera,DataTesseramento,AnnoTesseramento,Importo) " +
+                        "VALUES(@IDAllenatore,@IDSocieta,@CodiceTessera,@TipoTessera,@DataTesseramento,@AnnoTesseramento,@Importo)";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("IDAllenatore", idAtleta));
+                    comando.Parameters.Add(new SqlParameter("IDSocieta", idSocieta));
+                    comando.Parameters.Add(new SqlParameter("CodiceTessera", codiceTessera));
+                    comando.Parameters.Add(new SqlParameter("TipoTessera", tipoTessera));
+                    comando.Parameters.Add(new SqlParameter("DataTesseramento", dataTesseramento.Date));
+                    comando.Parameters.Add(new SqlParameter("AnnoTesseramento", annoTesseramento));
+                    comando.Parameters.Add(new SqlParameter("Importo", importo));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
         }
     }
 }

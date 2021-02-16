@@ -104,5 +104,41 @@ namespace API_AIBVC.Controllers
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta della tessera"));
         }
+
+        //Assegna le tessere agli allenatori
+        [HttpPost("AssegnaTessereAllenatoreBySocieta")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin")]
+        public ActionResult<InfoMsg> AssegnaTessereAllenatoreBySocieta([FromBody]AssegnaTessere assegnaTessere)
+        {
+            if (db.AssegnaTessereAllenatoreBySocieta(assegnaTessere.IDAtleta, assegnaTessere.IDSocieta, assegnaTessere.CodiceTessera, assegnaTessere.TipoTessera, assegnaTessere.DataTesseramento, assegnaTessere.AnnoTesseramento, assegnaTessere.Importo))
+                return Ok(new InfoMsg(DateTime.Today, $"Tessera aggiunta con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'aggiunta della tessera"));
+        }
+
+        //Informazioni Tessere Societa
+        [HttpGet("TessereSocieta/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin")]
+        public DataTable GetTesseraInfo(int idsocieta)
+        {
+            return db.GetTesseraInfo(idsocieta);
+        }
+
+        //Informazioni Tessere Societa allenatori
+        [HttpGet("TessereSocietaAllenatore/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin")]
+        public DataTable GetTesseraInfoAllenatore(int idsocieta)
+        {
+            return db.GetTesseraInfoAllenatore(idsocieta);
+        }
     }
 }
