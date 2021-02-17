@@ -436,5 +436,15 @@ namespace API_AIBVC.Controllers
         {
             return db.GetPartiteTorneo(idTorneo);
         }
+
+        [HttpPut("AssegnaInfoPartita")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public string AssegnaInfoPartita([FromBody]InfoPartita infoPartita)
+        {
+            return db.AssegnaInfoPartita(infoPartita.IDArbitro1, infoPartita.IDArbitro2, infoPartita.Campo, Convert.ToDateTime(infoPartita.DataPartita), Convert.ToDateTime(infoPartita.OraPartita), infoPartita.IDPartita);
+        }
     }
 }
