@@ -570,19 +570,19 @@ namespace WebAPIAuthJWT.Helpers
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("idcomune", societa.IDComune));
                 comando.Parameters.Add(new SqlParameter("nomeSocieta", societa.NomeSocieta));
-                comando.Parameters.Add(new SqlParameter("indirizzo", societa.Indirizzo));
-                comando.Parameters.Add(new SqlParameter("cap", societa.CAP));
+                comando.Parameters.Add(new SqlParameter("indirizzo", societa.IndirizzoSoc));
+                comando.Parameters.Add(new SqlParameter("cap", societa.CAPSoc));
                 comando.Parameters.Add(new SqlParameter("datafondazione", societa.DataFondazione));
                 comando.Parameters.Add(new SqlParameter("dataaffiliazione", societa.DataAffiliazione));
                 comando.Parameters.Add(new SqlParameter("codiceaffiliazione", societa.CodiceAffiliazione));
                 comando.Parameters.Add(new SqlParameter("affiliata", societa.Affiliata));
-                comando.Parameters.Add(new SqlParameter("email", societa.Email));
+                comando.Parameters.Add(new SqlParameter("email", societa.EmailSoc));
                 comando.Parameters.Add(new SqlParameter("sito", societa.Sito));
                 comando.Parameters.Add(new SqlParameter("tel1", societa.Tel1));
                 comando.Parameters.Add(new SqlParameter("tel2", societa.Tel2));
                 comando.Parameters.Add(new SqlParameter("pec", societa.Pec));
                 comando.Parameters.Add(new SqlParameter("piva", societa.PIVA));
-                comando.Parameters.Add(new SqlParameter("cf", societa.CF));
+                comando.Parameters.Add(new SqlParameter("cf", societa.CFSoc));
                 comando.Parameters.Add(new SqlParameter("cu", societa.CU));
                 comando.Parameters.Add(new SqlParameter("idsocieta", societa.IDSocieta));
                 query = new DataTable();
@@ -1392,7 +1392,7 @@ namespace WebAPIAuthJWT.Helpers
             }
             catch (Exception e)
             {
-
+                string c = e.Message;
             }
             return regRiuscita;
         }
