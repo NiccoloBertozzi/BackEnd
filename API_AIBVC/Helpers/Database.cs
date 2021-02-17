@@ -1755,7 +1755,7 @@ namespace WebAPIAuthJWT.Helpers
             ") " +
             "SELECT idatleta, cognome, nome, sum(punti+Atleta.PuntiBase) AS Punteggi " +
             "FROM punteggi, atleta WHERE idatleta=idAtl AND atleta.sesso=@Sesso " +
-            "GROUP BY idatleta,cognome,nome HAVING sum(punti)>0 ORDER BY sum(punti) DESC,Cognome,Nome";
+            "GROUP BY idatleta,cognome,nome HAVING sum(punti+Atleta.PuntiBase)>0 ORDER BY sum(punti+Atleta.PuntiBase) DESC,Cognome,Nome";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("Sesso", sesso));
             query = new DataTable();
