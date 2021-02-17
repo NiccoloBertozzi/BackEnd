@@ -364,25 +364,24 @@ namespace API_AIBVC.Controllers
             return Json(new { output = db.GetArbitriTorneo(idTorneo) });
         }
 
-        /* HO COMMENTATO PERCHE' DAVA ERRORE
-       [HttpPost("GeneraListaIngresso/{IDTorneo}/{IDSupervisore}")]
-       [ProducesResponseType(400)]
-       [ProducesResponseType(404)]
-       [ProducesResponseType(200, Type = typeof(DataTable))]
-       [Authorize(Roles = "Delegato,Admin")]
-       public ActionResult<InfoMsg> GeneraListaIngresso(int idTorneo,int idSupervisore)
-       {
-          Metodo che crea la lista d'ingresso definitiva del torneo
-           if (db.ControlloSupervisore(idSupervisore,idTorneo))
-           {
-               if(db.CreaListaIngresso(idTorneo))
-                   return Ok(new InfoMsg(DateTime.Today, $"Lista di ingresso creata con successo"));
-               else
-                   return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione della lista di ingresso"));
-           }
-           else
-               return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
-        }*/
+        [HttpPost("GeneraListaIngresso/{IDTorneo}/{IDSupervisore}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> GeneraListaIngresso(int idTorneo,int idSupervisore)
+        {
+            //Metodo che crea la lista d'ingresso definitiva del torneo
+            if (db.ControlloSupervisore(idSupervisore,idTorneo))
+            {
+                if(db.CreaListaIngressoETorneoQualifica(idTorneo))
+                    return Ok(new InfoMsg(DateTime.Today, $"Lista di ingresso creata con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione della lista di ingresso"));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
+        }
 
         [HttpGet("GetTorneiSvoltiBySupervisore/{IDSupervisore}")]
         [ProducesResponseType(400)]
