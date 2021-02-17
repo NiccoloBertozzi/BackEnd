@@ -374,7 +374,7 @@ namespace API_AIBVC.Controllers
             //Metodo che crea la lista d'ingresso definitiva del torneo
             if (db.ControlloSupervisore(idSupervisore,idTorneo))
             {
-                if(db.CreaListaIngresso(idTorneo))
+                if(db.CreaListaIngressoETorneoQualifica(idTorneo))
                     return Ok(new InfoMsg(DateTime.Today, $"Lista di ingresso creata con successo"));
                 else
                     return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione della lista di ingresso"));
