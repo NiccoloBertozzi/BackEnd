@@ -124,5 +124,19 @@ namespace API_AIBVC.Controllers
         {
             return db.GetAnagraficaDelegato(Supervisori_Id);
         }
+
+        [HttpPut("AssegnaCampo")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Delegato,Admin")]
+        public ActionResult<InfoMsg> AssegnaCampo([FromBody] AssegnaCampo assegnaCampo)
+        {
+            if (db.AssegnaCampo(assegnaCampo.IdPartita, assegnaCampo.NumeroCampo))
+                return Ok(new InfoMsg(DateTime.Today, $"Campo assegnato con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella assegnazione del campo"));
+        }
     }
 }

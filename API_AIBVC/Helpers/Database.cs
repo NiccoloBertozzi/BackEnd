@@ -1557,6 +1557,30 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
+        public bool AssegnaCampo(int idPartita, int numeroCampo)
+        {
+            SqlCommand comando;
+            SqlParameter parametro;
+            string sql;
+            try
+            {
+                sql = "";
+                sql += "UPDATE Partita SET campo = @numeroCampo WHERE idPartita = @idPartita";
+                comando = new SqlCommand(sql, conn);
+                parametro = new SqlParameter("numeroCampo", numeroCampo);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("idPartita", idPartita);
+                comando.Parameters.Add(parametro);
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public DataTable GetPartita(int idTorneo, int numPartita)//Metodo che restituisce le informazioni di una partita
         {
             SqlDataAdapter adapter;
@@ -3480,7 +3504,23 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
-
+        public DataTable GetNumeroCampiSocieta(int idimpianto)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            sql = "";
+            sql += "SELECT NumeroCampi FROM Impianto WHERE idImpianto=@idimpianto";
+            comando = new SqlCommand(sql, conn);
+            comando.Parameters.Add(new SqlParameter("idimpianto", idimpianto));
+            adapter = new SqlDataAdapter(comando);
+            query = new DataTable();
+            conn.Open();
+            adapter.Fill(query);
+            conn.Close();
+            return query;
+        }
         public DataTable GetTesseraInfo(int idsocieta)
         {
             string sql;

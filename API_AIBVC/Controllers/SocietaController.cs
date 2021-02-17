@@ -149,5 +149,16 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTesseraInfoAllenatore(idsocieta);
         }
+
+        //numero campi impianto
+        [HttpGet("NumeroCampiSocieta/{idimpianto}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin,Delegato")]
+        public DataTable GetNumeroCampiSocieta(int idimpianto)
+        {
+            return db.GetNumeroCampiSocieta(idimpianto);
+        }
     }
 }
