@@ -1276,7 +1276,7 @@ namespace WebAPIAuthJWT.Helpers
             }
             return regRiuscita;
         }
-        public bool RegisterSocieta(string comune, string nomeSocieta, string indirizzo, string cap, DateTime dataFondazione, DateTime dataAffilizione, string codAffiliazione, bool affiliata, string email, string sito, string tel1, string tel2, string pec, string piva, string cF, string cU, string pwd)
+        public bool RegisterSocieta(string comune, string nomeSocieta, string indirizzo,string citta, string cap, DateTime dataFondazione, DateTime dataAffilizione, string codAffiliazione, bool affiliata, string email,string presidente,string referente, string sito, string tel1, string tel2, string pec, string piva, string cF, string cU, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -1287,14 +1287,16 @@ namespace WebAPIAuthJWT.Helpers
             try
             {
                 sql = "";
-                sql += "INSERT INTO Societa(IDComune,NomeSocieta,Indirizzo,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Sito,Tel1,Tel2,Pec,PIVA,CF,CU) ";
-                sql += "VALUES (@IDComune,@NomeSocieta,@Indirizzo,@CAP,@DataFondazione,@DataAffiliazione,@CodiceAffiliazione,@Affiliata,@Email,@Sito,@Tel1,@Tel2,@Pec,@PIVA,@CF,@CU)";
+                sql += "INSERT INTO Societa(IDComune,NomeSocieta,Indirizzo,Citta,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Presidente,Referente,Sito,Tel1,Tel2,Pec,PIVA,CF,CU) ";
+                sql += "VALUES (@IDComune,@NomeSocieta,@Indirizzo,@Citta,@CAP,@DataFondazione,@DataAffiliazione,@CodiceAffiliazione,@Affiliata,@Email,@presidente,@referente,@Sito,@Tel1,@Tel2,@Pec,@PIVA,@CF,@CU)";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("IDComune", comune);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("NomeSocieta", nomeSocieta);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Indirizzo", indirizzo);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("Citta", citta);
                 comando.Parameters.Add(parametro);
                 if (cap != null)
                     parametro = new SqlParameter("CAP", cap);
@@ -1313,6 +1315,16 @@ namespace WebAPIAuthJWT.Helpers
                 parametro = new SqlParameter("Affiliata", affiliata);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("Email", email);
+                comando.Parameters.Add(parametro);
+                if (referente != null)
+                    parametro = new SqlParameter("referente", referente);
+                else
+                    parametro = new SqlParameter("referente", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (presidente != null)
+                    parametro = new SqlParameter("presidente", presidente);
+                else
+                    parametro = new SqlParameter("presidente", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 if (sito != null)
                     parametro = new SqlParameter("Sito", sito);

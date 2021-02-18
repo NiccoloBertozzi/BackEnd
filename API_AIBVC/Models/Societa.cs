@@ -22,6 +22,7 @@ namespace TEST.Models
         public string IDComune { get; set; }
         public string NomeSocieta { get; set; }
         public string IndirizzoSoc { get; set; }
+        public string citta { get; set; }
         public string CAPSoc { get; set; }
         public System.DateTime DataFondazione { get; set; }
         public System.DateTime DataAffiliazione { get; set; }
@@ -29,6 +30,8 @@ namespace TEST.Models
         public bool Affiliata { get; set; }
         public string EmailSoc { get; set; }
         public string Sito { get; set; }
+        public string Presidente { get; set; }
+        public string Referente { get; set; }
         public string Tel1 { get; set; }
         public string Tel2 { get; set; }
         public string Pec { get; set; }
