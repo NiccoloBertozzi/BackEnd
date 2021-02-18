@@ -454,5 +454,15 @@ namespace API_AIBVC.Controllers
         {
             return db.AssegnaInfoPartita(infoPartita.IDArbitro1, infoPartita.IDArbitro2, infoPartita.Campo, Convert.ToDateTime(infoPartita.DataPartita), Convert.ToDateTime(infoPartita.OraPartita), infoPartita.IDPartita);
         }
+
+        [HttpPut("UpdateInfoTorneo")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Delegato,Admin")]
+        public string UpdateInfoTorneo([FromBody]AddTorneo modTorneo)
+        {
+            return db.UpdateTorneo(modTorneo.Titolo, modTorneo.PuntiVittoria, modTorneo.Montepremi, Convert.ToDateTime(modTorneo.DataChiusuraIscrizioni), Convert.ToDateTime(modTorneo.DataInizio), Convert.ToDateTime(modTorneo.DataFine), modTorneo.Genere, modTorneo.IDFormulaTorneo, modTorneo.NumMaxTeamMainDraw, modTorneo.NumMaxTeamQualifiche, modTorneo.IDParametriTorneo, modTorneo.IDTipoTorneo, modTorneo.QuotaIscrizione, modTorneo.IDSocieta, modTorneo.NumTeamQualificati, modTorneo.NumWildCard, modTorneo.IDImpianto, modTorneo.Outdoor, modTorneo.RiunioneTecnica, modTorneo.OraInizio, modTorneo.IDSupervisore, modTorneo.IDSupArbitrale, modTorneo.IDDirettore, Convert.ToDateTime(modTorneo.DataPubblicazioneLista), modTorneo.VisibilitaListaIngresso, modTorneo.UrlLocandina, modTorneo.IDTorneo);
+        }
     }
 }

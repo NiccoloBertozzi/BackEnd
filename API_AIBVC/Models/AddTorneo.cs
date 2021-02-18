@@ -27,5 +27,15 @@ namespace API_AIBVC.Models
         public bool Outdoor { get; set; }
         public bool RiunioneTecnica { get; set; }
         public string OraInizio { get; set; }
+        public int IDTipoTorneo { get; set; }
+        public int IDFormulaTorneo { get; set; }
+        public string DataPubblicazioneLista { get; set; }
+        public int VisibilitaListaIngresso { get; set; }
+        public string UrlLocandina { get; set; }
+        public int IDTorneo { get; set; }
+        public int IDSupervisore { get; set; }
+        public int IDSupArbitrale { get; set; }
+        public int IDDirettore { get; set; }
+        public int[] IDParametriTorneo { get; set; }
     }
 }
