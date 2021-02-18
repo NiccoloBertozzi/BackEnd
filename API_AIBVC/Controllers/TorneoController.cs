@@ -9,6 +9,7 @@ using WebAPIAuthJWT.Helpers;
 using API_AIBVC.Models;
 using TEST.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 
 namespace API_AIBVC.Controllers
 {
@@ -40,6 +41,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(200, Type = typeof(DataTable))]
         public DataTable GetTorneiTipo(int idTipo)
         {
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneiTipo(idTipo);
         }        //Restituisce tornei di un determinato tipo
 
@@ -109,10 +113,12 @@ namespace API_AIBVC.Controllers
         [HttpGet("AtletiSocieta/{idsocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        [ProducesResponseType(200, Type = typeof(InfoMsg))]
         public DataTable GetAtletiSocieta(int idsocieta)
         {
+            //[Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+            //HttpContext.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            //HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "http://aibvcwa.azurewebsites.net");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
@@ -123,10 +129,12 @@ namespace API_AIBVC.Controllers
         [HttpGet("AllenatoriSocieta/{idSocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+        [ProducesResponseType(200, Type = typeof(InfoMsg))]
         public DataTable GetAllenatoriSocieta(int idsocieta)
         {
+            //[Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
+            //HttpContext.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            //HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "http://aibvcwa.azurewebsites.net");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
