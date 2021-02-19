@@ -41,7 +41,7 @@ namespace API_AIBVC.Controllers
         public ActionResult<InfoMsg> AggiornaRisultati([FromBody] AggiornaSet aggiornaSet)
         {
             //Mi servono: IDTorneo,IDPartita,Numero del set e i punti fatti dalle 2 squadre
-            if (db.UploadResults(db.GetIDTorneo(aggiornaSet.TitoloTorneo), aggiornaSet.NumPartita, aggiornaSet.NumSet, aggiornaSet.PuntiTeam1, aggiornaSet.PuntiTeam2))
+            if (db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.NumSet, aggiornaSet.PuntiTeam1, aggiornaSet.PuntiTeam2))
                 return Ok(new InfoMsg(DateTime.Today, $"Risultato aggiornato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'aggiornamento del risultato"));
