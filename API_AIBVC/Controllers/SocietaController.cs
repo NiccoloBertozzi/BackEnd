@@ -94,10 +94,10 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Societa,Admin")]
-        public JsonResult GetAllImpianti()
+        [Authorize(Roles = "Societa,Admin,Delegato")]
+        public DataTable GetAllImpianti()
         {
-            return Json(new { output = db.GetAllImpianti() });
+            return db.GetAllImpianti();
         }
 
         //Assegna le tessere agli atleti
