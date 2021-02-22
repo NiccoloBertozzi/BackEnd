@@ -3507,7 +3507,7 @@ namespace WebAPIAuthJWT.Helpers
             SqlDataAdapter adapter;
             DataTable query;
             sql = "";
-            sql += "SELECT IDImpianto,NomeImpianto FROM Impianto";
+            sql += "SELECT IDImpianto,NomeImpianto FROM Impianto ORDER BY NomeImpianto ASC";
             adapter = new SqlDataAdapter(sql, conn);
             query = new DataTable();
             conn.Open();
