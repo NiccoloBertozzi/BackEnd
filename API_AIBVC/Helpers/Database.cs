@@ -1527,7 +1527,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
-        public bool UploadResults(int idTorneo, int idPartita, int numSet, int puntiTeam1, int puntiTeam2)
+        public bool UploadResults(int idTorneo, int idPartita, int pt1s1, int pt1s2, int pt1s3, int pt2s1, int pt2s2, int pt2s3)
         {
             SqlCommand comando;
             SqlParameter parametro;
@@ -1535,25 +1535,24 @@ namespace WebAPIAuthJWT.Helpers
             //Metodo che aggiurna i risultati di una partita
             try
             {
-                sql = "";
-                sql += "UPDATE Partita ";
-                switch (numSet)
-                {
-                    case 1:
-                        sql += "SET PT1S1=@PuntiTeam1,PT2S1=@PuntiTeam2 ";
-                        break;
-                    case 2:
-                        sql += "SET PT1S2=@PuntiTeam1,PT2S2=@PuntiTeam2 ";
-                        break;
-                    case 3:
-                        sql += "SET PT1S3=@PuntiTeam1,PT2S3=@PuntiTeam2 ";
-                        break;
-                }
-                sql += "WHERE IDPartita=@IDPartita AND IDTorneo=@IDTorneo";
+                sql = "" + 
+                "UPDATE Partita " +
+                "SET PT1S1=@pt1s1,PT2S1=@pt2s1" +
+                ",PT1S2=@pt1s2,PT2S2=@pt2s2" +
+                ",PT1S3=@pt1s3,PT2S3=@pt2s3 " +
+                "WHERE IDPartita=@IDPartita AND IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("PuntiTeam1", puntiTeam1);
+                parametro = new SqlParameter("pt1s1", pt1s1);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("PuntiTeam2", puntiTeam2);
+                parametro = new SqlParameter("pt1s2", pt1s2);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("pt1s3", pt1s3);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("pt2s1", pt2s1);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("pt2s2", pt2s2);
+                comando.Parameters.Add(parametro);
+                parametro = new SqlParameter("pt2s3", pt2s3);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDPartita", idPartita);
                 comando.Parameters.Add(parametro);

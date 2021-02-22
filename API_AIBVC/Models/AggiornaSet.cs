@@ -7,10 +7,13 @@ namespace API_Supervisore.Models
 {
     public class AggiornaSet
     {
-        public string TitoloTorneo { get; set; }
+        public int IdTorneo { get; set; }
         public int NumPartita { get; set; }
-        public int NumSet { get; set; }
-        public int PuntiTeam1 { get; set; }
-        public int PuntiTeam2 { get; set; }
+        public int pt1s3 { get; set; }
+        public int pt1s2 { get; set; }
+        public int pt1s1 { get; set; }
+        public int pt2s3 { get; set; }
+        public int pt2s2 { get; set; }
+        public int pt2s1 { get; set; }
     }
 }
