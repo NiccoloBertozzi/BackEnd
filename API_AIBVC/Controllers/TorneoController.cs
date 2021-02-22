@@ -114,14 +114,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
         public DataTable GetAtletiSocieta(int idsocieta)
         {
-            //[Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-            //HttpContext.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-            //HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "http://aibvcwa.azurewebsites.net");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetAtletiSocieta(idsocieta);
         }
 
@@ -130,14 +125,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
         public DataTable GetAllenatoriSocieta(int idsocieta)
         {
-            //[Authorize(Roles = "Atleta,Societa,Admin,Delegato,Allenatore,Admin")]
-            //HttpContext.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-            //HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "http://aibvcwa.azurewebsites.net");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetAllenatoreSocieta(idsocieta);
         }
 

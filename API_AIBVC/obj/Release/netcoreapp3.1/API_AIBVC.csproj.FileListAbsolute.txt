@@ -259,3 +259,4 @@ C:\Users\Riccardo\Desktop\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.
 C:\Users\Riccardo\Desktop\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.dll
 C:\Users\Riccardo\Desktop\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
 E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties\ServiceDependencies\AIBVCapi - Web Deploy\profile.arm.json
+C:\Users\berto\Desktop\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties\ServiceDependencies\AIBVCapi - Web Deploy\profile.arm.json
