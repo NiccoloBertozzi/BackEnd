@@ -21,16 +21,16 @@ namespace API_AIBVC.Controllers
         Database db = new Database();
 
         //Restituisce tornei prima della data inserita
-        [HttpGet("GetTornei/{Data}")]
+        [HttpGet("GetTornei")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        public DataTable GetTornei(DateTime Data)
+        public DataTable GetTornei()
         {
             HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
             HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
-            return db.GetTorneiEntroData(Data);
+            return db.GetTorneiEntroData();
         }        //Restituisce tornei prima della data inserita
 
         //Restituisce tornei di un determinato tipo
