@@ -539,7 +539,7 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT IDSocieta,Comune.Citta,NomeSocieta,Indirizzo,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Sito,Tel1,Tel2,Pec,PIVA,CF,CU ";
+            sql += "SELECT IDSocieta,Comune.Citta,NomeSocieta,Indirizzo,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Sito,Tel1,Tel2,Pec,PIVA,CF,CU,Presidente,Referente ";
             sql += "FROM Societa ";
             sql += "LEFT JOIN Comune ON Societa.IDComune = Comune.IDComune ";
             sql += "WHERE IDSocieta=@IDSocieta";
@@ -563,8 +563,8 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 sql = "";
                 sql += "UPDATE Societa SET IDComune=@idcomune,NomeSocieta=@nomeSocieta,Indirizzo=@indirizzo," +
-                    "CAP = @cap,DataFondazione = @datafondazione,DataAffiliazione = @dataaffiliazione," +
-                    "CodiceAffiliazione = @codiceaffiliazione,Affiliata = @affiliata,Email = @email,Sito = @sito,Tel1 = @tel1," +
+                    "CAP = @cap,DataFondazione = @datafondazione, Citta=@Citta,DataAffiliazione = @dataaffiliazione," +
+                    "CodiceAffiliazione = @codiceaffiliazione,Referente=@referente,Presidente=@presidente,Affiliata = @affiliata,Email = @email,Sito = @sito,Tel1 = @tel1," +
                     "Tel2 = @tel2,Pec = @pec,PIVA = @piva,CF = @cf,CU = @cu" +
                     " WHERE Societa.IDSocieta = @idsocieta;";
                 comando = new SqlCommand(sql, conn);
@@ -573,8 +573,11 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(new SqlParameter("indirizzo", societa.IndirizzoSoc));
                 comando.Parameters.Add(new SqlParameter("cap", societa.CAPSoc));
                 comando.Parameters.Add(new SqlParameter("datafondazione", societa.DataFondazione));
+                comando.Parameters.Add(new SqlParameter("Citta", societa.citta));
                 comando.Parameters.Add(new SqlParameter("dataaffiliazione", societa.DataAffiliazione));
                 comando.Parameters.Add(new SqlParameter("codiceaffiliazione", societa.CodiceAffiliazione));
+                comando.Parameters.Add(new SqlParameter("referente", societa.Referente));
+                comando.Parameters.Add(new SqlParameter("presidente", societa.Presidente));
                 comando.Parameters.Add(new SqlParameter("affiliata", societa.Affiliata));
                 comando.Parameters.Add(new SqlParameter("email", societa.EmailSoc));
                 comando.Parameters.Add(new SqlParameter("sito", societa.Sito));
@@ -592,8 +595,9 @@ namespace WebAPIAuthJWT.Helpers
                 int p = query.Rows.Count;
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                string c = e.Message;
                 return false;
             }
         }
