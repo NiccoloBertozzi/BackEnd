@@ -3024,13 +3024,11 @@ namespace WebAPIAuthJWT.Helpers
             return query;
         }
 
-        public bool CreaListaIngressoETorneoQualifica(int idTorneo)
+        public string CreaLista(int idTorneo)
         {
             SqlCommand comando;
             SqlDataAdapter adapter;
-            SqlParameter parametro;
-            DataTable query, idTorneoQualifica,numTabelloneWildCard, squadreQualifica; //DataTable per raccogliere il numero di team del tabellone e il numero di wildcard
-            DataTable[] torneoPrincipale;
+            DataTable query, numTabelloneWildCard; //DataTable per raccogliere il numero di team del tabellone e il numero di wildcard
             string sql;
             try
             {
@@ -3065,9 +3063,9 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                     }
                 }
-                //Prendo NumMaxTeamMainDraw e NumWildCard del torneo
+                //Prendo NumMaxTeamMainDraw del torneo
                 sql = "";
-                sql += "SELECT NumMaxTeamMainDraw,NumWildCard,NumMaxTeamQualifiche,NumTeamQualificati FROM Torneo WHERE IDTorneo=@IDTorneo";
+                sql += "SELECT NumMaxTeamMainDraw,NumWildCard FROM Torneo WHERE IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
                 adapter = new SqlDataAdapter(comando);
@@ -3106,6 +3104,34 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                     }
                 }
+                return "Lista di ingresso creata con successo!";
+            }
+            catch (Exception e)
+            {
+                return "Errore: " + e.Message;
+            }
+        }
+        //Metodo che crea il torneo di qualifica
+        public string CreaTorneoQualifica(int idTorneo)
+        {
+            SqlCommand comando;
+            SqlDataAdapter adapter;
+            SqlParameter parametro;
+            DataTable idTorneoQualifica, numTabelloneWildCard, squadreQualifica; //DataTable per raccogliere il numero di team del tabellone e il numero di wildcard
+            DataTable[] torneoPrincipale;
+            string sql;
+            try
+            {
+                //Prendo NumMaxTeamMainDraw,NumWildCard,NumMaxTeamQualifiche e NumTeamQualificati del torneo
+                sql = "";
+                sql += "SELECT NumMaxTeamMainDraw,NumWildCard,NumMaxTeamQualifiche,NumTeamQualificati FROM Torneo WHERE IDTorneo=@IDTorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                adapter = new SqlDataAdapter(comando);
+                numTabelloneWildCard = new DataTable();
+                conn.Open();
+                adapter.Fill(numTabelloneWildCard);
+                conn.Close();
                 //Prendo le informazioni del torneo
                 torneoPrincipale = new DataTable[3];
                 torneoPrincipale = GetTorneoByID(idTorneo);
@@ -3196,14 +3222,14 @@ namespace WebAPIAuthJWT.Helpers
                     adapter.Fill(squadreQualifica);
                     conn.Close();
                     //Collego le squadre al torneo di qualifica
-                    for(int i = 0; i < query.Rows.Count; i++)
+                    for (int i = 0; i < squadreQualifica.Rows.Count; i++)
                     {
                         sql = "";
                         sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints) ";
                         sql += "VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints)";
                         comando.Parameters.Add(new SqlParameter("IDSquadra", squadreQualifica.Rows[i]["IDSquadra"]));
                         comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica.Rows[0][0]));
-                        if (query.Rows[i]["IDAllenatore"] != null)
+                        if (squadreQualifica.Rows[i]["IDAllenatore"] != null)
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", squadreQualifica.Rows[i]["IDAllenatore"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", DBNull.Value));
@@ -3213,10 +3239,10 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                     }
                     //Creo le partite di qualifica in base al numero di team che si qualificano al torneo
-                    switch(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]))
+                    switch (Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]))
                     {
                         case 8:
-                            PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]),squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]),Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]));
+                            PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]), squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]));
                             break;
 
                         case 4:
@@ -3227,15 +3253,14 @@ namespace WebAPIAuthJWT.Helpers
 
                             break;
                     }
-                    return true;
+                    return "Torneo di qualifica creato!";
                 }
                 else
-                    return false;
+                    return "Torneo principale non trovato";
             }
             catch (Exception e)
             {
-                string errore = e.Message;
-                return false;
+                return "Errore: " + e.Message;
             }
         }
         //Metodo che crea le partite per il torneo di qualifica con 4 o 8 NTQ (NumTeamQualificati) 
