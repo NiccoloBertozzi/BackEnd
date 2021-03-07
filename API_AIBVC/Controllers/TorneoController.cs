@@ -362,7 +362,7 @@ namespace API_AIBVC.Controllers
             return Json(new { output = db.GetArbitriTorneo(idTorneo) });
         }
 
-        [HttpPost("GeneraListaIngresso/{IDTorneo}/{IDSupervisore}")]
+        /*[HttpPost("GeneraListaIngresso/{IDTorneo}/{IDSupervisore}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
@@ -379,7 +379,7 @@ namespace API_AIBVC.Controllers
             }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo"));
-        }
+        }*/
 
         [HttpGet("GetTorneiSvoltiBySupervisore/{IDSupervisore}")]
         [ProducesResponseType(400)]
@@ -455,14 +455,28 @@ namespace API_AIBVC.Controllers
             return db.UpdateTorneo(modTorneo.Titolo, modTorneo.PuntiVittoria, modTorneo.Montepremi, Convert.ToDateTime(modTorneo.DataChiusuraIscrizioni), Convert.ToDateTime(modTorneo.DataInizio), Convert.ToDateTime(modTorneo.DataFine), modTorneo.Genere, modTorneo.IDFormulaTorneo, modTorneo.NumMaxTeamMainDraw, modTorneo.NumMaxTeamQualifiche, modTorneo.IDParametriTorneo, modTorneo.IDTipoTorneo, modTorneo.QuotaIscrizione, modTorneo.IDSocieta, modTorneo.NumTeamQualificati, modTorneo.NumWildCard, modTorneo.IDImpianto, modTorneo.Outdoor, modTorneo.RiunioneTecnica, modTorneo.OraInizio, modTorneo.IDSupervisore, modTorneo.IDSupArbitrale, modTorneo.IDDirettore, Convert.ToDateTime(modTorneo.DataPubblicazioneLista), modTorneo.VisibilitaListaIngresso, modTorneo.UrlLocandina, modTorneo.IDTorneo);
         }
 
-        [HttpPost("CreaListaIngresso/{IDTorneo}")]
+        [HttpPost("CreaListaIngresso/{IDTorneo}/{IDSupervisore}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public string CreaListaIngresso(int idTorneo)
+        public string CreaListaIngresso(int idTorneo, int idSupervisore)
         {
-            return db.CreaLista(idTorneo);
+            //Metodo che crea la lista d'ingresso definitiva del torneo
+            if (db.ControlloSupervisore(idSupervisore, idTorneo))
+                return db.CreaLista(idTorneo);
+            else
+                return "Non sei il supervisore di questo torneo";
+        }
+
+        [HttpPost("CreaTorneoQualifiche/{IDTorneo}/{dataInizioQualifiche}/{dataFineQualifiche}/{dataPartite2Turno}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public string CreaTorneoQualifiche(int idTorneo, string dataInizioQualifiche, string dataFineQualifiche, string dataPartite2Turno)
+        {
+            return db.CreaTorneoQualifica(idTorneo, Convert.ToDateTime(dataInizioQualifiche), Convert.ToDateTime(dataFineQualifiche), Convert.ToDateTime(dataPartite2Turno));
         }
     }
 }
