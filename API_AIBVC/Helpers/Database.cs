@@ -3966,5 +3966,61 @@ namespace WebAPIAuthJWT.Helpers
                 return "ERRORE: " + e.Message;
             }
         }
+        public string AssegnaArbitriPartita(int idArbitro1, int idArbitro2, int idTorneo, int numPartita)
+        {
+            //Metodo per assegnare gli arbitri alle partite
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable delegatiTorneo;
+            bool trovaArbitri = false;
+            try
+            {
+                //Prendo tutti gli arbitri collegati al torneo
+                sql = "";
+                sql += "SELECT IDDelegato FROM ArbitraTorneo WHERE IDTorneo=@IDTorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                adapter = new SqlDataAdapter(comando);
+                delegatiTorneo = new DataTable();
+                conn.Open();
+                adapter.Fill(delegatiTorneo);
+                conn.Close();
+                //Cerco se gli arbitri sono presenti
+                for(int i = 0; i < delegatiTorneo.Rows.Count; i++)
+                {
+                    if (Convert.ToInt32(delegatiTorneo.Rows[i]["IDDelegato"]) == idArbitro1 || Convert.ToInt32(delegatiTorneo.Rows[i]["IDDelegato"]) == idArbitro2)
+                        trovaArbitri = true;
+                }
+                if (trovaArbitri)//Se almeno un arbitro è stato trovato:
+                {
+                    sql = "";
+                    sql += "UPDATE Partita " +
+                        "SET IDArbitro1=@Arbitro1,IDArbitro2=@Arbitro2 " +
+                        "WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
+                    comando = new SqlCommand(sql, conn);
+                    if (idArbitro1 != 0)
+                        comando.Parameters.Add(new SqlParameter("Arbitro1", idArbitro1));
+                    else
+                        comando.Parameters.Add(new SqlParameter("Arbitro1", DBNull.Value));
+                    if (idArbitro2 != 0)
+                        comando.Parameters.Add(new SqlParameter("Arbitro2", idArbitro2));
+                    else
+                        comando.Parameters.Add(new SqlParameter("Arbitro2", DBNull.Value));
+                    comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return "Arbitri/o assegnati/o alla partita";
+                }
+                else
+                    return "Nessuno dei due arbitri trovato tra quelli collegati al torneo";
+            }
+            catch(Exception e)
+            {
+                return "ERRORE: " + e.Message;
+            }
+        }
     }
 }

@@ -478,5 +478,18 @@ namespace API_AIBVC.Controllers
         {
             return db.CreaTorneoQualifica(idTorneo, Convert.ToDateTime(dataInizioQualifiche), Convert.ToDateTime(dataFineQualifiche), Convert.ToDateTime(dataPartite2Turno));
         }
+
+        [HttpPut("AssegnaArbitriPartite")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public string AssegnaArbitriPartite([FromBody]AddArbitroPartita addArbitroPart)
+        {
+            if (db.ControlloSupervisore(addArbitroPart.IDDelegato, addArbitroPart.IDTorneo))
+                return db.AssegnaArbitriPartita(addArbitroPart.IDArbitro1, addArbitroPart.IDArbitro2, addArbitroPart.IDTorneo, addArbitroPart.NumPartita);
+            else
+                return "Non sei il supervisore di questo torneo";
+        }
     }
 }
