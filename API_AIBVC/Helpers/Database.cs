@@ -1506,14 +1506,27 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
-        public bool UploadResults(int idTorneo, int idPartita, int pt1s1, int pt1s2, int pt1s3, int pt2s1, int pt2s2, int pt2s3)
+        public bool UploadResults(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet)
         {
             SqlCommand comando;
             SqlParameter parametro;
+            SqlDataAdapter adapter;
+            DataTable puntiVittoria;
             string sql;
             //Metodo che aggiurna i risultati di una partita
             try
             {
+                //Prendo i punti vittoria dal torneo
+                sql = "";
+                sql += "SELECT PuntiVittoria FROM Torneo WHERE IDTorneo=@IDTorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                adapter = new SqlDataAdapter(comando);
+                puntiVittoria = new DataTable();
+                conn.Open();
+                adapter.Fill(puntiVittoria);
+                conn.Close();
+                //Update del punteggio
                 sql = "" + 
                 "UPDATE Partita " +
                 "SET PT1S1=@pt1s1,PT2S1=@pt2s1" +
@@ -1540,6 +1553,11 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 comando.ExecuteNonQuery();
                 conn.Close();
+                //Controllo se qualcuno ha vinto il set
+                if ((((pt1s1 - pt2s1) >= 2 || (pt1s1 - pt2s1) <= -2) && (pt1s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s2 - pt2s2) >= 2 || (pt1s2 - pt2s2) <= -2) && (pt1s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s3 - pt2s3) >= 2 || (pt1s3 - pt2s3) <= -2) && (pt1s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))))
+                {
+
+                }
                 return true;
             }
             catch
@@ -4021,6 +4039,17 @@ namespace WebAPIAuthJWT.Helpers
             {
                 return "ERRORE: " + e.Message;
             }
+        }
+        public string AvanzaTabelloneQualifiche(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3)
+        {
+            //Metodo per l'avanzamento nel tabellone di qualifiche
+            //Utilizzo il metodo UploadResults per registrare i punti partita
+            if (UploadResults(idTorneo, idPartita, pt1s1, pt2s1, pt1s2, pt2s2, pt1s3, pt2s3))
+            {
+
+            }
+            else
+                return "Problemi con la registrazione dei punti";
         }
     }
 }
