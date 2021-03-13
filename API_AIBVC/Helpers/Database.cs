@@ -1506,6 +1506,32 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return query;
         }
+        public DataTable GetNumSetVinti(int idTorneo, int idPartita)
+        {
+            //Metodo che restituisce il numero di set vinti dalle squadre durante la partita
+            SqlCommand comando;
+            SqlDataAdapter adapter;
+            DataTable risultato = new DataTable();
+            string sql;
+            try
+            {
+                sql = "";
+                sql += "SELECT SetSQ1,SetSQ2 FROM Partita WHERE IDTorneo=@IDTorneo AND IDPartita=@IDPartita";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("IDPartita", idPartita));
+                adapter = new SqlDataAdapter(comando);
+                conn.Open();
+                adapter.Fill(risultato);
+                conn.Close();
+                return risultato;
+            }
+            catch(Exception e)
+            {
+                conn.Close();
+                return risultato;
+            }
+        }
         public bool UploadResults(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet)
         {
             SqlCommand comando;
@@ -1532,6 +1558,7 @@ namespace WebAPIAuthJWT.Helpers
                 "SET PT1S1=@pt1s1,PT2S1=@pt2s1" +
                 ",PT1S2=@pt1s2,PT2S2=@pt2s2" +
                 ",PT1S3=@pt1s3,PT2S3=@pt2s3 " +
+                ",SetSQ1=@SetSQ1,SetSQ2=@SetSQ2 " +
                 "WHERE IDPartita=@IDPartita AND IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("pt1s1", pt1s1);
@@ -1550,14 +1577,43 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDTorneo", idTorneo);
                 comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
                 //Controllo se qualcuno ha vinto il set
                 if ((((pt1s1 - pt2s1) >= 2 || (pt1s1 - pt2s1) <= -2) && (pt1s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s2 - pt2s2) >= 2 || (pt1s2 - pt2s2) <= -2) && (pt1s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s3 - pt2s3) >= 2 || (pt1s3 - pt2s3) <= -2) && (pt1s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))))
                 {
-
+                    if (Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) < 3 && Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) < 3)
+                    {
+                        //Controllo a che set sono
+                        switch (numSet)
+                        {
+                            case 1:
+                                if ((pt1s1 - pt2s1) >= 2)
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1));
+                                else
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1));
+                                break;
+                            case 2:
+                                if ((pt1s2 - pt2s2) >= 2)
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1));
+                                else
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1));
+                                break;
+                            case 3:
+                                if ((pt1s3 - pt2s3) >= 2)
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1));
+                                else
+                                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1));
+                                break;
+                        }
+                    }
                 }
+                else //Se non è finito il set, lascio i set vinti di prima
+                {
+                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"])));
+                    comando.Parameters.Add(new SqlParameter("SetSQ1", Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"])));
+                }
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
                 return true;
             }
             catch
