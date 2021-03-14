@@ -245,18 +245,15 @@ namespace API_AIBVC.Controllers
             return db.GetImpianti(idSocieta);
         }
 
-        //Autorizza il torneo
-        [HttpPut("AutorizzaTorneo/{idTorneo}")]
+        //Autorizza o non autorizza il torneo
+        [HttpPut("AutorizzaTorneo/{idTorneo}/{Autorizza}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Admin")]
-        public ActionResult<InfoMsg> AutorizzaTorneo(int idTorneo)
+        public string AutorizzaTorneo(int idTorneo, bool autorizzaONo)
         {
-            if (db.AutorizzaTorneo(idTorneo))
-                return Ok(new InfoMsg(DateTime.Today, $"Torneo autorizzato con successo"));
-            else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'autorizzazione del torneo"));
+            return db.AutorizzaTorneo(idTorneo, autorizzaONo);
         }
 
         //Assegnazione dei delegati del torneo
@@ -490,6 +487,16 @@ namespace API_AIBVC.Controllers
                 return db.AssegnaArbitriPartita(addArbitroPart.IDArbitro1, addArbitroPart.IDArbitro2, addArbitroPart.IDTorneo, addArbitroPart.NumPartita);
             else
                 return "Non sei il supervisore di questo torneo";
+        }
+
+        [HttpGet("GetStatoTorneo/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Societa,Admin")]
+        public string GetStatoTorneo(int idTorneo)
+        {
+            return db.GetStatoTornei(idTorneo);
         }
     }
 }

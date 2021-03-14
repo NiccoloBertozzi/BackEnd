@@ -2488,28 +2488,41 @@ namespace WebAPIAuthJWT.Helpers
                 return null;
             }
         }//ritorna i tutti i tipi di formula
-        public bool AutorizzaTorneo(int idTorneo)
+        public string AutorizzaTorneo(int idTorneo, bool autorizza)
         {
-            SqlDataAdapter adapter;
             SqlCommand comando;
             SqlParameter parametro;
             string sql;
             try
             {
-                sql = "";
-                sql += "UPDATE Torneo SET Autorizzato=1 WHERE IdTorneo=@idTorneo";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("idTorneo", idTorneo);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                return true;
+                if (autorizza)
+                {
+                    sql = "";
+                    sql += "UPDATE Torneo SET Autorizzato=1 WHERE IdTorneo=@idTorneo";
+                    comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("idTorneo", idTorneo);
+                    comando.Parameters.Add(parametro);
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return "Torneo autorizzato";
+                }
+                else
+                {
+                    sql = "";
+                    sql += "UPDATE Torneo SET Annullato=1 WHERE IdTorneo=@idTorneo";
+                    comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("idTorneo", idTorneo);
+                    comando.Parameters.Add(parametro);
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                    return "Torneo non autorizzato";
+                }
             }
             catch (Exception e)
             {
-                string errore = e.Message;
-                return false;
+                return "Errore: " + e.Message;
             }
         }
         public bool AssegnaSupervisori(int idSupervisore, int idSupArbitrale, int idDirettore, int idTorneo)
@@ -4096,16 +4109,47 @@ namespace WebAPIAuthJWT.Helpers
                 return "ERRORE: " + e.Message;
             }
         }
-        public string AvanzaTabelloneQualifiche(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3)
+        public string AvanzaTabelloneQualifiche(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet)
         {
             //Metodo per l'avanzamento nel tabellone di qualifiche
             //Utilizzo il metodo UploadResults per registrare i punti partita
-            if (UploadResults(idTorneo, idPartita, pt1s1, pt2s1, pt1s2, pt2s2, pt1s3, pt2s3))
+            if (UploadResults(idTorneo, idPartita, pt1s1, pt2s1, pt1s2, pt2s2, pt1s3, pt2s3, numSet))
             {
 
+                return "Avanzamento avvenuto con successo";
             }
             else
                 return "Problemi con la registrazione dei punti";
+        }
+        public string GetStatoTornei(int idTorneo)
+        {
+            //Metodo che restituisce lo stato del torneo (rifiutato, accettato, in attesa)
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable query;
+            try
+            {
+                sql = "";
+                sql += "SELECT Autorizzato,Annullato FROM Torneo WHERE IDTorneo=@IDTorneo";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                adapter = new SqlDataAdapter(comando);
+                query = new DataTable();
+                conn.Open();
+                adapter.Fill(query);
+                conn.Close();
+                if (Convert.ToInt32(query.Rows[0]["Autorizzato"]) == 1)
+                    return "Torneo autorizzato";
+                else if (Convert.ToInt32(query.Rows[0]["Annullato"]) == 1)
+                    return "Torneo non autorizzato";
+                else
+                    return "Torneo in attesa";
+            }
+            catch(Exception exc)
+            {
+                return "Errore: " + exc.Message;
+            }
         }
     }
 }

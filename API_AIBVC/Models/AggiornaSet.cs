@@ -15,5 +15,6 @@ namespace API_Supervisore.Models
         public int pt2s3 { get; set; }
         public int pt2s2 { get; set; }
         public int pt2s1 { get; set; }
+        public int NumSet { get; set; }
     }
 }
