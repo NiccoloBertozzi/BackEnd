@@ -498,5 +498,15 @@ namespace API_AIBVC.Controllers
         {
             return db.GetStatoTornei(idTorneo);
         }
+
+        [HttpGet("GetListaIngresso/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Societa,Atleta,Admin")]
+        public DataTable GetListaIngresso(int idTorneo)
+        {
+            return db.GetListaIngresso(idTorneo);
+        }
     }
 }
