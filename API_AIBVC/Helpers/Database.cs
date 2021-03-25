@@ -3438,7 +3438,7 @@ namespace WebAPIAuthJWT.Helpers
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 3));
                                 break;
                         }
-                        comando.Parameters.Add(new SqlParameter("Fase", "Singolo turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("Fase", "1 turno eliminatorio"));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3493,7 +3493,7 @@ namespace WebAPIAuthJWT.Helpers
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 2));
                                 break;
                         }
-                        comando.Parameters.Add(new SqlParameter("Fase", "Primo turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("Fase", "1 turno eliminatorio"));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3509,7 +3509,7 @@ namespace WebAPIAuthJWT.Helpers
                             comando = new SqlCommand(sql, conn);
                             comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
                             comando.Parameters.Add(new SqlParameter("NumPartita", i + 9));
-                            comando.Parameters.Add(new SqlParameter("Fase", "Secondo turno eliminatorio"));
+                            comando.Parameters.Add(new SqlParameter("Fase", "2 turno eliminatorio"));
                             comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
                             conn.Open();
                             comando.ExecuteNonQuery();
@@ -4142,16 +4142,52 @@ namespace WebAPIAuthJWT.Helpers
                 return "ERRORE: " + e.Message;
             }
         }
-        public string AvanzaTabelloneQualifiche(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet)
+        public string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
         {
             //Metodo per l'avanzamento nel tabellone di qualifiche
             //IMPORTANTE: QUESTO METODO VA RICHIAMATO CON LA FINE DELLA PARTITA
             string sql;
             SqlDataAdapter adapter;
             SqlCommand comando;
-            DataTable query;
+            DataTable partite2Turno, setPartitaFinita;
             try
             {
+                //Prendo le partite per il 2 turno eliminatorio
+                sql = "";
+                sql += "SELECT * FROM Partita WHERE IDTorneo=@IDTorneoQualifiche AND Fase=@Fase";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneoQualifiche", idTorneoQualifiche));
+                comando.Parameters.Add(new SqlParameter("Fase", "2 turno eliminatorio"));
+                adapter = new SqlDataAdapter(comando);
+                partite2Turno = new DataTable();
+                conn.Open();
+                adapter.Fill(partite2Turno);
+                conn.Close();
+                //Prendo i set della partita in modo da vedere chi ha vinto
+                sql = "";
+                sql += "SELECT SetSQ1,SetSQ2 FROM Partita WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifiche));
+                comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
+                adapter = new SqlDataAdapter(comando);
+                setPartitaFinita = new DataTable();
+                conn.Open();
+                adapter.Fill(setPartitaFinita);
+                conn.Close();
+                //Controllo se ci sono o non ci sono partite per il 2 turno eliminatorio
+                if (partite2Turno.Rows.Count > 0)
+                {
+                    /*
+                     * Per passare alla seconda partita elimantoria, mi baso sulla parità del NumPartita:
+                     * Infatti, se il numPartita è dispari aggiungerò NumSquadre/2 (ovvero il numero di partite del primo turno eliminatorio).
+                     * Invece, se numPartita è pari aggiungerò (NumSquadre/2)-1 (Da rivedere)
+                     */
+
+                }
+                else
+                {
+
+                }
                 return "Avanzamento avvenuto con successo";
             }
             catch(Exception e)
