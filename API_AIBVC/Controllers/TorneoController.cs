@@ -508,5 +508,15 @@ namespace API_AIBVC.Controllers
         {
             return db.GetListaIngresso(idTorneo);
         }
+
+        [HttpPost("AvanzaTabelloneQualifiche/{IDTorneoQualifiche}/{NumPartita}/{IDTorneoPrincipale}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin")]
+        public string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
+        {
+            return db.AvanzaTabelloneQualifiche(idTorneoQualifiche, numPartita, idTorneoPrincipale);
+        }
     }
 }
