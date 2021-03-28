@@ -1658,7 +1658,7 @@ namespace WebAPIAuthJWT.Helpers
             "CONCAT(D1.Nome,' ',D1.Cognome) as Arbitro1,CONCAT(D2.Nome,' ',D2.Cognome) as Arbitro2, " +
             "Partita.Fase,Partita.Campo,Partita.DataPartita,Partita.OraPartita, " +
             "Partita.PT1S1 as PtTeam1Set1,Partita.PT2S1 as PtTeam2Set1,Partita.PT1S2 as PtTeam1Set2,Partita.PT2S2 as PtTeam2Set2, " +
-            "Partita.PT1S3 as PtTeam1Set3,Partita.PT2S3 as PtTeam2Set3 " +
+            "Partita.PT1S3 as PtTeam1Set3,Partita.PT2S3 as PtTeam2Set3, Partita.SetSQ1 as SetSquadra1, Partita.SetSQ2 as SetSquadra2 " +
             "FROM((((((((" +
             "Partita LEFT JOIN Squadra S1 ON Partita.idsq1 = S1.idsquadra) LEFT JOIN Squadra S2 ON Partita.idsq2 = S2.idsquadra) " +
             "LEFT JOIN Atleta A1 ON S1.IDAtleta1 = A1.IDAtleta) LEFT JOIN Atleta A2 ON S1.IDAtleta2 = A2.IDAtleta) " +
@@ -3560,7 +3560,82 @@ namespace WebAPIAuthJWT.Helpers
                 }
                 if (numSquadreQualifiche > 16 || numSquadreQualifiche <= 32)
                 {
-
+                    for(int i = 0; i < 16; i++)
+                    {
+                        sql = "";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        comando = new SqlCommand(sql, conn);
+                        if (squadreQualifica.Rows[i]["IDSquadra"] != DBNull.Value)
+                            comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
+                        else
+                            comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
+                        if (squadreQualifica.Rows[31 - i]["IDSquadra"] != DBNull.Value)
+                            comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[31 - i]["IDSquadra"]));
+                        else
+                            comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                        comando.Parameters.Add(new SqlParameter("DataPartita", dataInizioQualifiche.Date));
+                        /*
+                         * Avendo messo le partite in ordine numerico (e non a forma di tabellone), in NumPartita metto 
+                         * la posizione che la partita dovrebbe avere nel tabellone
+                         */
+                        switch (i)
+                        {
+                            case 0:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 1:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 2:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 3:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 4:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 5:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 6:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 7:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 8:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 9:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 10:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 11:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 12:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 13:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 14:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                            case 15:
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
+                                break;
+                        }
+                        comando.Parameters.Add(new SqlParameter("Fase", "1 turno eliminatorio"));
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
                 }
                 if (numSquadreQualifiche > 32 || numSquadreQualifiche <= 64)
                 {
@@ -3644,8 +3719,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 12; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,NumPartitaSuccessiva) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@NumPartitaSuccessiva)";
                         comando = new SqlCommand(sql, conn);
                         if (squadreQualifica.Rows[i]["IDSquadra"] != null)//Prima squadra
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
@@ -3659,45 +3734,57 @@ namespace WebAPIAuthJWT.Helpers
                         comando.Parameters.Add(new SqlParameter("DataPartita", dataInizioQualifiche.Date));
                         /*
                          * Avendo messo le partite in ordine numerico (e non a forma di tabellone), in NumPartita metto 
-                         * la posizione che la partita dovrebbe avere nel tabellone
+                         * la posizione che la partita dovrebbe avere nel tabellone e la partita successiva
                          */
                         switch (i)
                         {
                             case 0:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 1));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 13));
                                 break;
                             case 1:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 12));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 18));
                                 break;
                             case 2:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 7));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 16));
                                 break;
                             case 3:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 6));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 15));
                                 break;
                             case 4:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 4));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 14));
                                 break;
                             case 5:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 9));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 17));
                                 break;
                             case 6:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 10));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 17));
                                 break;
                             case 7:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 3));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 14));
                                 break;
                             case 8:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 5));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 15));
                                 break;
                             case 9:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 8));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 16));
                                 break;
                             case 10:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 11));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 18));
                                 break;
                             case 11:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", 2));
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 13));
                                 break;
                         }
                         comando.Parameters.Add(new SqlParameter("Fase", "Primo turno eliminatorio"));
@@ -4004,7 +4091,7 @@ namespace WebAPIAuthJWT.Helpers
             SqlCommand comando;
             DataTable query;
             sql = "";
-            sql += "SELECT Partita.NumPartita,Squadra1.NomeTeam,Squadra2.NomeTeam,CONCAT(Arbitro1.Nome,' ',Arbitro1.Cognome) As Arbitro1,CONCAT(Arbitro2.Nome,' ',Arbitro2.Cognome) As Arbitro2,Torneo.Titolo,Partita.Fase,Partita.Campo,Partita.DataPartita,Partita.OraPartita,Partita.Risultato,Partita.Durata,Partita.PT1S1,Partita.PT2S1,Partita.PT1S2,Partita.PT2S2,Partita.PT1S3,Partita.PT2S3,Partita.SetSQ1,Partita.SetSQ2 " +
+            sql += "SELECT Partita.NumPartita,Squadra1.NomeTeam As Team1,Squadra2.NomeTeam As Team2,CONCAT(Arbitro1.Nome,' ',Arbitro1.Cognome) As Arbitro1,CONCAT(Arbitro2.Nome,' ',Arbitro2.Cognome) As Arbitro2,Torneo.Titolo,Partita.Fase,Partita.Campo,Partita.DataPartita,Partita.OraPartita,Partita.Durata,Partita.PT1S1,Partita.PT2S1,Partita.PT1S2,Partita.PT2S2,Partita.PT1S3,Partita.PT2S3,Partita.SetSQ1,Partita.SetSQ2 " +
                    "FROM(((((Partita LEFT JOIN Squadra Squadra1 ON Partita.IDSQ1 = Squadra1.IDSquadra)LEFT JOIN Squadra Squadra2 ON Partita.IDSQ2 = Squadra2.IDSquadra)LEFT JOIN DelegatoTecnico Arbitro1 ON Partita.IDArbitro1 = Arbitro1.IDDelegato)LEFT JOIN DelegatoTecnico Arbitro2 ON Partita.IDArbitro2 = Arbitro2.IDDelegato)LEFT JOIN Torneo ON Partita.IDTorneo = Torneo.IDTorneo) " +
                    "WHERE Partita.IDTorneo = @IDTorneo";
             comando = new SqlCommand(sql, conn);
@@ -4204,6 +4291,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(setPartitaFinita);
                 conn.Close();
+                AddPuntiSquadre(idTorneoQualifiche, numPartita, Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ1"]), Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ2"]));
                 //Prendo il NumPartitaSuccessiva
                 sql = "";
                 sql += "SELECT NumPartitaSuccessiva FROM Partita WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
@@ -4306,6 +4394,61 @@ namespace WebAPIAuthJWT.Helpers
                 return "Errore: " + e.Message;
             }
         }
+        //Metodo per aggiungere i punti delle 2 squadre
+        private void AddPuntiSquadre(int idTorneo, int numPartita,int idSquadra1, int idSquadra2)
+        {
+            string sql;
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            DataTable puntiPrecedenti, puntiPartita;
+            try
+            {
+                //Prendo i punti che avevano le 2 squadre
+                sql = "";
+                sql += "SELECT IDSquadra,Punti FROM Partecipa WHERE IDTorneo=@IDTorneo AND (IDSquadra=@IDSquadra1 OR IDSquadra=@IDSquadra2)";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("IDSquadra1", idSquadra1));
+                comando.Parameters.Add(new SqlParameter("IDSquadra2", idSquadra2));
+                adapter = new SqlDataAdapter(comando);
+                puntiPrecedenti = new DataTable();
+                conn.Open();
+                adapter.Fill(puntiPrecedenti);
+                conn.Close();
+                //Prendo il punteggio della partita
+                sql = "";
+                sql += "SELECT PT1S1,PT2S1,PT1S2,PT2S2,PT1S3,PT2S3 FROM Partita WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
+                adapter = new SqlDataAdapter(comando);
+                puntiPartita = new DataTable();
+                conn.Open();
+                adapter.Fill(puntiPartita);
+                conn.Close();
+                for(int i = 0; i < 2; i++)
+                {
+                    sql = "";
+                    sql += "UPDATE Partecipa " +
+                        "SET Punti=@Punti " +
+                        "WHERE IDTorneo=@IDTorneo AND IDSquadra=@IDSquadra";
+                    comando = new SqlCommand(sql, conn);
+                    if (i == 0)
+                        comando.Parameters.Add(new SqlParameter("Punti", Convert.ToInt32(puntiPrecedenti.Rows[i]["Punti"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT1S1"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT1S2"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT1S3"])));
+                    else
+                        comando.Parameters.Add(new SqlParameter("Punti", Convert.ToInt32(puntiPrecedenti.Rows[i]["Punti"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT2S1"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT2S2"]) + Convert.ToInt32(puntiPartita.Rows[0]["PT2S3"])));
+                    comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    comando.Parameters.Add(new SqlParameter("IDSquadra", puntiPrecedenti.Rows[i]["IDSquadra"]));
+                    conn.Open();
+                    comando.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            catch(Exception e)
+            {
+
+            }
+        }
         public string GetStatoTornei(int idTorneo)
         {
             //Metodo che restituisce lo stato del torneo (rifiutato, accettato, in attesa)
@@ -4336,5 +4479,6 @@ namespace WebAPIAuthJWT.Helpers
                 return "Errore: " + exc.Message;
             }
         }
+        
     }
 }
