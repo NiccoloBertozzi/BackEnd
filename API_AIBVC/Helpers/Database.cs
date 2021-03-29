@@ -3409,11 +3409,11 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (squadreQualifica.Rows[i]["IDSquadra"] != null)//Prima squadra
+                        if (squadreQualifica.Rows[i]["IDSquadra"] != DBNull.Value)//Prima squadra
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
-                        if (squadreQualifica.Rows[7 - i]["IDSquadra"] != null)//Seconda squadra
+                        if (squadreQualifica.Rows[7 - i]["IDSquadra"] != DBNull.Value)//Seconda squadra
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[7 - i]["IDSquadra"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
@@ -3452,11 +3452,11 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (squadreQualifica.Rows[i]["IDSquadra"] != null)
+                        if (squadreQualifica.Rows[i]["IDSquadra"] != DBNull.Value)
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
-                        if (squadreQualifica.Rows[15 - i]["IDSquadra"] != null)
+                        if (squadreQualifica.Rows[15 - i]["IDSquadra"] != DBNull.Value)
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[15 - i]["IDSquadra"]));
                         else
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
@@ -3812,6 +3812,47 @@ namespace WebAPIAuthJWT.Helpers
             catch (Exception e)
             {
                 string errore = e.Message;
+            }
+        }
+        //Metodo che gestisce le partite che contengono le squadre "Bye"
+        public string GestisciSquadraBye(int idTorneo, int numPartita)
+        {
+            SqlDataAdapter adapter;
+            SqlCommand comando;
+            string sql;
+            DataTable partita;
+            try
+            {
+                //Prendo le info della partita
+                sql = "";
+                sql += "SELECT Squadra1.NomeTeam As Squadra1,Squadra2.NomeTeam As Squadra2 "+
+                    "FROM((Partita LEFT JOIN Squadra Squadra1 ON Partita.IDSQ1 = Squadra1.IDSquadra)LEFT JOIN Squadra Squadra2 ON Partita.IDSQ2 = Squadra2.IDSquadra) "+
+                    "WHERE IDTorneo = @IDTorneo AND NumPartita = @NumPartita";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
+                adapter = new SqlDataAdapter(comando);
+                partita = new DataTable();
+                conn.Open();
+                adapter.Fill(partita);
+                conn.Close();
+                if (partita.Rows[0]["Squadra1"].ToString() == "Bye" && partita.Rows[0]["Squadra2"].ToString() == "Bye")
+                {
+
+                }
+                else if(partita.Rows[0]["Squadra1"].ToString() == "Bye")
+                {
+
+                }
+                else
+                {
+
+                }
+                return "Gestione avvenuta con successo";
+            }
+            catch(Exception e)
+            {
+                return "ERRORE: " + e.Message;
             }
         }
         public DataTable GetTorneiDisputatiByDelegato(int idDelegato)
