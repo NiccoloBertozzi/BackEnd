@@ -3303,11 +3303,11 @@ namespace WebAPIAuthJWT.Helpers
                     sql = "";
                     sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=@Titolo";
                     comando = new SqlCommand(sql, conn);
-                    comando.Parameters.Add(new SqlParameter("Titolo", torneoPrincipale[0].Rows[0]["Titolo"] += " Qualifiche"));
+                    comando.Parameters.Add(new SqlParameter("Titolo", torneoPrincipale[0].Rows[0]["Titolo"]));
                     adapter = new SqlDataAdapter(comando);
                     idTorneoQualifica = new DataTable();
                     conn.Open();
-                    adapter.Fill(idTorneoQualifica);//IMPORTANTE: SCOPRIRE PERCHE' NON RESTITUISCE NULLA
+                    adapter.Fill(idTorneoQualifica);
                     conn.Close();
                     if (torneoPrincipale[1].Rows.Count > 0)//Prendo i parametri del torneo
                     {
@@ -3327,11 +3327,11 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     //Seleziono le squadre che dovranno giocare le qualifiche
                     sql = "";
-                    sql += "SELECT TOP (@NumMaxTeamQualifiche) * FROM ListaIscritti WHERE WC=0 AND IDTorneo=@IDTorneo AND IDSquadra NOT IN (SELECT TOP (@NumeroTeamTabellone) IDSquadra FROM ListaIscritti WHERE IDTorneo=@IDTorneo AND WC=0 ORDER BY EntryPoints DESC)";
+                    sql += "SELECT TOP (@NumMaxTeamQualifiche) * FROM ListaIscritti WHERE IDTorneo=@IDTorneo AND IDSquadra NOT IN (SELECT TOP (@NumeroTeamTabellone) IDSquadra FROM ListaIscritti WHERE IDTorneo=@IDTorneo ORDER BY EntryPoints DESC)";
                     comando = new SqlCommand(sql, conn);
                     comando.Parameters.Add(new SqlParameter("NumMaxTeamQualifiche", numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]));
                     comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
-                    comando.Parameters.Add(new SqlParameter("NumeroTeamTabellone", Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamMainDraw"]) - Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumWildCard"]) - Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"])));
+                    comando.Parameters.Add(new SqlParameter("NumeroTeamTabellone", Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamMainDraw"]) - Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"])));
                     adapter = new SqlDataAdapter(comando);
                     squadreQualifica = new DataTable();
                     conn.Open();
@@ -3361,15 +3361,15 @@ namespace WebAPIAuthJWT.Helpers
                         switch (Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]))
                         {
                             case 8:
-                                PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]), squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
+                                PartiteNTQ4_8(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
 
                             case 4:
-                                PartiteNTQ4_8(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]), squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
+                                PartiteNTQ4_8(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
 
                             case 6:
-                                PartiteNTQ6(Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]), squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
+                                PartiteNTQ6(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
                         }
                     }
@@ -3401,6 +3401,26 @@ namespace WebAPIAuthJWT.Helpers
                 adapter.Fill(squadreBye);
                 conn.Close();
                 //Partite
+                if (numSquadreQualifiche <= 4)
+                {
+                    for(int i = 0; i < numSquadreQualifiche; i++)
+                    {
+                        sql = "";
+                        sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints) " +
+                            "VALUES (@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints)";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDSquadra", squadreQualifica.Rows[i]["IDSquadra"]));
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", squadreQualifica.Rows[i]["IDTorneo"]));
+                        if (squadreQualifica.Rows[i]["IDAllenatore"] != DBNull.Value)
+                            comando.Parameters.Add(new SqlParameter("IDAllenatore", squadreQualifica.Rows[i]["IDAllenatore"]));
+                        else
+                            comando.Parameters.Add(new SqlParameter("IDAllenatore", DBNull.Value));
+                        comando.Parameters.Add(new SqlParameter("EntryPoints", squadreQualifica.Rows[i]["EntryPoints"]));
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
                 if (numSquadreQualifiche <= 8)
                 {
                     for(int i = 0; i < 4; i++)
@@ -4513,7 +4533,8 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(setPartitaFinita);
                 conn.Close();
-                AddPuntiSquadre(idTorneoQualifiche, numPartita, Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ1"]), Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ2"]));
+                //Aggiungo i punti alle 2 squadre
+                //AddPuntiSquadre(idTorneoQualifiche, numPartita, Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ1"]), Convert.ToInt32(setPartitaFinita.Rows[0]["IDSQ2"]));
                 //Prendo il NumPartitaSuccessiva
                 sql = "";
                 sql += "SELECT NumPartitaSuccessiva FROM Partita WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
@@ -4606,8 +4627,8 @@ namespace WebAPIAuthJWT.Helpers
                 else
                 {
                     sql = "";
-                    sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints,Punti)" +
-                        "VALUES(@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints,@Punti)";
+                    sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints)" +
+                        "VALUES(@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints)";
                     comando = new SqlCommand(sql, conn);
                     //Controllo quale squadra ha vinto
                     if (Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ1"]) > Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ2"]))
@@ -4618,7 +4639,6 @@ namespace WebAPIAuthJWT.Helpers
                         else
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", DBNull.Value));
                         comando.Parameters.Add(new SqlParameter("EntryPoints", infoSquadra.Rows[0]["EntryPoints"]));
-                        comando.Parameters.Add(new SqlParameter("Punti", infoSquadra.Rows[0]["Punti"]));
                     }
                     else
                     {
@@ -4628,7 +4648,6 @@ namespace WebAPIAuthJWT.Helpers
                         else
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", DBNull.Value));
                         comando.Parameters.Add(new SqlParameter("EntryPoints", infoSquadra.Rows[1]["EntryPoints"]));
-                        comando.Parameters.Add(new SqlParameter("Punti", infoSquadra.Rows[1]["Punti"]));
                     }
                     comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoPrincipale));
                     conn.Open();
@@ -4643,7 +4662,7 @@ namespace WebAPIAuthJWT.Helpers
             }
         }
         //Metodo per aggiungere i punti delle 2 squadre
-        private void AddPuntiSquadre(int idTorneo, int numPartita,int idSquadra1, int idSquadra2)
+        /*private void AddPuntiSquadre(int idTorneo, int numPartita,int idSquadra1, int idSquadra2)
         {
             string sql;
             SqlDataAdapter adapter;
@@ -4696,7 +4715,7 @@ namespace WebAPIAuthJWT.Helpers
             {
 
             }
-        }
+        }*/
         public string GetStatoTornei(int idTorneo)
         {
             //Metodo che restituisce lo stato del torneo (rifiutato, accettato, in attesa)
