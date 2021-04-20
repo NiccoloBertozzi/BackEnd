@@ -518,5 +518,51 @@ namespace API_AIBVC.Controllers
         {
             return db.AvanzaTabelloneQualifiche(idTorneoQualifiche, numPartita, idTorneoPrincipale);
         }
+        [HttpGet("ControlloChiusuraIscrizioni/{idtorneo}/Supervisore/{idSupervisore}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa")]
+        public int ControlloDataIscrizioni(int idtorneo, int idSupervisore)
+        {
+            return db.ControlloDataIscrizioni(idtorneo, idSupervisore);
+        }
+
+        [HttpPut("CreaPool/{idTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa")]
+        public ActionResult<InfoMsg> CreaPool(int idTorneo)
+        {
+                if (db.CreaPool(idTorneo))
+                    return Ok(new InfoMsg(DateTime.Today, $"Pool Creati con successo"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione dei pool"));
+        }
+        [HttpPut("CreatePoolWinLose/{idTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa")]
+        public ActionResult<InfoMsg> CreatePoolWinLose(int idTorneo)
+        {
+            if (db.CreatePoolWinLose(idTorneo))
+                return Ok(new InfoMsg(DateTime.Today, $"Pool WIN/LOSE Creati con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione dei pool WIN/LOSE"));
+        }
+        [HttpPut("CreaOttaviSedicesimi/{idTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa")]
+        public ActionResult<InfoMsg> CreaOttaviSedicesimi(int idTorneo)
+        {
+            if (db.CreaOttaviSedicesimi(idTorneo))
+                return Ok(new InfoMsg(DateTime.Today, $"Ottavi Sedicesimi Creati con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione degli Ottavi Sedicesimi"));
+        }
     }
 }

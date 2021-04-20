@@ -14,11 +14,13 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1")]
+    [Route("api/v1/supervisore")]
     public class SupervisoreController : Controller
     {
         Database db = new Database();
         [HttpGet("GetAllTornei")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public JsonResult GetAllTornei()
@@ -26,6 +28,8 @@ namespace API_AIBVC.Controllers
             return Json(new { myOutput = db.GetAllTornei() });
         }
         [HttpPost("GetNomiSquadreInPartita")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public ActionResult<InfoMsg> GetNomiSquadreInPartita([FromBody] CercaTeam cercaTeam)
@@ -34,19 +38,22 @@ namespace API_AIBVC.Controllers
         }
         [HttpPut("AggiornaRisultati")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Roles = "Delegato,Admin")]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public ActionResult<InfoMsg> AggiornaRisultati([FromBody] AggiornaSet aggiornaSet)
         {
             //Mi servono: IDTorneo,IDPartita,Numero del set e i punti fatti dalle 2 squadre
-            if (db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.pt1s1, aggiornaSet.pt1s2, aggiornaSet.pt1s3, aggiornaSet.pt2s1, aggiornaSet.pt2s2, aggiornaSet.pt2s3, aggiornaSet.NumSet))
+            if (db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.pt1s1, aggiornaSet.pt2s1, aggiornaSet.pt1s2, aggiornaSet.pt2s2, aggiornaSet.pt1s3, aggiornaSet.pt2s3, aggiornaSet.NumSet))
                 return Ok(new InfoMsg(DateTime.Today, $"Risultato aggiornato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'aggiornamento del risultato"));
         }
         [HttpPost("GetPartita")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public ActionResult<InfoMsg> GetPartita([FromBody] CercaTeam cercaPartita)
@@ -54,16 +61,17 @@ namespace API_AIBVC.Controllers
             return Ok(db.GetPartita(db.GetIDTorneo(cercaPartita.TitoloTorneo), cercaPartita.NumPartita));
         }
         [HttpGet("GetTorneoById/{id}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         public DataTable GetTorneoByID(int id)
         {
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneoByID(id)[0];
         }
         //ritorna nome cognome e id di un supervisore in base al cf
         [HttpGet("GetIDSupervisore/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetNomeCognomeSupervisore(string CF, string Nome, string Cognome)
@@ -73,6 +81,8 @@ namespace API_AIBVC.Controllers
 
         //ritorna nome cognome e id di un arbitro in base al cf
         [HttpGet("GetIDArbitro/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetNomeCognomeArbitro(string CF, string Nome, string Cognome)
@@ -82,6 +92,8 @@ namespace API_AIBVC.Controllers
 
         //ritorna nome cognome e id di un direttore in base al cf
         [HttpGet("GetIDDirettore/{CF}/Nome/{Nome}/Cognome/{Cognome}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetNomeCognomeDirettore(string CF, string Nome, string Cognome)
@@ -91,6 +103,8 @@ namespace API_AIBVC.Controllers
 
         //ritorna la lista dei supervisori
         [HttpGet("GetSupervisori")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetInfoSupervisore()
@@ -100,6 +114,8 @@ namespace API_AIBVC.Controllers
 
         //ritorna la lista dei arbitri
         [HttpGet("GetArbitri")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetInfoArbitro()
@@ -108,6 +124,8 @@ namespace API_AIBVC.Controllers
         }
         //ritorna la lista dei supervisori
         [HttpGet("GetDirettori")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetInfoDirettore()
