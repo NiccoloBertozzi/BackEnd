@@ -43,13 +43,10 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public ActionResult<InfoMsg> AggiornaRisultati([FromBody] AggiornaSet aggiornaSet)
+        public string AggiornaRisultati([FromBody] AggiornaSet aggiornaSet)
         {
             //Mi servono: IDTorneo,IDPartita,Numero del set e i punti fatti dalle 2 squadre
-            if (db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.pt1s1, aggiornaSet.pt2s1, aggiornaSet.pt1s2, aggiornaSet.pt2s2, aggiornaSet.pt1s3, aggiornaSet.pt2s3, aggiornaSet.NumSet))
-                return Ok(new InfoMsg(DateTime.Today, $"Risultato aggiornato con successo"));
-            else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nell'aggiornamento del risultato"));
+            return db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.IDPartita, aggiornaSet.pt1s1, aggiornaSet.pt2s1, aggiornaSet.pt1s2, aggiornaSet.pt2s2, aggiornaSet.pt1s3, aggiornaSet.pt2s3, aggiornaSet.NumSet, aggiornaSet.IDTorneoPrincipale);
         }
         [HttpPost("GetPartita")]
         [ProducesResponseType(400)]

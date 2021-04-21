@@ -1534,13 +1534,13 @@ namespace WebAPIAuthJWT.Helpers
                 return risultato;
             }
         }
-        public bool UploadResults(int idTorneo, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet)
+        public string UploadResults(int idTorneo, int numPartita, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet, int idTorneoPrincipale)
         {
             SqlCommand comando;
             SqlParameter parametro;
             SqlDataAdapter adapter;
-            DataTable puntiVittoria;
-            string sql;
+            DataTable puntiVittoria, titoloTorneo;
+            string sql, risposta = "";
             //Metodo che aggiurna i risultati di una partita
             try
             {
@@ -1554,6 +1554,16 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(puntiVittoria);
                 conn.Close();
+                //Prendo il titolo del torneo per controllare se è un torneo di qualifiche o no
+                sql = "";
+                sql += "SELECT * FROM Torneo WHERE IDTorneo=@IDTorneo AND Titolo LIKE '%Qualifiche%'";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                adapter = new SqlDataAdapter(comando);
+                titoloTorneo = new DataTable();
+                conn.Open();
+                adapter.Fill(titoloTorneo);
+                conn.Close();
                 //Update del punteggio
                 sql = "" +
                 "UPDATE Partita " +
@@ -1562,7 +1572,7 @@ namespace WebAPIAuthJWT.Helpers
                 ",PT1S3=@pt1s3,PT2S3=@pt2s3 " +
                 ",SetSQ1=@SetSQ1,SetSQ2=@SetSQ2 " +
                 ",Risultato=@ris " +
-                "WHERE IDPartita=@IDPartita AND IDTorneo=@IDTorneo";
+                "WHERE NumPartita=@NumPartita AND IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("pt1s1", pt1s1);
                 comando.Parameters.Add(parametro);
@@ -1576,7 +1586,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("pt2s3", pt2s3);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("IDPartita", idPartita);
+                parametro = new SqlParameter("NumPartita", numPartita);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDTorneo", idTorneo);
                 comando.Parameters.Add(parametro);
@@ -1585,7 +1595,7 @@ namespace WebAPIAuthJWT.Helpers
                 //Controllo se qualcuno ha vinto il set
                 if ((((pt1s1 - pt2s1) >= 2 || (pt1s1 - pt2s1) <= -2) && (pt1s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s2 - pt2s2) >= 2 || (pt1s2 - pt2s2) <= -2) && (pt1s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s3 - pt2s3) >= 2 || (pt1s3 - pt2s3) <= -2) && (pt1s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))))
                 {
-                    if (setsq1 < 3 && setsq2 < 3)
+                    if (setsq1 != 2 && setsq2 != 2)//Controllo se la partita è finita
                     {
                         //Controllo a che set sono
                         switch (numSet)
@@ -1609,8 +1619,16 @@ namespace WebAPIAuthJWT.Helpers
                                     setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
                                 break;
                         }
+                        risposta = "Set aggiornato con successo!";
+                    }
+                    else
+                    {
+                        if (titoloTorneo.Rows.Count == 1)//Se è finita una partita di qualifiche:
+                            risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale);
                     }
                 }
+                else
+                    risposta = "Punteggio aggiornato con successo!";
                 comando.Parameters.Add(new SqlParameter("SetSQ1", setsq1));
                 comando.Parameters.Add(new SqlParameter("SetSQ2", setsq2));
                 comando.Parameters.Add(new SqlParameter("ris", setsq1 + "-" + setsq2));
@@ -1632,11 +1650,11 @@ namespace WebAPIAuthJWT.Helpers
                 {
                     calcPunteggiPool(idTorneo);
                 }
-                return true;
+                return risposta;
             }
             catch (Exception e)
             {
-                return false;
+                return "ERRORE: " + e.Message;
             }
         }
         public bool AssegnaCampo(int idPartita, int numeroCampo)
@@ -3421,7 +3439,7 @@ namespace WebAPIAuthJWT.Helpers
                 //Partite
                 if (numSquadreQualifiche <= 4)
                 {
-                    for(int i = 0; i < numSquadreQualifiche; i++)
+                    for (int i = 0; i < numSquadreQualifiche; i++)
                     {
                         sql = "";
                         sql += "INSERT INTO Partecipa(IDSquadra,IDTorneo,IDAllenatore,EntryPoints) " +
@@ -4530,7 +4548,7 @@ namespace WebAPIAuthJWT.Helpers
                 return "ERRORE: " + e.Message;
             }
         }
-        public string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
+        private string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
         {
             //Metodo per l'avanzamento nel tabellone di qualifiche
             //IMPORTANTE: QUESTO METODO VA RICHIAMATO CON LA FINE DELLA PARTITA
@@ -5100,7 +5118,8 @@ namespace WebAPIAuthJWT.Helpers
                 //RiCreo ottavi in ordine
                 if (!CreaOttavi(idtorneo)) throw new Exception();//se torna false lo mando in errore
                 return true;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 string query = "DELETE From Partita WHERE IdTorneo=@IDTorneo AND (Fase=@fase OR Fase=@fase1)";
                 conn.Open();
@@ -5246,9 +5265,10 @@ namespace WebAPIAuthJWT.Helpers
                 }
                 return true;
             }
-            catch {
+            catch
+            {
                 conn.Close();
-                return false; 
+                return false;
             }
         }
         private bool CreaSedicesimi(int idtorneo)
@@ -5268,7 +5288,7 @@ namespace WebAPIAuthJWT.Helpers
                 do
                 {
                     DataTable tabelloneSedicesimi;
-                    if (tabelloneSediceseimi(idtorneo, numpool) != null) {tabelloneSedicesimi = tabelloneSediceseimi(idtorneo, numpool); }
+                    if (tabelloneSediceseimi(idtorneo, numpool) != null) { tabelloneSedicesimi = tabelloneSediceseimi(idtorneo, numpool); }
                     else
                     {
                         conn.Close();
@@ -5310,10 +5330,10 @@ namespace WebAPIAuthJWT.Helpers
             catch
             {
                 conn.Close();
-                return false; 
+                return false;
             }
         }
-        private DataTable tabelloneSediceseimi(int idtorneo,int num)
+        private DataTable tabelloneSediceseimi(int idtorneo, int num)
         {
             try
             {
