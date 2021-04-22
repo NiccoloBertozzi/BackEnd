@@ -1635,6 +1635,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 comando.ExecuteNonQuery();
                 conn.Close();
+
                 //calcolo punteggi per tornei poolplay
                 sql = "SELECT Formula FROM Torneo " +
                     "INNER JOIN FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula " +
@@ -1646,21 +1647,58 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(puntiVittoria);
                 conn.Close();
+
+                //prendo numero squadre qualifiche
+                conn.Open();
+                string query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo";//scarico numero squadre
+                SqlCommand command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                DataTable dtb = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(dtb);
+                int numteam = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                conn.Close();
+                //scarico team che hanno finito la partita delle qualifiche
+                conn.Open();
+                query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND (SetSQ1=2 OR SetSQ2=2)";//scarico numero squadre
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                dtb = new DataTable();
+                da = new SqlDataAdapter(command);
+                da.Fill(dtb);
+                int numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                conn.Close();
+                if(numteam == numteampartitaconclusa)
+                {
+                    conn.Open();
+                    query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//controllo che non ci siamo gia i pool
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    conn.Close();
+                    if (Convert.ToInt32(dtb.Rows[0][0]) == 0)
+                    {
+                        conn.Open();
+                        query = "SELECT IdTorneo FROM Torneo WHERE Titolo IN (SELECT DISTINCT(SUBSTRING((SELECT DISTINCT(Titolo) FROM Torneo " +
+                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo), 1, LEN((SELECT DISTINCT(Titolo) FROM Torneo" +
+                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo))-CHARINDEX(' ', REVERSE((SELECT DISTINCT(Titolo) FROM Torneo" +
+                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo))))) FROM Torneo)";//prendo id torneo collegato a quello di qualfica
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                        dtb = new DataTable();
+                        da = new SqlDataAdapter(command);
+                        da.Fill(dtb);
+                        conn.Close();
+                        CreaPool(Convert.ToInt32(dtb.Rows[0][0]));
+                    }
+                }
                 //controllo che sia un torneo pool play
                 if (puntiVittoria.Rows[0][0].ToString().Contains("Pool play"))
                 {
                     calcPunteggiPool(idTorneo);
                     //prendo numero squadre
-                    conn.Open();
-                    string query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//scarico numero squadre
-                    SqlCommand command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
-                    DataTable dtb = new DataTable();
-                    SqlDataAdapter da = new SqlDataAdapter(command);
-                    da.Fill(dtb);
-                    int numteam = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
-                    conn.Close();
-                    //scarico team che hanno finito la partita dei pool
                     conn.Open();
                     query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//scarico numero squadre
                     command = new SqlCommand(query, conn);
@@ -1668,7 +1706,17 @@ namespace WebAPIAuthJWT.Helpers
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    int numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    numteam = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    conn.Close();
+                    //scarico team che hanno finito la partita dei pool
+                    conn.Open();
+                    query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%' AND (SetSQ1=2 OR SetSQ2=2)";//scarico numero squadre
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
                     conn.Close();
                     //partono i pool win lose
                     if (numteampartitaconclusa == numteam && numteampartitaconclusa == 16)
