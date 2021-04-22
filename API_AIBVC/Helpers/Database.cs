@@ -1572,7 +1572,7 @@ namespace WebAPIAuthJWT.Helpers
                 ",PT1S3=@pt1s3,PT2S3=@pt2s3 " +
                 ",SetSQ1=@SetSQ1,SetSQ2=@SetSQ2 " +
                 ",Risultato=@ris " +
-                "WHERE NumPartita=@NumPartita AND IDTorneo=@IDTorneo";
+                "WHERE IDPartita=@IDPartita AND IDTorneo=@IDTorneo";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("pt1s1", pt1s1);
                 comando.Parameters.Add(parametro);
@@ -1586,7 +1586,7 @@ namespace WebAPIAuthJWT.Helpers
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("pt2s3", pt2s3);
                 comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("NumPartita", numPartita);
+                parametro = new SqlParameter("IDPartita", idPartita);
                 comando.Parameters.Add(parametro);
                 parametro = new SqlParameter("IDTorneo", idTorneo);
                 comando.Parameters.Add(parametro);
@@ -1624,7 +1624,7 @@ namespace WebAPIAuthJWT.Helpers
                     else
                     {
                         if (titoloTorneo.Rows.Count == 1)//Se è finita una partita di qualifiche:
-                            risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale);
+                            risposta = AvanzaTabelloneQualifiche(idTorneo, idPartita, idTorneoPrincipale);
                     }
                 }
                 else
@@ -1646,9 +1646,57 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(puntiVittoria);
                 conn.Close();
+                //controllo che sia un torneo pool play
                 if (puntiVittoria.Rows[0][0].ToString().Contains("Pool play"))
                 {
                     calcPunteggiPool(idTorneo);
+                    //prendo numero squadre
+                    conn.Open();
+                    string query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//scarico numero squadre
+                    SqlCommand command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    DataTable dtb = new DataTable();
+                    SqlDataAdapter da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    int numteam = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    conn.Close();
+                    //scarico team che hanno finito la partita dei pool
+                    conn.Open();
+                    query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//scarico numero squadre
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    int numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    conn.Close();
+                    //partono i pool win lose
+                    if (numteampartitaconclusa == numteam && numteampartitaconclusa == 16)
+                    {
+                        conn.Open();
+                        query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Ottavi%'";//controllo che non ci siamo gia gli ottavi
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                        dtb = new DataTable();
+                        da = new SqlDataAdapter(command);
+                        da.Fill(dtb);
+                        conn.Close();
+                        if (Convert.ToInt32(dtb.Rows[0][0]) == 0) CreatePoolWinLose(idTorneo);
+
+                    }
+                    //partono gli ottavi e i sedisesimi
+                    else if (numteampartitaconclusa == numteam && numteampartitaconclusa == 32)
+                    {
+                        conn.Open();
+                        query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Sedicesimi%'";//controllo che non ci siamo gia i sedicesimi
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                        dtb = new DataTable();
+                        da = new SqlDataAdapter(command);
+                        da.Fill(dtb);
+                        conn.Close();
+                        if (Convert.ToInt32(dtb.Rows[0][0]) == 0) CreaOttaviSedicesimi(idTorneo);
+                    }
                 }
                 return risposta;
             }
@@ -5117,6 +5165,7 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 //RiCreo ottavi in ordine
                 if (!CreaOttavi(idtorneo)) throw new Exception();//se torna false lo mando in errore
+                if (!CreaPartiteRestanti(idtorneo)) throw new Exception();//se torna false lo mando in errore
                 return true;
             }
             catch (Exception e)
@@ -5263,6 +5312,16 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     else i--;
                 }
+                //set numeri partite successive
+                query = "SELECT IDPartita,IDTorneo,NumPartita,NumPartitaSuccessiva FROM Partita WHERE Fase='Ottavi' AND IdTorneo=@IDTorneo"; //prendo squadre ottavi
+                conn.Open();
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                ottavi = new DataTable();
+                da = new SqlDataAdapter(command);
+                da.Fill(ottavi);
+                conn.Close();
+                if(!SetPartiteSuccessive(idtorneo, 8, ottavi)) throw new Exception();//set numero partite successive
                 return true;
             }
             catch
@@ -5307,7 +5366,7 @@ namespace WebAPIAuthJWT.Helpers
                         //estraggo numero casuale
                         int row = random.Next(0, tabelloneSedicesimi.Rows.Count);
                         numpartita++;
-                        query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,IDSQ1,IDSQ2,NumPartita) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@sq1,@sq2,@num);";
+                        query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,IDSQ1,IDSQ2,NumPartita,NumPartitaSuccessiva) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@sq1,@sq2,@num,@numsucce);";
                         conn.Open();
                         command = new SqlCommand(query, conn);
                         command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO
@@ -5317,6 +5376,7 @@ namespace WebAPIAuthJWT.Helpers
                         command.Parameters.Add(new SqlParameter("sq1", tabelloneSedicesimi.Rows[row][0].ToString()));
                         command.Parameters.Add(new SqlParameter("sq2", tabelloneSedicesimi.Rows[(tabelloneSedicesimi.Rows.Count - 1) - row][0].ToString()));
                         command.Parameters.Add(new SqlParameter("num", numpartita));
+                        command.Parameters.Add(new SqlParameter("numsucce", numpartita + 8));
                         da = new SqlDataAdapter(command);
                         command.ExecuteNonQuery();
                         conn.Close();
@@ -5474,6 +5534,131 @@ namespace WebAPIAuthJWT.Helpers
                         }
                     }
                 }
+                conn.Close();
+                return true;
+            }
+            catch
+            {
+                conn.Close();
+                return false;
+            }
+        }
+        private bool SetPartiteSuccessive(int idtorneo, int num,DataTable dtb)
+        {
+            try
+            {
+                int count = 0;
+                for (int i = 0; i < num; i++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        dtb.Rows[i][3] = Convert.ToInt32(dtb.Rows[i][2]) + num - count;
+                        count++;
+                    }
+                    else dtb.Rows[i][3] = Convert.ToInt32(dtb.Rows[i][2]) + num - count;
+                    //aggiorno record
+                    conn.Open();
+                    string query = "UPDATE Partita SET NumPartitaSuccessiva=@num WHERE IdTorneo=@IDTorneo AND IDPartita=@idpartita";
+                    SqlCommand command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                    command.Parameters.Add(new SqlParameter("idpartita", dtb.Rows[i][0]));
+                    command.Parameters.Add(new SqlParameter("num", dtb.Rows[i][3]));
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                return true;
+            }
+            catch { return false; }
+        }
+        //crea quarti semifinali e finali
+        private bool CreaPartiteRestanti(int idtorneo)
+        {
+            try
+            {
+                string query;
+                SqlCommand command;
+                DataTable dtb = new DataTable();
+                SqlDataAdapter da;
+                int numpartita = GetLastNumberPartita(idtorneo);
+                //INSERT QUARTI
+                for (int i = 0; i < 4; i++)
+                {
+                    numpartita++;
+                    conn.Open();
+                    query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num);";
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO?
+                    command.Parameters.Add(new SqlParameter("Ora", DateTime.Now.TimeOfDay));
+                    command.Parameters.Add(new SqlParameter("Pool", "Quarti"));
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                    command.Parameters.Add(new SqlParameter("num", numpartita));
+                    da = new SqlDataAdapter(command);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                //SELECT QUARTI
+                query = "SELECT IDPartita,IDTorneo,NumPartita,NumPartitaSuccessiva FROM Partita WHERE Fase='Quarti' AND IdTorneo=@IDTorneo"; //prendo squadre quarti
+                conn.Open();
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                da = new SqlDataAdapter(command);
+                da.Fill(dtb);
+                conn.Close();
+                //SET NUMPARTITASUCCESSIVA
+                SetPartiteSuccessive(idtorneo, 4, dtb);//set numero partite successive    
+                numpartita = GetLastNumberPartita(idtorneo);
+                //INSERT SEMIFINALI
+                for (int i = 0; i < 2; i++)
+                {
+                    numpartita++;
+                    conn.Open();
+                    query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num);";
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO?
+                    command.Parameters.Add(new SqlParameter("Ora", DateTime.Now.TimeOfDay));
+                    command.Parameters.Add(new SqlParameter("Pool", "Semifinali"));
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                    command.Parameters.Add(new SqlParameter("num", numpartita));
+                    da = new SqlDataAdapter(command);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                //SELECT SEMIFINALI
+                query = "SELECT IDPartita,IDTorneo,NumPartita,NumPartitaSuccessiva FROM Partita WHERE Fase='Semifinali' AND IdTorneo=@IDTorneo"; //prendo squadre semifinali
+                conn.Open();
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                da = new SqlDataAdapter(command);
+                dtb = new DataTable();
+                da.Fill(dtb);
+                conn.Close();
+                //SET NUMPARTITASUCCESSIVA
+                SetPartiteSuccessive(idtorneo, 2, dtb);//set numero partite successive               
+                numpartita = GetLastNumberPartita(idtorneo);
+                numpartita++;
+                //CREO FINALI
+                conn.Open();
+                query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num);";
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO?
+                command.Parameters.Add(new SqlParameter("Ora", DateTime.Now.TimeOfDay));
+                command.Parameters.Add(new SqlParameter("Pool", "Finale 3/4"));
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                command.Parameters.Add(new SqlParameter("num", numpartita));
+                da = new SqlDataAdapter(command);
+                command.ExecuteNonQuery();
+                conn.Close();
+                numpartita++;
+                conn.Open();
+                query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num);";
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO?
+                command.Parameters.Add(new SqlParameter("Ora", DateTime.Now.TimeOfDay));
+                command.Parameters.Add(new SqlParameter("Pool", "Finale 1/2"));
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                command.Parameters.Add(new SqlParameter("num", numpartita));
+                da = new SqlDataAdapter(command);
+                command.ExecuteNonQuery();
                 conn.Close();
                 return true;
             }
