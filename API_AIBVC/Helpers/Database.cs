@@ -1595,36 +1595,33 @@ namespace WebAPIAuthJWT.Helpers
                 //Controllo se qualcuno ha vinto il set
                 if ((((pt1s1 - pt2s1) >= 2 || (pt1s1 - pt2s1) <= -2) && (pt1s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s1 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s2 - pt2s2) >= 2 || (pt1s2 - pt2s2) <= -2) && (pt1s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s2 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))) || (((pt1s3 - pt2s3) >= 2 || (pt1s3 - pt2s3) <= -2) && (pt1s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]) || pt2s3 >= Convert.ToInt32(puntiVittoria.Rows[0]["PuntiVittoria"]))))
                 {
-                    if (setsq1 != 2 && setsq2 != 2)//Controllo se la partita è finita
+                    //Controllo a che set sono
+                    switch (numSet)
                     {
-                        //Controllo a che set sono
-                        switch (numSet)
-                        {
-                            case 1:
-                                if ((pt1s1 - pt2s1) >= 2)
-                                    setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
-                                else
-                                    setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
-                                break;
-                            case 2:
-                                if ((pt1s2 - pt2s2) >= 2)
-                                    setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
-                                else
-                                    setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
-                                break;
-                            case 3:
-                                if ((pt1s3 - pt2s3) >= 2)
-                                    setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
-                                else
-                                    setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
-                                break;
-                        }
-                        risposta = "Set aggiornato con successo!";
+                        case 1:
+                            if ((pt1s1 - pt2s1) >= 2)
+                                setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
+                            else
+                                setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
+                            break;
+                        case 2:
+                            if ((pt1s2 - pt2s2) >= 2)
+                                setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
+                            else
+                                setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
+                            break;
+                        case 3:
+                            if ((pt1s3 - pt2s3) >= 2)
+                                setsq1 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ1"]) + 1;
+                            else
+                                setsq2 = Convert.ToInt32(GetNumSetVinti(idTorneo, idPartita).Rows[0]["SetSQ2"]) + 1;
+                            break;
                     }
-                    else
+                    risposta = "Set aggiornato con successo!";
+                    if (setsq1 == 2 || setsq2 == 2)//Controllo se la partita è finita
                     {
                         if (titoloTorneo.Rows.Count == 1)//Se è finita una partita di qualifiche:
-                            risposta = AvanzaTabelloneQualifiche(idTorneo, idPartita, idTorneoPrincipale);
+                            risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale);
                     }
                 }
                 else
@@ -1668,7 +1665,7 @@ namespace WebAPIAuthJWT.Helpers
                 da.Fill(dtb);
                 int numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
                 conn.Close();
-                if(numteam == numteampartitaconclusa)
+                if (numteam == numteampartitaconclusa)
                 {
                     conn.Open();
                     query = "SELECT COUNT(*)FROM Partita  WHERE IdTorneo=@IDTorneo AND Fase LIKE '%Pool%'";//controllo che non ci siamo gia i pool
@@ -1682,8 +1679,8 @@ namespace WebAPIAuthJWT.Helpers
                     {
                         conn.Open();
                         query = "SELECT IdTorneo FROM Torneo WHERE Titolo IN (SELECT DISTINCT(SUBSTRING((SELECT DISTINCT(Titolo) FROM Torneo " +
-                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo), 1, LEN((SELECT DISTINCT(Titolo) FROM Torneo" +
-                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo))-CHARINDEX(' ', REVERSE((SELECT DISTINCT(Titolo) FROM Torneo" +
+                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo), 1, LEN((SELECT DISTINCT(Titolo) FROM Torneo " +
+                            "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo))-CHARINDEX(' ', REVERSE((SELECT DISTINCT(Titolo) FROM Torneo " +
                             "INNER JOIN Partita ON Partita.IDTorneo =@IDTorneo AND Partita.IDTorneo = Torneo.IDTorneo))))) FROM Torneo)";//prendo id torneo collegato a quello di qualfica
                         command = new SqlCommand(query, conn);
                         command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
@@ -5369,7 +5366,7 @@ namespace WebAPIAuthJWT.Helpers
                 da = new SqlDataAdapter(command);
                 da.Fill(ottavi);
                 conn.Close();
-                if(!SetPartiteSuccessive(idtorneo, 8, ottavi)) throw new Exception();//set numero partite successive
+                if (!SetPartiteSuccessive(idtorneo, 8, ottavi)) throw new Exception();//set numero partite successive
                 return true;
             }
             catch
@@ -5591,7 +5588,7 @@ namespace WebAPIAuthJWT.Helpers
                 return false;
             }
         }
-        private bool SetPartiteSuccessive(int idtorneo, int num,DataTable dtb)
+        private bool SetPartiteSuccessive(int idtorneo, int num, DataTable dtb)
         {
             try
             {
