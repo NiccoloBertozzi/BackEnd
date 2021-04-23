@@ -5120,7 +5120,7 @@ namespace WebAPIAuthJWT.Helpers
                     conn.Close();
                 }
                 //calcolo QP
-                query = "UPDATE Pool SET QP= cast((cast(PF as float)/ cast(PS as float)) as float)";
+                query = "UPDATE Pool SET QP = CASE WHEN PS = 0 THEN PF ELSE cast((cast(PF as float)/ cast(PS as float)) as float) END;";
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.ExecuteNonQuery();
@@ -5129,6 +5129,7 @@ namespace WebAPIAuthJWT.Helpers
             }
             catch (Exception e)
             {
+                conn.Close();
                 return false;
             }
         }
