@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Routing.Matching;
 using System.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace WebAPIAuthJWT.Helpers
 {
@@ -1534,6 +1535,24 @@ namespace WebAPIAuthJWT.Helpers
                 return risultato;
             }
         }
+        public int GetIdPartita(int idtorneo, int numpartita)
+        {
+            try
+            {
+                string sql = "";
+                sql += "SELECT IdPartita FROM Partita WHERE IdTorneo=@IDTorneo AND NumPartita=@num";
+                SqlCommand comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                comando.Parameters.Add(new SqlParameter("num", numpartita));
+                SqlDataAdapter adapter = new SqlDataAdapter(comando);
+                DataTable id = new DataTable();
+                conn.Open();
+                adapter.Fill(id);
+                conn.Close();
+                return Convert.ToInt32(id.Rows[0][0]);
+            }
+            catch { return 0; }
+        }
         public string UploadResults(int idTorneo, int numPartita, int idPartita, int pt1s1, int pt2s1, int pt1s2, int pt2s2, int pt1s3, int pt2s3, int numSet, int idTorneoPrincipale)
         {
             SqlCommand comando;
@@ -1622,6 +1641,8 @@ namespace WebAPIAuthJWT.Helpers
                     {
                         if (titoloTorneo.Rows.Count == 1)//Se è finita una partita di qualifiche:
                             risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale);
+                        else
+                            AvanzaTabellone(idTorneo, numPartita, setsq1, setsq2);
                     }
                 }
                 else
@@ -5274,15 +5295,16 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 for (int i = 0; i < (numPool / 2); i++) //id partita nella tabella e prendo id partita/squadra 
                 {
-                    query = "SELECT IdSquadra FROM Pool WHERE QP IN (SELECT MAX(QP)From Pool WHERE IdPool='" + alpha[i] + "') AND IdTorneo=@IDTorneo";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE QP IN (SELECT MAX(QP)From Pool WHERE IdPool=@pool) AND IdTorneo=@IDTorneo AND IdPool=@pool";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                    command.Parameters.Add(new SqlParameter("pool", alpha[i]));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    int team = Convert.ToInt32(dtb.Rows[0][0]);
                     conn.Close();
+                    int team = Convert.ToInt32(dtb.Rows[0][0]);
                     if (i == 0)//POOL A
                     {
                         conn.Open();
@@ -5335,10 +5357,11 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 for (int i = 4; i < numPool; i++)
                 {
-                    query = "SELECT IdSquadra FROM Pool WHERE QP IN (SELECT MAX(QP)From Pool WHERE IdPool='" + alpha[i] + "') AND IdTorneo=@IDTorneo";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE QP IN (SELECT MAX(QP)From Pool WHERE IdPool=@pool) AND IdTorneo=@IDTorneo AND IdPool=@pool";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                    command.Parameters.Add(new SqlParameter("pool", alpha[i]));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
@@ -5713,6 +5736,124 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 return false;
             }
+        }
+        private bool AvanzaTabellone(int idtorneo, int numpartita, int setsq1, int setsq2)
+        {
+            try
+            {
+                //prendo la partita e controllo che non sia un pool
+                conn.Open();
+                string query = "SELECT IDPartita,IDSQ1,IDSQ2,IDTorneo,NumPartita,SetSQ1,SetSQ2,NumPartitaSuccessiva,Fase FROM Partita WHERE Fase NOT LIKE '%Pool%' AND IDTorneo=@IDTorneo AND NumPartita=@num";
+                SqlCommand command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                command.Parameters.Add(new SqlParameter("num", numpartita));
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                DataTable dtb = new DataTable();
+                da.Fill(dtb);
+                conn.Close();
+                int number = Convert.ToInt32(dtb.Rows[0][7]);
+                // se è diverso da zero significa che non è un pool
+                if (dtb.Rows.Count != 0)
+                {
+                    if (dtb.Rows[0][8].ToString() == "Finale 1/2" || dtb.Rows[0][8].ToString() == "Finale 3/4") return true;
+                    if (dtb.Rows[0][8].ToString() == "Semifinali")
+                    {
+                        //vittoria squadra 1
+                        if (setsq1 == 2)
+                        {
+                            //Vincitore
+                            conn.Open();
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                            command = new SqlCommand(query, conn);
+                            command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][1]));
+                            command.Parameters.Add(new SqlParameter("num", number + 1));
+                            command.ExecuteNonQuery();
+                            conn.Close();
+                            //perdente
+                            conn.Open();
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                            command = new SqlCommand(query, conn);
+                            command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][2]));
+                            command.Parameters.Add(new SqlParameter("num", number));
+                            command.ExecuteNonQuery();
+                            conn.Close();
+                            return true;
+                        }
+                        //vittoria squadra 2
+                        else if (setsq2 == 2)
+                        {
+                            //Vincitore
+                            conn.Open();
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                            command = new SqlCommand(query, conn);
+                            command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][2]));
+                            command.Parameters.Add(new SqlParameter("num", number + 1));
+                            command.ExecuteNonQuery();
+                            conn.Close();
+                            //perdente
+                            conn.Open();
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                            command = new SqlCommand(query, conn);
+                            command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][1]));
+                            command.Parameters.Add(new SqlParameter("num", number));
+                            command.ExecuteNonQuery();
+                            conn.Close();
+                            return true;
+                        }
+                    }
+                    //vittoria squadra 1
+                    if (setsq1 == 2)
+                    {
+                        conn.Open();
+                        query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                            "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                            "ELSE " +
+                            "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                        command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][1]));
+                        command.Parameters.Add(new SqlParameter("num", number));
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                        return true;
+                    }
+                    //vittoria squadra 2
+                    else if (setsq2 == 2)
+                    {
+                        conn.Open();
+                        query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                            "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                            "ELSE " +
+                            "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
+                        command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][2]));
+                        command.Parameters.Add(new SqlParameter("num", number));
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                        return true;
+                    }
+                    return false;
+                }
+                else return false;
+            }
+            catch { return false; }
         }
     }
 }

@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj": {}
+    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj": {
+    "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+        "projectUniqueName": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
         "projectName": "API_AIBVC",
-        "projectPath": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
-        "packagesPath": "C:\\Users\\berto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\obj\\",
+        "projectPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+        "packagesPath": "C:\\Users\\Niccolò Bertozzi\\.nuget\\packages\\",
+        "outputPath": "E:\\ProgrammiScuola\\SCUOLA\\BackEnd\\API_AIBVC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "E:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\berto\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Niccolò Bertozzi\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -86,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.113\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
         }
       }
     }

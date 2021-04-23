@@ -57,6 +57,15 @@ namespace API_AIBVC.Controllers
         {
             return Ok(db.GetPartita(db.GetIDTorneo(cercaPartita.TitoloTorneo), cercaPartita.NumPartita));
         }
+        [HttpGet("GetIDPartita/{idtorneo}/Partita/{numpartita}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public string GetIdPartita(int idtorneo, int numpartita)
+        {
+            return GetIdPartita(idtorneo, numpartita).ToString();
+        }
         [HttpGet("GetTorneoById/{id}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
