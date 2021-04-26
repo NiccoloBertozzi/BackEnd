@@ -33,7 +33,7 @@ namespace API_AIBVC.Controllers
             }
             else
                 return BadRequest(new InfoMsg(DateTime.Today, string.Format($"Username e/o Password errati.")));
-            return Ok(new { token = tokenJWT, id = risposta[1] });
+            return Ok(new { token = tokenJWT, id = risposta[1], data=DateTime.Today, message=string.Format($"OK") });
         }
         [HttpPost("RegistraAllenatore")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
