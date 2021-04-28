@@ -62,9 +62,9 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public string GetIdPartita(int idtorneo, int numpartita)
+        public int GetIdPartita(int idtorneo, int numpartita)
         {
-            return GetIdPartita(idtorneo, numpartita).ToString();
+            return db.GetIdPartita(idtorneo, numpartita);
         }
         [HttpGet("GetTorneoById/{id}")]
         [ProducesResponseType(400)]
