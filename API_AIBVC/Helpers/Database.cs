@@ -3578,8 +3578,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 4; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         if (i <= squadreQualifica.Rows.Count && (7 - i) <= squadreQualifica.Rows.Count)
                         {
@@ -3619,6 +3619,7 @@ namespace WebAPIAuthJWT.Helpers
                                 break;
                         }
                         comando.Parameters.Add(new SqlParameter("Fase", "1 turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3629,8 +3630,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 8; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         if (i <= squadreQualifica.Rows.Count && (15 - i) <= squadreQualifica.Rows.Count)
                         {
@@ -3682,6 +3683,7 @@ namespace WebAPIAuthJWT.Helpers
                                 break;
                         }
                         comando.Parameters.Add(new SqlParameter("Fase", "1 turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3692,13 +3694,14 @@ namespace WebAPIAuthJWT.Helpers
                         for (int i = 0; i < 4; i++)
                         {
                             sql = "";
-                            sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita)" +
-                                "VALUES(@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                            sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita,OraPartita)" +
+                                "VALUES(@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                             comando = new SqlCommand(sql, conn);
                             comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
                             comando.Parameters.Add(new SqlParameter("NumPartita", i + 9));
                             comando.Parameters.Add(new SqlParameter("Fase", "2 turno eliminatorio"));
                             comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
+                            comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                             conn.Open();
                             comando.ExecuteNonQuery();
                             conn.Close();
@@ -3751,8 +3754,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 16; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         if (i <= squadreQualifica.Rows.Count && (31 - i) <= squadreQualifica.Rows.Count)
                         {
@@ -3772,6 +3775,7 @@ namespace WebAPIAuthJWT.Helpers
                         }
                         comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
                         comando.Parameters.Add(new SqlParameter("DataPartita", dataInizioQualifiche.Date));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         /*
                          * Avendo messo le partite in ordine numerico (e non a forma di tabellone), in NumPartita metto 
                          * la posizione che la partita dovrebbe avere nel tabellone
@@ -3866,8 +3870,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 6; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         if (i <= squadreQualifica.Rows.Count && (11 - i) <= squadreQualifica.Rows.Count)
                         {
@@ -3913,6 +3917,7 @@ namespace WebAPIAuthJWT.Helpers
                                 break;
                         }
                         comando.Parameters.Add(new SqlParameter("Fase", "Singolo turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -3923,8 +3928,8 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 12; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,NumPartitaSuccessiva) " +
-                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@NumPartitaSuccessiva)";
+                        sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,NumPartitaSuccessiva,OraPartita) " +
+                            "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@NumPartitaSuccessiva,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         if (i <= squadreQualifica.Rows.Count && (23 - i) <= squadreQualifica.Rows.Count)
                         {
@@ -4000,6 +4005,7 @@ namespace WebAPIAuthJWT.Helpers
                                 break;
                         }
                         comando.Parameters.Add(new SqlParameter("Fase", "Primo turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
@@ -4008,13 +4014,14 @@ namespace WebAPIAuthJWT.Helpers
                     for (int i = 0; i < 6; i++)
                     {
                         sql = "";
-                        sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita) " +
-                            "VALUES (@IDTorneo,@NumPartita,@Fase,@DataPartita)";
+                        sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                            "VALUES (@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
                         comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
                         comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
                         comando.Parameters.Add(new SqlParameter("NumPartita", i + 13));
                         comando.Parameters.Add(new SqlParameter("Fase", "Secondo turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();

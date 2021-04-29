@@ -457,11 +457,11 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public string CreaListaIngresso(int idTorneo, int idSupervisore)
+        public string CreaListaIngresso(int IDTorneo, int IDSupervisore)
         {
             //Metodo che crea la lista d'ingresso definitiva del torneo
-            if (db.ControlloSupervisore(idSupervisore, idTorneo))
-                return db.CreaLista(idTorneo);
+            if (db.ControlloSupervisore(IDSupervisore, IDTorneo))
+                return db.CreaLista(IDTorneo);
             else
                 return "Non sei il supervisore di questo torneo";
         }
