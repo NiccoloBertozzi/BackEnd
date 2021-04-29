@@ -1168,25 +1168,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\berto\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\rigon\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+      "projectUniqueName": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
       "projectName": "API_AIBVC",
-      "projectPath": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
-      "packagesPath": "C:\\Users\\berto\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\berto\\Desktop\\BackEnd\\API_AIBVC\\obj\\",
+      "projectPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+      "packagesPath": "C:\\Users\\rigon\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rigon\\Desktop\\PROGETTO AIBVC\\BackEnd\\API_AIBVC\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\berto\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rigon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
@@ -1199,6 +1200,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -1210,6 +1212,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
@@ -1254,7 +1257,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.114\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

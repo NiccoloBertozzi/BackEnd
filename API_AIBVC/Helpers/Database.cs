@@ -1877,7 +1877,7 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             DataTable[] risultati = new DataTable[3];
             sql = "";
-            sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumMaxTeamMainDraw,Torneo.NumMaxTeamQualifiche,Torneo.NumTeamQualificati,Torneo.NumWildCard,Outdoor,Torneo.IDImpianto,RiunioneTecnica,OraInizio,Torneo.IDSocieta,Torneo.DataChiusuraIscrizioni,Torneo.IDTipoTorneo,Torneo.IDFormula,Torneo.IDSupervisore " +
+            sql += "SELECT DISTINCT Torneo.Titolo,TipoTorneo.Descrizione AS TipoTorneo,CONCAT(Supervisore.Nome,' ',Supervisore.Cognome) as SupervisoreTorneo,CONCAT(SupervisoreArbitrale.Nome,' ',SupervisoreArbitrale.Cognome) AS SupervisoreArbitrale,CONCAT(DirettoreCompetizione.Nome,' ',DirettoreCompetizione.Cognome) as DirettoreCompetizione,FormulaTorneo.Formula,Impianto.NomeImpianto,Comune.Citta,Torneo.QuotaIscrizione,Torneo.PuntiVittoria,Torneo.Montepremi,Torneo.DataInizio,Torneo.DataFine,Torneo.Gender,Torneo.NumMaxTeamMainDraw,Torneo.NumMaxTeamQualifiche,Torneo.NumTeamQualificati,Torneo.NumWildCard,Outdoor,Torneo.IDImpianto,RiunioneTecnica,OraInizio,Torneo.IDSocieta,Torneo.DataChiusuraIscrizioni,Torneo.IDTipoTorneo,Torneo.IDFormula,Torneo.IDSupervisore,Torneo.IDSupervisoreArbitrale " +
             "FROM(((((((((Torneo LEFT JOIN TipoTorneo On Torneo.IDTipoTorneo = TipoTorneo.IDTipoTorneo)LEFT JOIN DelegatoTecnico Supervisore ON Torneo.IDSupervisore = Supervisore.IDDelegato)LEFT JOIN ArbitraTorneo On ArbitraTorneo.IDDelegato = Torneo.IDSupervisoreArbitrale)LEFT JOIN DelegatoTecnico SupervisoreArbitrale On Torneo.IDSupervisoreArbitrale = SupervisoreArbitrale.IDDelegato)LEFT JOIN DelegatoTecnico DirettoreCompetizione On Torneo.IDDirettoreCompetizione = DirettoreCompetizione.IDDelegato)LEFT JOIN FormulaTorneo ON Torneo.IDFormula = FormulaTorneo.IDFormula)LEFT JOIN ImpiantoTorneo On ImpiantoTorneo.IDTorneo = Torneo.IDTorneo)LEFT JOIN Impianto On ImpiantoTorneo.IDImpianto = Impianto.IDImpianto)LEFT JOIN Comune On Impianto.IDComune = Comune.IDComune) " +
             "WHERE Torneo.IDTorneo=@IDTorneo";
             comando = new SqlCommand(sql, conn);
@@ -3405,8 +3405,8 @@ namespace WebAPIAuthJWT.Helpers
                 if (torneoPrincipale[0].Rows.Count == 1)//Controllo che abbia trovato il torneo
                 {
                     sql = "";
-                    sql += "INSERT INTO Torneo(IDSocieta,IDTipoTorneo,IDFormula,IDSupervisore,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,QuotaIscrizione,NumTeamQualificati,NumWildCard,Autorizzato,IDImpianto,Outdoor,RiunioneTecnica,OraInizio) ";
-                    sql += "VALUES(@IDSocieta,@IDTipoTorneo,@IDFormula,@IDSupervisore,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIscrizioni,@DataInzio,@DataFine,@Gender,@NumMaxTeamMainDraw,@NumMaxTeamQualifiche,@QuotaIscrizione,@NumTeamQualificati,@NumWildCard,1,@IDImpianto,@Outdoor,@RiunioneTecnica,@OraInizio)";
+                    sql += "INSERT INTO Torneo(IDSocieta,IDTipoTorneo,IDFormula,IDSupervisore,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,QuotaIscrizione,NumTeamQualificati,NumWildCard,Autorizzato,IDImpianto,Outdoor,RiunioneTecnica,OraInizio,IDSupervisoreArbitrale) ";
+                    sql += "VALUES(@IDSocieta,@IDTipoTorneo,@IDFormula,@IDSupervisore,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIscrizioni,@DataInzio,@DataFine,@Gender,@NumMaxTeamMainDraw,@NumMaxTeamQualifiche,@QuotaIscrizione,@NumTeamQualificati,@NumWildCard,1,@IDImpianto,@Outdoor,@RiunioneTecnica,@OraInizio,@IDSupervisoreArbitrale)";
                     comando = new SqlCommand(sql, conn);
                     parametro = new SqlParameter("IDSocieta", torneoPrincipale[0].Rows[0]["IDSocieta"]);
                     comando.Parameters.Add(parametro);
@@ -3447,6 +3447,8 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("OraInizio", torneoPrincipale[0].Rows[0]["OraInizio"]);
                     comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("IDSupervisore", torneoPrincipale[0].Rows[0]["IDSupervisore"]);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("IDSupervisoreArbitrale", torneoPrincipale[0].Rows[0]["IDSupervisoreArbitrale"]);
                     comando.Parameters.Add(parametro);
                     conn.Open();
                     comando.ExecuteNonQuery();
@@ -3525,7 +3527,7 @@ namespace WebAPIAuthJWT.Helpers
                                 break;
                         }
                     }
-                    return "Torneo di qualifica creato!";
+                    return "Torneo di qualifica creato! : " + idTorneoQualifica.Rows[0]["IDTorneo"].ToString();
                 }
                 else
                     return "Torneo principale non trovato";
