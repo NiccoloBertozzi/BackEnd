@@ -34,6 +34,17 @@ namespace API_AIBVC.Controllers
         {
             return db.GetTorneiEntroDataSocieta(Data,idsocieta);
         }
+
+        //Restituisce tornei prima della data inserita
+        [HttpGet("GetInfoSocieta/{idsocieta}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
+        public DataTable GetSocieta(int idsocieta)
+        {
+            return db.GetInfoSocieta(idsocieta);
+        }
         [HttpPost("AddImpianto")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -59,14 +70,24 @@ namespace API_AIBVC.Controllers
         }
 
         //Restituisce gli impianti di una società
-        [HttpGet("GetImpianti/{IDSocieta}")]
+        [HttpGet("GetAllImpianti/{IDSocieta}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Societa,Delegato,Admin")]
-        public JsonResult GetImpianti(int idSocieta)
+        public DataTable GetImpianti(int idSocieta)
         {
-            return Json(new { output = db.GetImpiantiSocieta(idSocieta) });
+            return db.GetAllImpiantiSocieta(idSocieta);
+        }
+        //Restituisce un impianto di una società
+        [HttpGet("GetImpianto/{IDSocieta}/Impianto/{IDImpianto}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Delegato,Admin,Atleta,Allenatore")]
+        public DataTable GetImpianto(int idSocieta, int IDImpianto)
+        {
+            return db.GetImpiantoSocieta(idSocieta, IDImpianto);
         }
         //Restituisce tutte le societa
         [HttpGet("GetAllSocieta")]

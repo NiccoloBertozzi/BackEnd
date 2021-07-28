@@ -27,9 +27,6 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(200, Type = typeof(DataTable))]
         public DataTable GetTornei()
         {
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneiEntroData();
         }        //Restituisce tornei prima della data inserita
 
@@ -39,11 +36,8 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        public DataTable GetTorneiTipo(int idTipo)
+        public DataTable GetTorneiTipo(string idTipo)
         {
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetTorneiTipo(idTipo);
         }        //Restituisce tornei di un determinato tipo
 
@@ -246,14 +240,25 @@ namespace API_AIBVC.Controllers
         }
 
         //Autorizza o non autorizza il torneo
-        [HttpPut("AutorizzaTorneo/{idTorneo}/{Autorizza}")]
+        [HttpPut("AutorizzaTorneo/{idTorneo}/Stato/{Autorizza}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Admin")]
-        public string AutorizzaTorneo(int idTorneo, bool autorizzaONo)
+        public string AutorizzaTorneo(int idTorneo, bool Autorizza)
         {
-            return db.AutorizzaTorneo(idTorneo, autorizzaONo);
+            return db.AutorizzaTorneo(idTorneo, Autorizza);
+        }
+
+        //Autorizza o non autorizza il torneo
+        [HttpGet("ControllaAutorizzazione/{idTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Admin")]
+        public bool ControlAutorizzazioneTorneo(int idTorneo)
+        {
+            return db.ControlAutorizzazioneTorneo(idTorneo);
         }
 
         //Assegnazione dei delegati del torneo
