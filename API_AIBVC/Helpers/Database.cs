@@ -4105,10 +4105,10 @@ namespace WebAPIAuthJWT.Helpers
                                 comando.Parameters.Add(new SqlParameter("NumPartita", ));
                                 break;
                             case 16:
-                                comando.Parameters.Add(new SqlParameter("NumPartita", 1));
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
                                 break;
                             case 17:
-                                comando.Parameters.Add(new SqlParameter("NumPartita", 32));
+                                comando.Parameters.Add(new SqlParameter("NumPartita", ));
                                 break;
                             case 18:
                                 comando.Parameters.Add(new SqlParameter("NumPartita", ));
@@ -4157,6 +4157,277 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Open();
                         comando.ExecuteNonQuery();
                         conn.Close();
+                    }
+                    //Creazione partite secondo turno eliminatorio
+                    for (int i = 0; i < 16; i++)
+                    {
+                        sql = "";
+                        sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita,OraPartita)" +
+                            "VALUES(@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                        comando.Parameters.Add(new SqlParameter("NumPartita", i + 33));
+                        comando.Parameters.Add(new SqlParameter("Fase", "2 turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    //Di conseguenza, inserisco nelle partite del 1 turno i NumPartitaSuccessiva
+                    for (int i = 1; i <= 32; i++)
+                    {
+                        sql = "";
+                        sql += "UPDATE Partita " +
+                               "SET NumPartitaSuccessiva = @NumPartitaSuccessiva " +
+                               "WHERE IDTorneo = @IDTorneo AND NumPartita = @NumPartita";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                        comando.Parameters.Add(new SqlParameter("NumPartita", i));
+                        switch (i)
+                        {
+                            case 1:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 33));
+                                break;
+                            case 2:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 33));
+                                break;
+                            case 3:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 34));
+                                break;
+                            case 4:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 34));
+                                break;
+                            case 5:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 35));
+                                break;
+                            case 6:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 35));
+                                break;
+                            case 7:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 36));
+                                break;
+                            case 8:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 36));
+                                break;
+                            case 9:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 37));
+                                break;
+                            case 10:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 37));
+                                break;
+                            case 11:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 38));
+                                break;
+                            case 12:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 38));
+                                break;
+                            case 13:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 39));
+                                break;
+                            case 14:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 39));
+                                break;
+                            case 15:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 40));
+                                break;
+                            case 16:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 40));
+                                break;
+                            case 17:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 41));
+                                break;
+                            case 18:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 41));
+                                break;
+                            case 19:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 42));
+                                break;
+                            case 20:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 42));
+                                break;
+                            case 21:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 43));
+                                break;
+                            case 22:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 43));
+                                break;
+                            case 23:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 44));
+                                break;
+                            case 24:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 44));
+                                break;
+                            case 25:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 45));
+                                break;
+                            case 26:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 45));
+                                break;
+                            case 27:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 46));
+                                break;
+                            case 28:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 46));
+                                break;
+                            case 29:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 47));
+                                break;
+                            case 30:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 47));
+                                break;
+                            case 31:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 48));
+                                break;
+                            case 32:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 48));
+                                break;
+                        }
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    //Creazione partite terzo turno eliminatorio
+                    for (int i = 0; i < 8; i++)
+                    {
+                        sql = "";
+                        sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita,OraPartita)" +
+                            "VALUES(@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                        comando.Parameters.Add(new SqlParameter("NumPartita", i + 49));
+                        comando.Parameters.Add(new SqlParameter("Fase", "3 turno eliminatorio"));
+                        comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
+                        comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    //Di conseguenza, inserisco nelle partite del 2 turno i NumPartitaSuccessiva
+                    for (int i = 33; i <= 48; i++)
+                    {
+                        sql = "";
+                        sql += "UPDATE Partita " +
+                               "SET NumPartitaSuccessiva = @NumPartitaSuccessiva " +
+                               "WHERE IDTorneo = @IDTorneo AND NumPartita = @NumPartita";
+                        comando = new SqlCommand(sql, conn);
+                        comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                        comando.Parameters.Add(new SqlParameter("NumPartita", i));
+                        switch (i)
+                        {
+                            case 33:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 49));
+                                break;
+                            case 34:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 49));
+                                break;
+                            case 35:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 50));
+                                break;
+                            case 36:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 50));
+                                break;
+                            case 37:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 51));
+                                break;
+                            case 38:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 51));
+                                break;
+                            case 39:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 52));
+                                break;
+                            case 40:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 52));
+                                break;
+                            case 41:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 53));
+                                break;
+                            case 42:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 53));
+                                break;
+                            case 43:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 54));
+                                break;
+                            case 44:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 54));
+                                break;
+                            case 45:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 55));
+                                break;
+                            case 46:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 55));
+                                break;
+                            case 47:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 56));
+                                break;
+                            case 48:
+                                comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 56));
+                                break;
+                        }
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    //Se si qualificano 4 squadre, serve anche un 4 turno eliminatorio
+                    if (numQualificati == 4)
+                    {
+                        //Creazione partite quarto turno eliminatorio
+                        for (int i = 0; i < 4; i++)
+                        {
+                            sql = "";
+                            sql += "INSERT INTO Partita(IDTorneo,NumPartita,Fase,DataPartita,OraPartita)" +
+                                "VALUES(@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
+                            comando = new SqlCommand(sql, conn);
+                            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                            comando.Parameters.Add(new SqlParameter("NumPartita", i + 57));
+                            comando.Parameters.Add(new SqlParameter("Fase", "3 turno eliminatorio"));
+                            comando.Parameters.Add(new SqlParameter("DataPartita", dataPartite2Turno.Date));
+                            comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
+                            conn.Open();
+                            comando.ExecuteNonQuery();
+                            conn.Close();
+                        }
+                        //Di conseguenza, inserisco nelle partite del 3 turno i NumPartitaSuccessiva
+                        for (int i = 49; i <= 56; i++)
+                        {
+                            sql = "";
+                            sql += "UPDATE Partita " +
+                                   "SET NumPartitaSuccessiva = @NumPartitaSuccessiva " +
+                                   "WHERE IDTorneo = @IDTorneo AND NumPartita = @NumPartita";
+                            comando = new SqlCommand(sql, conn);
+                            comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                            comando.Parameters.Add(new SqlParameter("NumPartita", i));
+                            switch (i)
+                            {
+                                case 49:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 57));
+                                    break;
+                                case 50:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 57));
+                                    break;
+                                case 51:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 58));
+                                    break;
+                                case 52:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 58));
+                                    break;
+                                case 53:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 59));
+                                    break;
+                                case 54:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 59));
+                                    break;
+                                case 55:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 60));
+                                    break;
+                                case 56:
+                                    comando.Parameters.Add(new SqlParameter("NumPartitaSuccessiva", 60));
+                                    break;
+                            }
+                            conn.Open();
+                            comando.ExecuteNonQuery();
+                            conn.Close();
+                        }
                     }
                 }
             }
