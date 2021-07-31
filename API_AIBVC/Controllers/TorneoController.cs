@@ -534,7 +534,7 @@ namespace API_AIBVC.Controllers
             return db.ControlloDataIscrizioni(idtorneo, idSupervisore);
         }
 
-        [HttpPut("CreaPool/{idTorneo}")]
+        [HttpPost("CreaPool/{idTorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
