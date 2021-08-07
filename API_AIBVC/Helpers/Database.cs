@@ -3523,11 +3523,10 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     //Seleziono le squadre che dovranno giocare le qualifiche
                     sql = "";
-                    sql += "SELECT TOP (@NumMaxTeamQualifiche) * FROM ListaIscritti WHERE IDTorneo=@IDTorneo AND IDSquadra NOT IN (SELECT TOP (@NumeroTeamTabellone) IDSquadra FROM ListaIscritti WHERE IDTorneo=@IDTorneo ORDER BY EntryPoints DESC)";
+                    sql += "SELECT TOP (@NumMaxTeamQualifiche) * FROM ListaIscritti WHERE IDTorneo=@idTorneo AND IDSquadra NOT IN (SELECT IDSquadra FROM Partecipa WHERE IDTorneo=@idTorneo)";
                     comando = new SqlCommand(sql, conn);
                     comando.Parameters.Add(new SqlParameter("NumMaxTeamQualifiche", numTabelloneWildCard.Rows[0]["NumMaxTeamQualifiche"]));
                     comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
-                    comando.Parameters.Add(new SqlParameter("NumeroTeamTabellone", Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumMaxTeamMainDraw"]) - Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"])));
                     adapter = new SqlDataAdapter(comando);
                     squadreQualifica = new DataTable();
                     conn.Open();
@@ -3617,7 +3616,7 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                     }
                 }
-                if (numSquadreQualifiche <= 8)
+                else if (numSquadreQualifiche <= 8)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -3669,7 +3668,7 @@ namespace WebAPIAuthJWT.Helpers
                         conn.Close();
                     }
                 }
-                if (numSquadreQualifiche > 8 || numSquadreQualifiche <= 16)
+                else if (numSquadreQualifiche > 8 || numSquadreQualifiche <= 16)
                 {
                     for (int i = 0; i < 8; i++)
                     {
@@ -3677,7 +3676,7 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (15 - i) <= squadreQualifica.Rows.Count)
+                        if (i <= squadreQualifica.Rows.Count && (15 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[15 - i]["IDSquadra"]));
@@ -3688,7 +3687,7 @@ namespace WebAPIAuthJWT.Helpers
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((15 - i) > squadreQualifica.Rows.Count)
+                            if ((15 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[15 - i]["IDSquadra"]));
@@ -3793,7 +3792,7 @@ namespace WebAPIAuthJWT.Helpers
                         }
                     }
                 }
-                if (numSquadreQualifiche > 16 || numSquadreQualifiche <= 32)
+                else if (numSquadreQualifiche > 16 || numSquadreQualifiche <= 32)
                 {
                     for (int i = 0; i < 16; i++)
                     {
@@ -4023,7 +4022,7 @@ namespace WebAPIAuthJWT.Helpers
                         }
                     }
                 }
-                if (numSquadreQualifiche > 32 || numSquadreQualifiche <= 64)
+                else if (numSquadreQualifiche > 32 || numSquadreQualifiche <= 64)
                 {
                     for(int i=0; i < 32; i++)
                     {
