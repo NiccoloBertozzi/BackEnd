@@ -462,13 +462,18 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public string CreaListaIngresso(int IDTorneo, int IDSupervisore)
+        public ActionResult<InfoMsg> CreaListaIngresso(int IDTorneo, int IDSupervisore)
         {
             //Metodo che crea la lista d'ingresso definitiva del torneo
             if (db.ControlloSupervisore(IDSupervisore, IDTorneo))
-                return db.CreaLista(IDTorneo);
+            {
+                if (db.CreaLista(IDTorneo))
+                    return Ok(new InfoMsg(DateTime.Today, $"Lista di ingresso creata con successo!"));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore creazione lista ingresso"));
+            }
             else
-                return "Non sei il supervisore di questo torneo";
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Non sei il supervisore di questo torneo!"));
         }
 
         [HttpPost("CreaTorneoQualifiche/{IDTorneo}/{dataInizioQualifiche}/{dataFineQualifiche}/{dataPartite2Turno}")]
