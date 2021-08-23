@@ -37,5 +37,6 @@ namespace API_AIBVC.Models
         public int IDSupArbitrale { get; set; }
         public int IDDirettore { get; set; }
         public int[] IDParametriTorneo { get; set; }
+        public string Tour { get; set; }
     }
 }

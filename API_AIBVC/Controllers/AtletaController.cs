@@ -60,5 +60,29 @@ namespace API_AIBVC.Controllers
         {
             return db.GetIDSquadraByNomeTeam(Atleti_Id, IdTorneo);
         }
+
+        [HttpPut("UpdateAtleta")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Atleta,Admin")]
+        public ActionResult<InfoMsg> UpdateAtleta([FromBody] UpdateAtleta atletalogin)
+        {
+            if (db.GetIDSocieta(atletalogin.NomeSocieta).Rows.Count > 0)//controllo e prendo IDSocieta
+            {
+                atletalogin.atleta.IDSocieta = Convert.ToInt32(db.GetIDSocieta(atletalogin.NomeSocieta).Rows[0][0]);
+                atletalogin.atleta.IDComuneNascita = "";
+                atletalogin.atleta.IDComuneResidenza = "";
+                if (atletalogin.ComuneNascita != null) if (db.GetIDComuneNascita(atletalogin.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.ComuneNascita).Rows[0][0].ToString();
+                if (atletalogin.ComuneResidenza != null) if (db.GetIDComuneResidenza(atletalogin.ComuneResidenza).Rows.Count > 0) atletalogin.atleta.IDComuneResidenza = db.GetIDComuneResidenza(atletalogin.ComuneResidenza).Rows[0][0].ToString();
+                //registro
+                if (db.UpdateAnagraficaAtleta(atletalogin.atleta))
+                    return Ok(new InfoMsg(DateTime.Today, $"Modifica dell'atleta {atletalogin.atleta.Nome} eseguito con successo."));
+                else
+                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori nella modifica dell'atleta {atletalogin.atleta.Nome}."));
+            }
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Società non trovata."));
+        }
     }
 }

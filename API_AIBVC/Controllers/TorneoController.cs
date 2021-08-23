@@ -69,7 +69,7 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Societa,Admin")]
         public ActionResult<InfoMsg> CreaTorneo([FromBody] AddTorneo torneo)
         {
-            if (db.CreaTorneo(torneo.Titolo, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumMaxTeamMainDraw, torneo.NumMaxTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.QuotaIscrizione, torneo.IDSocieta, torneo.NumTeamQualificati, torneo.NumWildCard, torneo.IDImpianto, torneo.Outdoor, torneo.RiunioneTecnica, torneo.OraInizio))
+            if (db.CreaTorneo(torneo.Titolo,torneo.Tour, torneo.PuntiVittoria, torneo.Montepremi, Convert.ToDateTime(torneo.DataChiusuraIscrizioni), Convert.ToDateTime(torneo.DataInizio), Convert.ToDateTime(torneo.DataFine), torneo.Genere, torneo.FormulaTorneo, torneo.NumMaxTeamMainDraw, torneo.NumMaxTeamQualifiche, torneo.ParametriTorneo, torneo.TipoTorneo, torneo.QuotaIscrizione, torneo.IDSocieta, torneo.NumTeamQualificati, torneo.NumWildCard, torneo.IDImpianto, torneo.Outdoor, torneo.RiunioneTecnica, torneo.OraInizio))
                 return Ok(new InfoMsg(DateTime.Today, $"Torneo creato con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nella creazione del torneo"));
@@ -255,7 +255,6 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Admin")]
         public bool ControlAutorizzazioneTorneo(int idTorneo)
         {
             return db.ControlAutorizzazioneTorneo(idTorneo);
@@ -399,7 +398,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        [Authorize(Roles = "Atleta,Societa,Delegato,Admin")]
         public DataTable SquadreTorneo(int IdTorneo)
         {
             //Metodo che restituisce i torni a cui ha partecipato un supervisore
@@ -411,7 +410,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        [Authorize(Roles = "Atleta,Societa,Delegato,Admin")]
         public DataTable GetSquadra(int Idsquadra)
         {
             return db.GetSquadra(Idsquadra);
@@ -421,7 +420,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atltea,Admin")]
+        [Authorize(Roles = "Atleta,Admin")]
         public JsonResult GetTorneiFinitiByAtleta(int idAtleta)
         {
             return Json(new { output = db.GetTorneiFinitiByAtleta(idAtleta) });
@@ -431,7 +430,7 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atltea,Societa,Delegato,Admin")]
+        [Authorize(Roles = "Atleta,Societa,Delegato,Admin")]
         public DataTable GetPartiteTorneo(int idTorneo)
         {
             return db.GetPartiteTorneo(idTorneo);
@@ -481,9 +480,12 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public string CreaTorneoQualifiche(int idTorneo, string dataInizioQualifiche, string dataFineQualifiche, string dataPartite2Turno)
+        public ActionResult<InfoMsg> CreaTorneoQualifiche(int idTorneo, string dataInizioQualifiche, string dataFineQualifiche, string dataPartite2Turno)
         {
-            return db.CreaTorneoQualifica(idTorneo, Convert.ToDateTime(dataInizioQualifiche), Convert.ToDateTime(dataFineQualifiche), Convert.ToDateTime(dataPartite2Turno));
+            if(db.CreaTorneoQualifica(idTorneo, Convert.ToDateTime(dataInizioQualifiche), Convert.ToDateTime(dataFineQualifiche), Convert.ToDateTime(dataPartite2Turno)))
+                return Ok(new InfoMsg(DateTime.Today, $"Torneo di qualifica creato!"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Torneo principale non trovato"));
         }
 
         [HttpPut("AssegnaArbitriPartite")]
@@ -533,8 +535,8 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Delegato,Admin,Societa")]
-        public int ControlloDataIscrizioni(int idtorneo, int idSupervisore)
+        [Authorize(Roles = "Delegato,Admin,Societa,Atleta")]
+        public bool ControlloDataIscrizioni(int idtorneo, int idSupervisore)
         {
             return db.ControlloDataIscrizioni(idtorneo, idSupervisore);
         }
@@ -574,6 +576,16 @@ namespace API_AIBVC.Controllers
                 return Ok(new InfoMsg(DateTime.Today, $"Ottavi Sedicesimi Creati con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la creazione degli Ottavi Sedicesimi"));
+        }
+
+        [HttpGet("GetClassifica/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Societa,Atleta,Admin")]
+        public DataTable GetClassifica(int IDTorneo)
+        {
+            return db.CreateDataTable(db.GeneraClassifica(IDTorneo));
         }
     }
 }

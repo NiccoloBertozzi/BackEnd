@@ -29,7 +29,9 @@ namespace API_AIBVC.Controllers
                 risposta = db.GetToken(credenziali.Email);
                 tokenJWT = risposta[0];
                 //Set cookie con ruolo
-                HttpContext.Response.Cookies.Append("ruolo", risposta[2]);
+                CookieOptions Co = new CookieOptions();
+                Co.Expires= DateTime.Now.AddMinutes(20);
+                HttpContext.Response.Cookies.Append("ruolo", risposta[2],Co);
             }
             else
                 return BadRequest(new InfoMsg(DateTime.Today, string.Format($"Username e/o Password errati.")));
@@ -142,30 +144,7 @@ namespace API_AIBVC.Controllers
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
         }
 
-        [HttpPut("UpdateAtleta")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Roles = "Atleta,Admin")]
-        public ActionResult<InfoMsg> UpdateAtleta([FromBody] UpdateAtleta atletalogin)
-        {
-            if (db.GetIDSocieta(atletalogin.NomeSocieta).Rows.Count > 0)//controllo e prendo IDSocieta
-            {
-                atletalogin.atleta.IDSocieta = Convert.ToInt32(db.GetIDSocieta(atletalogin.NomeSocieta).Rows[0][0]);
-                atletalogin.atleta.IDComuneNascita = "";
-                atletalogin.atleta.IDComuneResidenza = "";
-                if (atletalogin.ComuneNascita != null) if (db.GetIDComuneNascita(atletalogin.ComuneNascita).Rows.Count > 0) atletalogin.atleta.IDComuneNascita = db.GetIDComuneNascita(atletalogin.ComuneNascita).Rows[0][0].ToString();
-                if (atletalogin.ComuneResidenza != null) if (db.GetIDComuneResidenza(atletalogin.ComuneResidenza).Rows.Count > 0) atletalogin.atleta.IDComuneResidenza = db.GetIDComuneResidenza(atletalogin.ComuneResidenza).Rows[0][0].ToString();
-                //registro
-                if (db.UpdateAnagraficaAtleta(atletalogin.atleta))
-                    return Ok(new InfoMsg(DateTime.Today, $"Modifica dell'atleta {atletalogin.atleta.Nome} eseguito con successo."));
-                else
-                    return StatusCode(500, new InfoMsg(DateTime.Today, $"Errori nella modifica dell'atleta {atletalogin.atleta.Nome}."));
-            }
-            else
-                return StatusCode(500, new InfoMsg(DateTime.Today, $"Società non trovata."));
-        }
+        
 
         [HttpPut("UpdateSocieta")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]

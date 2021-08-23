@@ -16,6 +16,7 @@ using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Reflection;
 using System.Diagnostics;
+using API_AIBVC.Models;
 
 namespace WebAPIAuthJWT.Helpers
 {
@@ -326,7 +327,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF, IDDelegato ";
             sql += "FROM DelegatoTecnico ";
             sql += "ORDER BY Delegato ASC";
             query = new DataTable();
@@ -342,7 +343,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF, IDDelegato ";
             sql += "FROM DelegatoTecnico ";
             sql += "WHERE Supervisore=1 ";
             sql += "ORDER BY Delegato ASC";
@@ -360,7 +361,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Open();
             string sql;
             sql = "";
-            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF ";
+            sql += "SELECT CONCAT(Cognome,' ',Nome)AS Delegato, CF, IDDelegato ";
             sql += "FROM DelegatoTecnico ";
             sql += "WHERE Arbitro=1 ";
             sql += "ORDER BY Delegato ASC";
@@ -544,9 +545,8 @@ namespace WebAPIAuthJWT.Helpers
             string sql;
             conn.Open();
             sql = "";
-            sql += "SELECT IDSocieta,Comune.Citta,NomeSocieta,Indirizzo,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Sito,Tel1,Tel2,Pec,PIVA,CF,CU,Presidente,Referente ";
+            sql += "SELECT * ";
             sql += "FROM Societa ";
-            sql += "LEFT JOIN Comune ON Societa.IDComune = Comune.IDComune ";
             sql += "WHERE IDSocieta=@IDSocieta";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDSocieta", id_Societa));
@@ -1659,7 +1659,7 @@ namespace WebAPIAuthJWT.Helpers
                     if (setsq1 == 2 || setsq2 == 2)//Controllo se la partita è finita
                     {
                         if (titoloTorneo.Rows.Count == 1)//Se è finita una partita di qualifiche:
-                            risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale);
+                            risposta = AvanzaTabelloneQualifiche(idTorneo, numPartita, idTorneoPrincipale, setsq1, setsq2);
                         else
                             AvanzaTabellone(idTorneo, numPartita, setsq1, setsq2);
                     }
@@ -2110,7 +2110,7 @@ namespace WebAPIAuthJWT.Helpers
             conn.Close();
             return risultati;
         }
-        public bool CreaTorneo(string titolo, int puntiVittoria, double montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int NumMaxTeamMainDraw, int NumMaxTeamQualifiche, string[] parametriTorneo, string tipoTorneo, double quotaIscrizione, int idSocieta, int numTeamQualificati, int numWildCard, int idImpianto, bool outdoor, bool riunioneTecnica, string oraInizio)
+        public bool CreaTorneo(string titolo,string Tour, int puntiVittoria, double montepremi, DateTime dataChiusuraIscrizioni, DateTime dataInizio, DateTime dataFine, char genere, string formulaTorneo, int NumMaxTeamMainDraw, int NumMaxTeamQualifiche, string[] parametriTorneo, string tipoTorneo, double quotaIscrizione, int idSocieta, int numTeamQualificati, int numWildCard, int idImpianto, bool outdoor, bool riunioneTecnica, string oraInizio)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
@@ -2124,8 +2124,8 @@ namespace WebAPIAuthJWT.Helpers
             {
                 //Creo il torneo
                 sql = "";
-                sql += "INSERT INTO Torneo(IDSocieta,IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,QuotaIscrizione,NumTeamQualificati,NumWildCard,IDImpianto,Outdoor,RiunioneTecnica,OraInizio) ";
-                sql += "VALUES(@IDSocieta,@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumMaxTeamMainDraw,@NumMaxTeamQualifiche,@QuotaIscrizione,@NumTeamQualificati,@NumWildCard,@IDImpianto,@Outdoor,@RiunioneTecnica,@OraInizio)";
+                sql += "INSERT INTO Torneo(IDSocieta,IDTipoTorneo,IDFormula,Titolo,PuntiVittoria,Montepremi,DataChiusuraIscrizioni,DataInizio,DataFine,Gender,NumMaxTeamMainDraw,NumMaxTeamQualifiche,QuotaIscrizione,NumTeamQualificati,NumWildCard,IDImpianto,Outdoor,RiunioneTecnica,OraInizio,Tour) ";
+                sql += "VALUES(@IDSocieta,@IDTipoTorneo,@IDFormula,@Titolo,@PuntiVittoria,@Montepremi,@DataChiusuraIScrizioni,@DataInzio,@DataFine,@Gender,@NumMaxTeamMainDraw,@NumMaxTeamQualifiche,@QuotaIscrizione,@NumTeamQualificati,@NumWildCard,@IDImpianto,@Outdoor,@RiunioneTecnica,@OraInizio,@Tour)";
                 comando = new SqlCommand(sql, conn);
                 parametro = new SqlParameter("IDSocieta", idSocieta);
                 comando.Parameters.Add(parametro);
@@ -2167,6 +2167,11 @@ namespace WebAPIAuthJWT.Helpers
                     parametro = new SqlParameter("OraInizio", oraInizio);
                 else
                     parametro = new SqlParameter("OraInizio", DBNull.Value);
+                comando.Parameters.Add(parametro);
+                if (Tour != null)
+                    parametro = new SqlParameter("Tour", Tour);
+                else
+                    parametro = new SqlParameter("Tour", DBNull.Value);
                 comando.Parameters.Add(parametro);
                 conn.Open();
                 comando.ExecuteNonQuery();
@@ -3327,7 +3332,7 @@ namespace WebAPIAuthJWT.Helpers
             {
                 //Prendo le squadre con la wildcard
                 sql = "";
-                sql += "SELECT * FROM ListaIscritti WHERE IDTorneo=@IDTorneo AND WC=1";
+                sql += "SELECT * FROM ListaIscritti WHERE IDTorneo=@IDTorneo AND WC=1 ORDER BY EntryPoints";
                 comando = new SqlCommand(sql, conn);
                 comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
                 adapter = new SqlDataAdapter(comando);
@@ -3456,7 +3461,7 @@ namespace WebAPIAuthJWT.Helpers
             }
         }
         //Metodo che crea il torneo di qualifica
-        public string CreaTorneoQualifica(int idTorneo, DateTime dataInizioQualifiche, DateTime dataFineQualifiche, DateTime dataPartite2Turno)
+        public bool CreaTorneoQualifica(int idTorneo, DateTime dataInizioQualifiche, DateTime dataFineQualifiche, DateTime dataPartite2Turno)
         {
             SqlCommand comando;
             SqlDataAdapter adapter;
@@ -3594,24 +3599,25 @@ namespace WebAPIAuthJWT.Helpers
                             case 8:
                                 PartiteNTQ4_8(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
-
                             case 4:
                                 PartiteNTQ4_8(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
-
                             case 6:
                                 PartiteNTQ6(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
                                 break;
+                            case 1:
+                                PartiteNTQ1(squadreQualifica.Rows.Count, squadreQualifica, Convert.ToInt32(numTabelloneWildCard.Rows[0]["NumTeamQualificati"]), Convert.ToInt32(idTorneoQualifica.Rows[0]["IDTorneo"]), dataPartite2Turno, dataInizioQualifiche);
+                                break;
                         }
                     }
-                    return "Torneo di qualifica creato! : " + idTorneoQualifica.Rows[0]["IDTorneo"].ToString();
+                    return true;
                 }
                 else
-                    return "Torneo principale non trovato";
+                    return false;
             }
             catch (Exception e)
             {
-                return "Errore: " + e.Message;
+                return false;
             }
         }
         //Metodo che crea le partite per il torneo di qualifica con 4 o 8 NTQ (NumTeamQualificati) 
@@ -4657,6 +4663,51 @@ namespace WebAPIAuthJWT.Helpers
                 string errore = e.Message;
             }
         }
+        //Metodo che crea le partite per il torneo di qualifica con 1 NTQ
+        private void PartiteNTQ1(int numSquadreQualifiche, DataTable squadreQualifica, int numQualificati, int idTorneoQualifica, DateTime dataPartite2Turno, DateTime dataInizioQualifiche)
+        {
+            SqlCommand comando;
+            SqlDataAdapter adapter;
+            DataTable squadreBye;
+            string sql;
+            try
+            {
+                //Prendo le squadre bye
+                sql = "";
+                sql += "SELECT * FROM Squadra WHERE NomeTeam='Bye'";
+                adapter = new SqlDataAdapter(sql, conn);
+                squadreBye = new DataTable();
+                conn.Open();
+                adapter.Fill(squadreBye);
+                conn.Close();
+                sql = "";
+                sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
+                    "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
+                comando = new SqlCommand(sql, conn);
+                if (squadreQualifica.Rows.Count == 2)
+                {
+                    comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[0]["IDSquadra"]));
+                    comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[1]["IDSquadra"]));
+                }
+                else
+                {
+                    comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[0]["IDSquadra"]));
+                    comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
+                }
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifica));
+                comando.Parameters.Add(new SqlParameter("DataPartita", dataInizioQualifiche.Date));
+                comando.Parameters.Add(new SqlParameter("NumPartita", 1));
+                comando.Parameters.Add(new SqlParameter("Fase", "Singolo turno eliminatorio"));
+                comando.Parameters.Add(new SqlParameter("OraPartita", DateTime.Now.TimeOfDay));
+                conn.Open();
+                comando.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                string errore = e.Message;
+            }
+        }
         //Metodo che gestisce le partite che contengono le squadre "Bye"
         public string GestisciSquadraBye(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
         {
@@ -5294,7 +5345,7 @@ namespace WebAPIAuthJWT.Helpers
                 return "ERRORE: " + e.Message;
             }
         }
-        private string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale)
+        private string AvanzaTabelloneQualifiche(int idTorneoQualifiche, int numPartita, int idTorneoPrincipale, int setsq1,int setsq2)
         {
             //Metodo per l'avanzamento nel tabellone di qualifiche
             //IMPORTANTE: QUESTO METODO VA RICHIAMATO CON LA FINE DELLA PARTITA
@@ -5304,6 +5355,18 @@ namespace WebAPIAuthJWT.Helpers
             DataTable setPartitaFinita, numPartitaSuccessiva, infoSquadra, infoPartitaSuccessiva = new DataTable();
             try
             {
+                //prendo idtorneopricipale
+                sql = "";
+                sql += "SELECT IDTorneo FROM Torneo WHERE Titolo=(SELECT SUBSTRING(Titolo, 0,((SELECT LEN(Titolo)FROM Torneo WHERE IDTorneo=@IDTorneo)-10)) FROM Torneo WHERE IDTorneo = @IDTorneo) ";
+                comando = new SqlCommand(sql, conn);
+                comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneoQualifiche));
+                comando.Parameters.Add(new SqlParameter("NumPartita", numPartita));
+                adapter = new SqlDataAdapter(comando);
+                setPartitaFinita = new DataTable();
+                conn.Open();
+                adapter.Fill(setPartitaFinita);
+                conn.Close();
+                idTorneoPrincipale = Convert.ToInt32(setPartitaFinita.Rows[0][0]);
                 //Prendo i set della partita in modo da vedere chi ha vinto e gli id delle squadre
                 sql = "";
                 sql += "SELECT SetSQ1,SetSQ2,IDSQ1,IDSQ2 FROM Partita WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartita";
@@ -5362,7 +5425,7 @@ namespace WebAPIAuthJWT.Helpers
                         "WHERE IDTorneo=@IDTorneo AND NumPartita=@NumPartitaSuccessiva";
                     comando = new SqlCommand(sql, conn);
                     //Controllo quale squadra ha vinto
-                    if (Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ1"]) > Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ2"]))
+                    if (setsq1 > setsq2)
                     {
                         if (numPartita % 2 != 0) //Se il NumPartita è dispari, la squadra vincente sarà la squadra 1 nella partita successiva
                         {
@@ -5413,7 +5476,7 @@ namespace WebAPIAuthJWT.Helpers
                         "VALUES(@IDSquadra,@IDTorneo,@IDAllenatore,@EntryPoints)";
                     comando = new SqlCommand(sql, conn);
                     //Controllo quale squadra ha vinto
-                    if (Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ1"]) > Convert.ToInt32(setPartitaFinita.Rows[0]["SetSQ2"]))
+                    if (setsq1 > setsq2)
                     {
                         comando.Parameters.Add(new SqlParameter("IDSquadra", infoSquadra.Rows[0]["IDSquadra"]));
                         if (infoSquadra.Rows[0]["IDAllenatore"] != DBNull.Value)
@@ -5424,7 +5487,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     else
                     {
-                        comando.Parameters.Add(new SqlParameter("IDSquadra", setPartitaFinita.Rows[1]["IDSquadra"]));
+                        comando.Parameters.Add(new SqlParameter("IDSquadra", infoSquadra.Rows[1]["IDSquadra"]));
                         if (infoSquadra.Rows[1]["IDAllenatore"] != DBNull.Value)
                             comando.Parameters.Add(new SqlParameter("IDAllenatore", infoSquadra.Rows[1]["IDAllenatore"]));
                         else
@@ -5473,7 +5536,7 @@ namespace WebAPIAuthJWT.Helpers
                 return "Errore: " + exc.Message;
             }
         }
-        public int ControlloDataIscrizioni(int idTorneo, int idSupervisore)
+        public bool ControlloDataIscrizioni(int idTorneo, int idSupervisore)
         {
             //CONTROLLARE ANCHE CHE LE QUALIFICHE SIANO GIA PRONTE
             string sql;
@@ -5481,17 +5544,16 @@ namespace WebAPIAuthJWT.Helpers
             SqlCommand comando;
             DataTable result;
             sql = "";
-            sql = "SELECT IDTorneo FROM Torneo WHERE IDTorneo = @IDTorneo AND DataChiusuraIscrizioni <= GETDATE() AND IDSupervisore=@IDSupervisore";
+            sql = "SELECT IDTorneo FROM Torneo WHERE IDTorneo = @IDTorneo AND DataChiusuraIscrizioni <= GETDATE() AND GETDATE() <= DataInizio";
             comando = new SqlCommand(sql, conn);
             comando.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
-            comando.Parameters.Add(new SqlParameter("IDSupervisore", idSupervisore));
             adapter = new SqlDataAdapter(comando);
             result = new DataTable();
             conn.Open();
             adapter.Fill(result);
             conn.Close();
-            if (result.Rows.Count > 0) return Convert.ToInt32(result.Rows[0]["IDTorneo"]);
-            else return 0;
+            if (result.Rows.Count > 0) return true;
+            else return false;
         }
         public bool CreaPool(int idTorneo)
         {
@@ -5510,7 +5572,7 @@ namespace WebAPIAuthJWT.Helpers
                 da.Fill(dtb);
                 conn.Close();
 
-                query = "SELECT IDSquadra FROM Partecipa WHERE IDTorneo=@IDTorneo";
+                query = "SELECT IDSquadra FROM Partecipa WHERE IDTorneo=@IDTorneo order by Entrypoints DESC";
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
@@ -6408,7 +6470,7 @@ namespace WebAPIAuthJWT.Helpers
                             for (int i = 0; i < 8; i++)
                             {
                                 numpartita++;
-                                query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita,NumPartitaSucecssiva) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num,@numsucc);";
+                                query = "INSERT INTO Partita (DataPartita,OraPartita,Fase,Risultato,IDTorneo,NumPartita,NumPartitaSuccessiva) VALUES (@Data,@Ora,@Pool,'0-0',@IDTorneo,@num,@numsucc);";
                                 conn.Open();
                                 command = new SqlCommand(query, conn);
                                 command.Parameters.Add(new SqlParameter("Data", DateTime.Now.Date));//COME GESTIRE LE DATE E L'ORARIO
@@ -6759,7 +6821,7 @@ namespace WebAPIAuthJWT.Helpers
             if (teamTotali == 8)
             {
                 //SCARICO TUTTE LE PRIME
-                query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6772,7 +6834,7 @@ namespace WebAPIAuthJWT.Helpers
                 }
                 conn.Close();
                 //SCARICO TUTTE LE SECONDE
-                query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY idpool DESC ";//scarico 1 team di quel pool
+                query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY idpool ASC ";//scarico 1 team di quel pool
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6807,7 +6869,7 @@ namespace WebAPIAuthJWT.Helpers
             else if (teamTotali == 12)
             {
                 //SCARICO TUTTE LE PRIME
-                query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6825,7 +6887,7 @@ namespace WebAPIAuthJWT.Helpers
                 prime = listsup;
                 conn.Close();
                 //SCARICO TUTTE LE SECONDE
-                query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6843,7 +6905,7 @@ namespace WebAPIAuthJWT.Helpers
                 seconde = listsup;
                 conn.Close();
                 //SCARICO TUTTE LE TERZE
-                query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ";//scarico 1 team di quel pool
                 conn.Open();
                 command = new SqlCommand(query, conn);
                 command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6865,7 +6927,7 @@ namespace WebAPIAuthJWT.Helpers
                 if (teamTotali == 16)
                 {
                     //SCARICO LE PRIME PRIMI (A,B) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6878,7 +6940,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     conn.Close();
                     //SCARICO LE SECONDE PRIMI (C,D) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6891,7 +6953,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     conn.Close();
                     //SCARICO TUTTE LE SECONDE
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -6909,7 +6971,7 @@ namespace WebAPIAuthJWT.Helpers
                     seconde[2] = listsup[3];//7 =2
                     conn.Close();
                     //SCARICO TUTTE LE TERZE
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -7008,7 +7070,7 @@ namespace WebAPIAuthJWT.Helpers
                 else if (teamTotali == 24)
                 {
                     //SCARICO LE PRIME PRIMI (A,B) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -7021,7 +7083,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     conn.Close();
                     //SCARICO LE SECONDE PRIMI (C,D) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D' OR idpool='E' OR idpool='F') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D' OR idpool='E' OR idpool='F') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -7040,69 +7102,51 @@ namespace WebAPIAuthJWT.Helpers
                     prime.Add(listsup[3]);//la quarta=6
                     conn.Close();
                     //SCARICO LE MIGLIORI 2 SECONDE
-                    query = "SELECT TOP(2) IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    for (int i = 0; i < 2; i++)
                     {
-                        seconde.Add(dr[0].ToString());
+                        seconde.Add(dtb.Rows[i][0].ToString());
                     }
                     listsup = seconde.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
                     seconde[1] = listsup[0];//8 =1
                     seconde[0] = listsup[1];//7 =0
-                    conn.Close();
-                    //SCARICO LE PEGGIORI 4 SECONDE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP ASC ";//scarico 1 team di quel pool
-                    conn.Open();
-                    command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
-                    dtb = new DataTable();
-                    da = new SqlDataAdapter(command);
-                    da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    List<string> secondesup = new List<string>();
+                    for (int i =2; i < 6; i++)
                     {
-                        seconde.Add(dr[0].ToString());
+                        secondesup.Add(dtb.Rows[i][0].ToString());
                     }
-                    listsup = seconde.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
-                    seconde[2] = listsup[2];//9 =2
-                    seconde[5] = listsup[3];//12 =5
-                    seconde[4] = listsup[4];//11 =4
-                    seconde[3] = listsup[5];//10 =3
+                    listsup = secondesup.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
+                    seconde.Add(listsup[0]);//9 =2
+                    seconde.Add(listsup[3]);//10 =3
+                    seconde.Add(listsup[2]);//11 =4
+                    seconde.Add(listsup[1]);//12 =5  
                     conn.Close();
                     //SCARICO LE MIGLIORI 2 TERZE
-                    query = "SELECT TOP(2) IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    for (int i = 0; i < 2; i++)
                     {
-                        terze.Add(dr[0].ToString());
+                        terze.Add(dtb.Rows[i][0].ToString());
                     }
                     listsup = terze.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
                     terze[0] = listsup[0];//13  =0
                     terze[1] = listsup[1];//14 =1
-                    conn.Close();
-                    //SCARICO LE SECONDE MIGLIORI 2 TERZE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
-                    conn.Open();
-                    command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
-                    dtb = new DataTable();
-                    da = new SqlDataAdapter(command);
-                    da.Fill(dtb);
                     List<string> terzesup = new List<string>();
-                    foreach (DataRow dr in dtb.Rows)
+                    for (int i = 2; i < 4; i++)
                     {
-                        terzesup.Add(dr[0].ToString());
+                        terzesup.Add(dtb.Rows[i][0].ToString());
                     }
-                    terzesup.RemoveRange(0, 2);
                     listsup = terzesup.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
                     terze.Add(listsup[1]);//15 =2
                     terze.Add(listsup[0]);//16 =3
@@ -7114,7 +7158,7 @@ namespace WebAPIAuthJWT.Helpers
                 else if (teamTotali == 32)
                 {
                     //SCARICO LE PRIME PRIMI (A,B) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='A' OR idpool='B') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -7127,7 +7171,7 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     conn.Close();
                     //SCARICO LE PRIME PRIMI (A,B) PER POINT RATIO
-                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D') ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=8 AND IdTorneo=@IDTorneo AND (idPool='C' OR idpool='D') ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
@@ -7159,16 +7203,16 @@ namespace WebAPIAuthJWT.Helpers
                     prime.Add(listsup[0]);//la prima=8
                     conn.Close();
                     //SCARICO LE MIGLIORI 2 SECONDE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    for (int i = 0; i < 4; i++)
                     {
-                        seconde.Add(dr[0].ToString());
+                        seconde.Add(dtb.Rows[i][0].ToString());
                     }
                     listsup = seconde.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
                     seconde[0] = listsup[0];//9 =1
@@ -7176,59 +7220,43 @@ namespace WebAPIAuthJWT.Helpers
                     seconde[2] = listsup[2];//11 =3
                     seconde[3] = listsup[1];//12 =2
                     conn.Close();
-                    //SCARICO LE PEGGIORI 4 SECONDE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=5 AND IdTorneo=@IDTorneo ORDER BY QP ASC ";//scarico 1 team di quel pool
-                    conn.Open();
-                    command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
-                    dtb = new DataTable();
-                    da = new SqlDataAdapter(command);
-                    da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    List<string> secondesup = new List<string>();
+                    for (int i = 4; i < 8; i++)
                     {
-                        seconde.Add(dr[0].ToString());
+                        secondesup.Add(dtb.Rows[i][0].ToString());
                     }
-                    listsup = seconde.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
-                    seconde[4] = listsup[1];//13 =2
-                    seconde[5] = listsup[2];//14 =3
-                    seconde[6] = listsup[3];//15 =4
-                    seconde[7] = listsup[0];//16 =1
-                    conn.Close();
+                    listsup = secondesup.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
+                    seconde.Add(listsup[1]);//13 =2
+                    seconde.Add(listsup[2]);//14 =3
+                    seconde.Add(listsup[3]);//15 =4
+                    seconde.Add(listsup[0]);//16 =1
                     //SCARICO LE MIGLIORI 2 TERZE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC ";//scarico 1 team di quel pool
+                    query = "SELECT IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP DESC,(SELECT EntryPoints FROM Partecipa WHERE Partecipa.IDSquadra=Pool.IDSquadra AND Partecipa.IDTorneo=@IDTorneo)DESC ";//scarico 1 team di quel pool
                     conn.Open();
                     command = new SqlCommand(query, conn);
                     command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
                     dtb = new DataTable();
                     da = new SqlDataAdapter(command);
                     da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    for(int i=0;i<4;i++)
                     {
-                        terze.Add(dr[0].ToString());
+                        terze.Add(dtb.Rows[i][0].ToString());
                     }
                     listsup = terze.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
                     terze[0] = listsup[0];//17 =1
                     terze[1] = listsup[3];//18 =4
                     terze[2] = listsup[2];//19 =3
                     terze[3] = listsup[1];//20 =2
-                    conn.Close();
-                    //SCARICO LE PEGGIORI 4 SECONDE
-                    query = "SELECT TOP(4) IdSquadra FROM Pool WHERE PP=3 AND IdTorneo=@IDTorneo ORDER BY QP ASC ";//scarico 1 team di quel pool
-                    conn.Open();
-                    command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
-                    dtb = new DataTable();
-                    da = new SqlDataAdapter(command);
-                    da.Fill(dtb);
-                    foreach (DataRow dr in dtb.Rows)
+                    List<string> terzesup= new List<string>();
+                    for (int i = 4; i < 8; i++)
                     {
-                        terze.Add(dr[0].ToString());
+                        terzesup.Add(dtb.Rows[i][0].ToString());
                     }
-                    listsup = terze.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
-                    terze[4] = listsup[1];//21 =2
-                    terze[5] = listsup[2];//22 =3
-                    terze[6] = listsup[3];//23 =4
-                    terze[7] = listsup[0];//24 =1
+                    listsup = terzesup.OrderBy(item => rnd.Next()).ToList();//mischio le altre due
+                    terze.Add(listsup[1]);//21 =2
+                    terze.Add(listsup[2]);//22 =3
+                    terze.Add(listsup[3]);//23 =4
+                    terze.Add(listsup[0]);//24 =1
                     conn.Close();
                     team.AddRange(prime);
                     team.AddRange(seconde);
@@ -7666,18 +7694,11 @@ namespace WebAPIAuthJWT.Helpers
                     }
                     else if (dtb.Rows[0][8].ToString() == "Ottavi")
                     {
-                        query = "SELECT TOP(1) NumPartita FROM Partita WHERE Fase='Quarti' AND IDTorneo=@IDTorneo";
-                        command = new SqlCommand(query, conn);
-                        command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
-                        da = new SqlDataAdapter(command);
-                        dtb = new DataTable();
-                        da.Fill(dtb);
-                        numpartita = Convert.ToInt32(dtb.Rows[0][0].ToString());
-                        conn.Close();
                         conn.Open();
-                        query = "SELECT IDPartita,IDSQ1,IDSQ2,IDTorneo,NumPartita,SetSQ1,SetSQ2,NumPartitaSuccessiva,Fase FROM Partita WHERE Fase='Ottavi' AND IDTorneo=@IDTorneo";
+                        query = "SELECT IDPartita,IDSQ1,IDSQ2,IDTorneo,NumPartita,SetSQ1,SetSQ2,NumPartitaSuccessiva,Fase FROM Partita WHERE Fase='Ottavi' AND IDTorneo=@IDTorneo AND NumPartita=@num";
                         command = new SqlCommand(query, conn);
                         command.Parameters.Add(new SqlParameter("IDTorneo", idtorneo));
+                        command.Parameters.Add(new SqlParameter("num", numpartita));
                         da = new SqlDataAdapter(command);
                         dtb = new DataTable();
                         da.Fill(dtb);
@@ -7685,11 +7706,14 @@ namespace WebAPIAuthJWT.Helpers
                         if (setsq1 == 2)
                         {
                             conn.Open();
-                            query = "UPDATE Partita SET IDSQ2 = @sq2 WHERE IdTorneo = @IDTorneo AND NumPartita = @num ";
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
                             command = new SqlCommand(query, conn);
                             command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
-                            command.Parameters.Add(new SqlParameter("sq2", dtb.Rows[0][1]));
-                            command.Parameters.Add(new SqlParameter("num", numpartita));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][1]));
+                            command.Parameters.Add(new SqlParameter("num", number));
                             command.ExecuteNonQuery();
                             conn.Close();
                             return true;
@@ -7698,11 +7722,14 @@ namespace WebAPIAuthJWT.Helpers
                         else if (setsq2 == 2)
                         {
                             conn.Open();
-                            query = "UPDATE Partita SET IDSQ2 = @sq2 WHERE IdTorneo = @IDTorneo AND NumPartita = @num ";
+                            query = "IF(SELECT IDSQ1 FROM Partita  WHERE IdTorneo = @IDTorneo AND NumPartita = @num) IS NULL " +
+                                "UPDATE Partita SET IDSQ1 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num " +
+                                "ELSE " +
+                                "UPDATE Partita SET IDSQ2 = @sq1 WHERE IdTorneo = @IDTorneo AND NumPartita = @num";
                             command = new SqlCommand(query, conn);
                             command.Parameters.Add(new SqlParameter("IDTorneo", dtb.Rows[0][3]));
-                            command.Parameters.Add(new SqlParameter("sq2", dtb.Rows[0][2]));
-                            command.Parameters.Add(new SqlParameter("num", numpartita));
+                            command.Parameters.Add(new SqlParameter("sq1", dtb.Rows[0][2]));
+                            command.Parameters.Add(new SqlParameter("num", number));
                             command.ExecuteNonQuery();
                             conn.Close();
                             return true;
@@ -7807,6 +7834,234 @@ namespace WebAPIAuthJWT.Helpers
                 else return false;
             }
             catch { return false; }
+        }
+        public List<Classifica> GeneraClassifica(int idTorneo)
+        {
+            try
+            {
+                List<Classifica> classifica = new List<Classifica>();
+                //scarico team
+                conn.Open();
+                string query = "SELECT COUNT(*) FROM Partita WHERE IdTorneo=@IDTorneo";//scarico numero squadre
+                SqlCommand command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                DataTable dtb = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(dtb);
+                int numteam = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                conn.Close();
+                //scarico team che hanno finito la partita 
+                conn.Open();
+                query = "SELECT COUNT(*) FROM Partita WHERE IdTorneo=@IDTorneo AND (SetSQ1=2 OR SetSQ2=2)";//scarico numero squadre
+                command = new SqlCommand(query, conn);
+                command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                dtb = new DataTable();
+                da = new SqlDataAdapter(command);
+                da.Fill(dtb);
+                int numteampartitaconclusa = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                conn.Close();
+                int numpartita = GetLastNumberPartita(idTorneo);
+                //tutte partite concluse
+                if (numteam == numteampartitaconclusa)
+                {
+                    conn.Open();
+                    query = "SELECT at1s1.CodiceTessera as CS1A1,at2s1.CodiceTessera as CS1A2," +
+                        "at1s2.CodiceTessera as CS2A1,at2s2.CodiceTessera as CS2A2," +
+                        "sq1.NomeTeam as SQ1,sq2.NomeTeam as SQ2,SetSQ1,SetSQ2 FROM Partita " +
+                        "INNER JOIN Squadra as sq1 ON sq1.IDSquadra = Partita.IDSQ1 " +
+                        "INNER JOIN Squadra as sq2 ON sq2.IDSquadra = Partita.IDSQ2 " +
+                        "INNER JOIN Atleta as at1s1 ON at1s1.IDAtleta=sq1.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s1 ON at2s1.IDAtleta = sq1.IDAtleta2 " +
+                        "INNER JOIN Atleta as at1s2 ON at1s2.IDAtleta = sq2.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s2 ON at2s2.IDAtleta = sq2.IDAtleta2 " +
+                        "WHERE IdTorneo=@IDTorneo AND (NumPartita=@num OR Numpartita=@num1) ORDER BY NumPartita DESC";//prendo finali
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    command.Parameters.Add(new SqlParameter("num", numpartita));
+                    command.Parameters.Add(new SqlParameter("num1", numpartita - 1));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    conn.Close();
+                    //prendo i vincitori e i perdenti delle finali
+                    for (int i = 0; i < 2; i++)
+                    {
+                        //se sq1 ha vinto 
+                        if (Convert.ToInt32(dtb.Rows[i][6]) == 2)
+                        {
+                            classifica.Add(new Classifica(dtb.Rows[i][0].ToString(),dtb.Rows[i][1].ToString(), 1,dtb.Rows[i][4].ToString(),100));
+                            classifica.Add(new Classifica(dtb.Rows[i][2].ToString(), dtb.Rows[i][3].ToString(), 1, dtb.Rows[i][5].ToString(), 100));
+                        }
+                        //se sq2 ha vinto
+                        else if (Convert.ToInt32(dtb.Rows[i][7]) == 2)
+                        {
+                            classifica.Add(new Classifica(dtb.Rows[i][2].ToString(), dtb.Rows[i][3].ToString(), 1, dtb.Rows[i][5].ToString(), 100));
+                            classifica.Add(new Classifica(dtb.Rows[i][0].ToString(), dtb.Rows[i][1].ToString(), 1, dtb.Rows[i][4].ToString(), 100));
+                        }
+                    }
+                    //prendo numpartita quarti
+                    conn.Open();
+                    query = "SELECT TOP(1) NumPartita FROM Partita WHERE IDTorneo=@IDTorneo AND Fase='Quarti' ORDER BY NumPartita DESC";//scarico numero squadre
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    numpartita = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    conn.Close();
+                    //prendo partite quarti ottavi sedicesimi
+                    conn.Open();
+                    query = "SELECT at1s1.CodiceTessera as CS1A1,at2s1.CodiceTessera as CS1A2," +
+                        "at1s2.CodiceTessera as CS2A1,at2s2.CodiceTessera as CS2A2," +
+                        "sq1.NomeTeam as SQ1,sq2.NomeTeam as SQ2,SetSQ1,SetSQ2 FROM Partita " +
+                        "INNER JOIN Squadra as sq1 ON sq1.IDSquadra = Partita.IDSQ1 " +
+                        "INNER JOIN Squadra as sq2 ON sq2.IDSquadra = Partita.IDSQ2 " +
+                        "INNER JOIN Atleta as at1s1 ON at1s1.IDAtleta=sq1.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s1 ON at2s1.IDAtleta = sq1.IDAtleta2 " +
+                        "INNER JOIN Atleta as at1s2 ON at1s2.IDAtleta = sq2.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s2 ON at2s2.IDAtleta = sq2.IDAtleta2 " +
+                        "WHERE IDTorneo=@IDTorneo AND NumPartita<=@num AND Fase NOT LIKE '%Pool%' ORDER BY NumPartita DESC";//prendo finali
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    command.Parameters.Add(new SqlParameter("num", numpartita));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    conn.Close();
+                    //prendo i vincitori e i perdenti
+                    for (int i = 0; i < dtb.Rows.Count; i++)
+                    {
+                        //se sq1 ha vinto 
+                        if (Convert.ToInt32(dtb.Rows[i][6]) == 2)
+                            classifica.Add(new Classifica(dtb.Rows[i][2].ToString(), dtb.Rows[i][3].ToString(), 1, dtb.Rows[i][5].ToString(), 100));
+                        //se sq2 ha vinto
+                        else if (Convert.ToInt32(dtb.Rows[i][7]) == 2)
+                            classifica.Add(new Classifica(dtb.Rows[i][0].ToString(), dtb.Rows[i][1].ToString(), 1, dtb.Rows[i][4].ToString(), 100));
+                    }
+
+                    //controllo num squadre torneo
+                    conn.Open();
+                    query = "SELECT COUNT(*) FROM Partecipa WHERE IdTorneo=@IDTorneo";//scarico numero squadre
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    int numsquadre = Convert.ToInt32(dtb.Rows[0][0]);//numero di team
+                    conn.Close();
+                    if (numsquadre == 24)
+                    {
+                        //prendo team pool
+                        conn.Open();
+                        query = "SELECT TOP(2) at1s1.CodiceTessera as CA1,at2s1.CodiceTessera as CA2,NomeTeam,Pool.IdSquadra FROM Pool " +
+                            "INNER JOIN Squadra ON Squadra.IDSquadra = Pool.IDSquadra " +
+                            "INNER JOIN Atleta as at1s1 ON at1s1.IDAtleta = Squadra.IDAtleta1 " +
+                            "INNER JOIN Atleta as at2s1 ON at2s1.IDAtleta = Squadra.IDAtleta2 "+
+                            "WHERE IDTorneo =@IDTorneo AND PP = 3 ORDER BY QP ASC";//scarico numero squadre
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                        dtb = new DataTable();
+                        da = new SqlDataAdapter(command);
+                        da.Fill(dtb);
+                        conn.Close();
+                        classifica.Add(new Classifica(dtb.Rows[1][0].ToString(), dtb.Rows[1][1].ToString(), 1, dtb.Rows[1][2].ToString(), 100));
+                        classifica.Add(new Classifica(dtb.Rows[0][0].ToString(), dtb.Rows[0][1].ToString(), 1, dtb.Rows[0][2].ToString(), 100));
+                    }
+                    //4 nei pool
+                    conn.Open();
+                    query = "SELECT at1s1.CodiceTessera as CA1,at2s1.CodiceTessera as CA2,NomeTeam,Pool.IdSquadra FROM Pool " +
+                        "INNER JOIN Squadra ON Squadra.IDSquadra = Pool.IDSquadra " +
+                        "INNER JOIN Atleta as at1s1 ON at1s1.IDAtleta = Squadra.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s1 ON at2s1.IDAtleta = Squadra.IDAtleta2 " +
+                        "WHERE IDTorneo = @IDTorneo AND PP = 0 ORDER BY QP DESC";
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    conn.Close();
+                    //prendo i vincitori e i perdenti
+                    for (int i = 0; i < dtb.Rows.Count; i++)
+                    {
+                        classifica.Add(new Classifica(dtb.Rows[i][0].ToString(), dtb.Rows[i][1].ToString(), 1, dtb.Rows[i][2].ToString(), 100));
+                    }
+                    //prendo qulifiche se ci sono
+                    conn.Open();
+                    query = "SELECT IDTorneo FROM Torneo WHERE Titolo LIKE '%'+(SELECT Titolo FROM Torneo WHERE IDTorneo=@IDTorneo)+'%' AND IDTorneo != @IDTorneo";//prendo finali
+                    command = new SqlCommand(query, conn);
+                    command.Parameters.Add(new SqlParameter("IDTorneo", idTorneo));
+                    dtb = new DataTable();
+                    da = new SqlDataAdapter(command);
+                    da.Fill(dtb);
+                    conn.Close();
+                    //ci sono qualfiche
+                    if (dtb.Rows.Count > 0)
+                    {
+                        int idtorneoqualifica = Convert.ToInt32(dtb.Rows[0][0]);
+                        //prendo tutte le partite di qualifica
+                        conn.Open();
+                        query = "SELECT at1s1.CodiceTessera as CS1A1,at2s1.CodiceTessera as CS1A2," +
+                        "at1s2.CodiceTessera as CS2A1,at2s2.CodiceTessera as CS2A2," +
+                        "sq1.NomeTeam as SQ1,sq2.NomeTeam as SQ2,SetSQ1,SetSQ2 FROM Partita " +
+                        "INNER JOIN Squadra as sq1 ON sq1.IDSquadra = Partita.IDSQ1 " +
+                        "INNER JOIN Squadra as sq2 ON sq2.IDSquadra = Partita.IDSQ2 " +
+                        "INNER JOIN Atleta as at1s1 ON at1s1.IDAtleta=sq1.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s1 ON at2s1.IDAtleta = sq1.IDAtleta2 " +
+                        "INNER JOIN Atleta as at1s2 ON at1s2.IDAtleta = sq2.IDAtleta1 " +
+                        "INNER JOIN Atleta as at2s2 ON at2s2.IDAtleta = sq2.IDAtleta2 " +
+                        "WHERE IDTorneo =@IDTorneo ORDER BY NumPartita DESC";//prendo finali
+                        command = new SqlCommand(query, conn);
+                        command.Parameters.Add(new SqlParameter("IDTorneo", idtorneoqualifica));
+                        dtb = new DataTable();
+                        da = new SqlDataAdapter(command);
+                        da.Fill(dtb);
+                        conn.Close();
+                        //prendo i vincitori e i perdenti
+                        for (int i = 0; i < dtb.Rows.Count; i++)
+                        {
+                            //se sq1 ha vinto 
+                            if (Convert.ToInt32(dtb.Rows[i][6]) == 2)
+                                classifica.Add(new Classifica(dtb.Rows[i][2].ToString(), dtb.Rows[i][3].ToString(), 1, dtb.Rows[i][5].ToString(), 100));
+                            //se sq2 ha vinto
+                            else if (Convert.ToInt32(dtb.Rows[i][7]) == 2)
+                                classifica.Add(new Classifica(dtb.Rows[i][0].ToString(), dtb.Rows[i][1].ToString(), 1, dtb.Rows[i][4].ToString(), 100));
+                        }
+                    }
+                    return classifica;
+                }
+            }
+            catch(Exception e)
+            {
+                List<Classifica> error = new List<Classifica>();
+                error.Add(new Classifica(null,null,0,e.Message.ToString(),0));
+                return error;
+            }
+            return null;
+        }
+        public  DataTable CreateDataTable<T>(IEnumerable<T> list)
+        {
+            Type type = typeof(T);
+            var properties = type.GetProperties();
+
+            DataTable dataTable = new DataTable();
+            dataTable.TableName = typeof(T).FullName;
+            foreach (PropertyInfo info in properties)
+            {
+                dataTable.Columns.Add(new DataColumn(info.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
+            }
+
+            foreach (T entity in list)
+            {
+                object[] values = new object[properties.Length];
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    values[i] = properties[i].GetValue(entity);
+                }
+
+                dataTable.Rows.Add(values);
+            }
+
+            return dataTable;
         }
     }
 }
