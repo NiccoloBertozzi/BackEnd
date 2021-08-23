@@ -3666,18 +3666,18 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (7 - i) <= squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (7 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[7 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((7 - i) > squadreQualifica.Rows.Count)
+                            if ((7 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[7 - i]["IDSquadra"]));
@@ -3718,14 +3718,14 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (15 - i) < squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (15 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[15 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
@@ -3842,18 +3842,18 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (31 - i) <= squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (31 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[31 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((31 - i) > squadreQualifica.Rows.Count)
+                            if ((31 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[31 - i]["IDSquadra"]));
@@ -4072,18 +4072,18 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (63 - i) <= squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (63 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[63 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((63 - i) > squadreQualifica.Rows.Count)
+                            if ((63 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[63 - i]["IDSquadra"]));
@@ -4503,18 +4503,18 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (11 - i) <= squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (11 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[11 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((11 - i) > squadreQualifica.Rows.Count)
+                            if ((11 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[11 - i]["IDSquadra"]));
@@ -4561,18 +4561,18 @@ namespace WebAPIAuthJWT.Helpers
                         sql += "INSERT INTO Partita(IDSQ1,IDSQ2,IDTorneo,NumPartita,Fase,DataPartita,NumPartitaSuccessiva,OraPartita) " +
                             "VALUES (@IDSQ1,@IDSQ2,@IDTorneo,@NumPartita,@Fase,@DataPartita,@NumPartitaSuccessiva,@OraPartita)";
                         comando = new SqlCommand(sql, conn);
-                        if (i <= squadreQualifica.Rows.Count && (23 - i) <= squadreQualifica.Rows.Count)
+                        if (i < squadreQualifica.Rows.Count && (23 - i) < squadreQualifica.Rows.Count)
                         {
                             comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
                             comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[23 - i]["IDSquadra"]));
                         }
                         else
                         {
-                            if (i > squadreQualifica.Rows.Count)
+                            if (i >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ1", squadreQualifica.Rows[i]["IDSquadra"]));
-                            if ((23 - i) > squadreQualifica.Rows.Count)
+                            if ((23 - i) >= squadreQualifica.Rows.Count)
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreBye.Rows[0]["IDSquadra"]));
                             else
                                 comando.Parameters.Add(new SqlParameter("IDSQ2", squadreQualifica.Rows[23 - i]["IDSquadra"]));
