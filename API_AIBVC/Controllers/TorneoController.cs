@@ -456,7 +456,7 @@ namespace API_AIBVC.Controllers
             return db.UpdateTorneo(modTorneo.Titolo, modTorneo.PuntiVittoria, modTorneo.Montepremi, Convert.ToDateTime(modTorneo.DataChiusuraIscrizioni), Convert.ToDateTime(modTorneo.DataInizio), Convert.ToDateTime(modTorneo.DataFine), modTorneo.Genere, modTorneo.IDFormulaTorneo, modTorneo.NumMaxTeamMainDraw, modTorneo.NumMaxTeamQualifiche, modTorneo.IDParametriTorneo, modTorneo.IDTipoTorneo, modTorneo.QuotaIscrizione, modTorneo.IDSocieta, modTorneo.NumTeamQualificati, modTorneo.NumWildCard, modTorneo.IDImpianto, modTorneo.Outdoor, modTorneo.RiunioneTecnica, modTorneo.OraInizio, modTorneo.IDSupervisore, modTorneo.IDSupArbitrale, modTorneo.IDDirettore, Convert.ToDateTime(modTorneo.DataPubblicazioneLista), modTorneo.VisibilitaListaIngresso, modTorneo.UrlLocandina, modTorneo.IDTorneo);
         }
 
-        [HttpPost("CreaListaIngresso/{IDTorneo}/{IDSupervisore}")]
+        [HttpPost("CreaListaIngresso/{IDTorneo}/Supervisore/{IDSupervisore}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
@@ -582,10 +582,17 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Delegato,Societa,Atleta,Admin")]
         public DataTable GetClassifica(int IDTorneo)
         {
             return db.CreateDataTable(db.GeneraClassifica(IDTorneo));
+        }
+        [HttpGet("GetTourTornei")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public string[] GetTourTornei()
+        {
+            return db.GetTourTornei();
         }
     }
 }

@@ -37,10 +37,14 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         public DataTable GetClassificaMaschile(string sesso)
         {
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Cookie");
             return db.GetClassifica(sesso);
+        }
+        //in base al sesso passato ritorna la classifica del tour 
+        [HttpGet("GetClassificaTour/{sesso}/Tour/{tour}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        public DataTable GetClassificaTour(string sesso,string tour)
+        {
+            return db.GetClassificaTour(sesso, tour);
         }
 
         [HttpGet("GetComuni")]
