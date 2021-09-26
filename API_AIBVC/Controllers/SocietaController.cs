@@ -40,7 +40,6 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
         public DataTable GetSocieta(int idsocieta)
         {
             return db.GetInfoSocieta(idsocieta);
@@ -84,7 +83,6 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Societa,Delegato,Admin,Atleta,Allenatore")]
         public DataTable GetImpianto(int idSocieta, int IDImpianto)
         {
             return db.GetImpiantoSocieta(idSocieta, IDImpianto);

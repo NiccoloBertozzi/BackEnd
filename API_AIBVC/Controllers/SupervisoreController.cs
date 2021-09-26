@@ -48,14 +48,13 @@ namespace API_AIBVC.Controllers
             //Mi servono: IDTorneo,IDPartita,Numero del set e i punti fatti dalle 2 squadre
             return db.UploadResults(aggiornaSet.IdTorneo, aggiornaSet.NumPartita, aggiornaSet.IDPartita, aggiornaSet.pt1s1, aggiornaSet.pt2s1, aggiornaSet.pt1s2, aggiornaSet.pt2s2, aggiornaSet.pt1s3, aggiornaSet.pt2s3, aggiornaSet.NumSet, aggiornaSet.IDTorneoPrincipale);
         }
-        [HttpPost("GetPartita")]
+        [HttpGet("GetPartita/{idtorneo}/Partita/{numpartita}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
-        [Authorize(Roles = "Delegato,Atleta,Societa,Allenatore,Admin")]
-        public ActionResult<InfoMsg> GetPartita([FromBody] CercaTeam cercaPartita)
+        public DataTable GetPartita(int idtorneo, int numpartita)
         {
-            return Ok(db.GetPartita(db.GetIDTorneo(cercaPartita.TitoloTorneo), cercaPartita.NumPartita));
+            return db.GetPartita(idtorneo, numpartita);
         }
         [HttpGet("GetIDPartita/{idtorneo}/Partita/{numpartita}")]
         [ProducesResponseType(400)]

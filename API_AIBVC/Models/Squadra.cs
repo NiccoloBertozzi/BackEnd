@@ -23,6 +23,6 @@ namespace TEST.Models
         public string Atleta2 { get; set; }
         public bool Accettato { get; set; }
         public string NomeTeam { get; set; }
-    
+        public ListaIscritti Iscritto { get; set; } 
     }
 }

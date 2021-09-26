@@ -47,6 +47,22 @@ namespace API_AIBVC.Controllers
             return db.GetClassificaTour(sesso, tour);
         }
 
+        //punti atleta di ogni tappa
+        [HttpGet("GetPuntiAletaTappa/{tour}/Atleta/{idatleta}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        public DataTable GetPuntiAtletaTappa(string tour, int idatleta)
+        {
+            return db.GetPuntiAtletaTappa(tour, idatleta);
+        }
+
+        //numero tappe
+        [HttpGet("GetTappe/{tour}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
+        public string[] GetNumeroTappe(string tour)
+        {
+            return db.GetTappe(tour);
+        }
+
         [HttpGet("GetComuni")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoMsg))]
         public DataTable GetComuni()

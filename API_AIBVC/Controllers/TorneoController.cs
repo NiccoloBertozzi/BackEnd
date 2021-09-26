@@ -80,16 +80,15 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta")]
-        public Nullable<int> InsertSquadra([FromBody] Squadra squadra)
+        [Authorize(Roles = "Atleta,Admin,Delegato")]
+        public ActionResult<InfoMsg> InsertSquadra([FromBody] Squadra squadra)
         {
-            Nullable<int> idsquadra = db.InsertSquadra(squadra.Atleta1, squadra.Atleta2, squadra.NomeTeam);
-            if (idsquadra != null)
-                return idsquadra;
+            if(db.InsertSquadra(squadra.Atleta1, squadra.Atleta2, squadra.NomeTeam,squadra.Iscritto.IDAllenatore,squadra.Iscritto.IDTorneo,squadra.Iscritto.WildCard))
+                return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
             else
-                return null;
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
         }
-        //iscrive una suadra ad un torneo
+        /*iscrive una suadra ad un torneo
         [HttpPost("IscriviSquadra")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -97,11 +96,11 @@ namespace API_AIBVC.Controllers
         [Authorize(Roles = "Atleta")]
         public ActionResult<InfoMsg> IscriviSquadra([FromBody] ListaIscritti iscritti)
         {
-            if (db.IscriviSquadra(iscritti.IDTorneo, iscritti.IDSquadra, iscritti.IDAllenatore))
+            if (db.IscriviSquadra(iscritti.IDTorneo, iscritti.IDSquadra,Atleta1,atleta2 iscritti.IDAllenatore,iscritti.WildCard))
                 return Ok(new InfoMsg(DateTime.Today, $"Squadra Iscritta con successo"));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante l'iscrizione della squadra"));
-        }
+        }*/
 
         //ritorna la lista degli atleti di una societa
         [HttpGet("AtletiSocieta/{idsocieta}")]
@@ -398,7 +397,6 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Delegato,Admin")]
         public DataTable SquadreTorneo(int IdTorneo)
         {
             //Metodo che restituisce i torni a cui ha partecipato un supervisore
@@ -430,20 +428,29 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
-        [Authorize(Roles = "Atleta,Societa,Delegato,Admin")]
         public DataTable GetPartiteTorneo(int idTorneo)
         {
             return db.GetPartiteTorneo(idTorneo);
         }
-
+        [HttpGet("GetTitoloTorneo/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        public string GetTitoloTorneo(int idTorneo)
+        {
+            return db.GetTitoloTorneo(idTorneo).Rows[0][0].ToString();
+        }
         [HttpPut("AssegnaInfoPartita")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin")]
-        public string AssegnaInfoPartita([FromBody] InfoPartita infoPartita)
+        public ActionResult<InfoMsg> AssegnaInfoPartita([FromBody] InfoPartita infoPartita)
         {
-            return db.AssegnaInfoPartita(infoPartita.IDArbitro1, infoPartita.IDArbitro2, infoPartita.Campo, Convert.ToDateTime(infoPartita.DataPartita), Convert.ToDateTime(infoPartita.OraPartita), infoPartita.IDPartita);
+            if (db.AssegnaInfoPartita(infoPartita.IDArbitro1, infoPartita.IDArbitro2, infoPartita.Campo, Convert.ToDateTime(infoPartita.DataPartita), Convert.ToDateTime(infoPartita.OraPartita), infoPartita.IDPartita))
+                return Ok(new InfoMsg(DateTime.Today, $"Info modificate con successo"));
+            else
+                return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore durante la modifica delle informazioni"));
         }
 
         [HttpPut("UpdateInfoTorneo")]
@@ -510,6 +517,15 @@ namespace API_AIBVC.Controllers
         {
             return db.GetStatoTornei(idTorneo);
         }
+        [HttpGet("GetTestadiSerie/{IDTorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Societa,Admin")]
+        public DataTable GetTestadiSerie(int IDTorneo)
+        {
+            return db.GetTestadiSerie(IDTorneo);
+        }
 
         [HttpGet("GetListaIngresso/{IDTorneo}")]
         [ProducesResponseType(400)]
@@ -531,16 +547,34 @@ namespace API_AIBVC.Controllers
             return db.AvanzaTabelloneQualifiche(idTorneoQualifiche, numPartita, idTorneoPrincipale);
         }*/
 
-        [HttpGet("ControlloChiusuraIscrizioni/{idtorneo}/Supervisore/{idSupervisore}")]
+        [HttpGet("ControlloChiusuraIscrizioni/{idtorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DataTable))]
         [Authorize(Roles = "Delegato,Admin,Societa,Atleta")]
-        public bool ControlloDataIscrizioni(int idtorneo, int idSupervisore)
+        public bool ControlloDataIscrizioni(int idtorneo)
         {
-            return db.ControlloDataIscrizioni(idtorneo, idSupervisore);
-        }
+            return db.ControlloDataIscrizioni(idtorneo);
 
+        }
+        [HttpGet("ControlloInizioTorneo/{idtorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa,Atleta")]
+        public bool ControlloInizioTorneo(int idtorneo)
+        {
+            return db.ControlloInizioTorneo(idtorneo);
+        }
+        [HttpGet("ControlloPresenzaTabellone/{idtorneo}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Delegato,Admin,Societa,Atleta")]
+        public bool ControlloPresenzaTabellone(int idtorneo)
+        {
+            return db.ControlloPresenzaTabellone(idtorneo);
+        }
         [HttpPost("CreaPool/{idTorneo}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

@@ -262,8 +262,6 @@ E:\ProgrammiScuola\SCUOLA\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties
 C:\Users\berto\Desktop\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties\ServiceDependencies\AIBVCapi - Web Deploy\profile.arm.json
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\appsettings.Development.json
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\appsettings.json
-E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties\launchSettings.json
-E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\Properties\ServiceDependencies\AIBVCapi - Web Deploy\profile.arm.json
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.exe
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.deps.json
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\API_AIBVC.runtimeconfig.json
@@ -292,7 +290,6 @@ E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runt
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win-x86\native\sni.dll
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
-E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csprojAssemblyReference.cache
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csproj.CoreCompileInputs.cache
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cs
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.MvcApplicationPartsAssemblyInfo.cache
@@ -305,3 +302,6 @@ E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\stat
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.dll
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.pdb
 E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.genruntimeconfig.cache
+E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.csproj.AssemblyReference.cache
+E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\API_AIBVC.GeneratedMSBuildEditorConfig.editorconfig
+E:\ProgrammiScuola\SCUOLA\AIBVC\BackEnd\API_AIBVC\obj\Release\netcoreapp3.1\scopedcss\bundle\API_AIBVC.styles.css

@@ -18,6 +18,17 @@ namespace API_AIBVC.Controllers
     {
         Database db = new Database();
 
+        // get all atleti
+        [HttpGet("GetAtleti")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DataTable))]
+        [Authorize(Roles = "Societa,Admin,Delegato")]
+        public DataTable GetAtleti()
+        {
+            return db.GetAtleti();
+        }
+
         // restituisce i campi di anagrafica
         [HttpGet("GetAnagraficaAtleta/{Atleti_Id}")]
         [ProducesResponseType(400)]
