@@ -14,7 +14,7 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/supervisore")]
+    [Route("v1/supervisore")]
     public class SupervisoreController : Controller
     {
         Database db = new Database();

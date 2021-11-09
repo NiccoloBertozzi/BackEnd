@@ -12,7 +12,7 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/LoginRegister")]
+    [Route("v1/LoginRegister")]
     public class LoginRegisterController : Controller
     {
         Database db = new Database();

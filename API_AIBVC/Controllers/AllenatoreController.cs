@@ -13,7 +13,7 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/allenatori")]
+    [Route("v1/allenatori")]
     public class AllenatoreController : Controller
     {
         Database db = new Database();

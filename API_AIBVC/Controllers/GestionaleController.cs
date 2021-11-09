@@ -12,7 +12,7 @@ namespace API_AIBVC.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/gestionale")]
+    [Route("v1/gestionale")]
     public class GestionaleController : Controller
     {
         Database db = new Database();
