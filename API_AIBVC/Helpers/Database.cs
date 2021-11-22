@@ -923,76 +923,16 @@ namespace WebAPIAuthJWT.Helpers
             int p = query.Rows.Count;
             return query;
         }
-        public bool RegisterAllenatore(int idSocieta, string codTessera, string grado, string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, string pwd)
+        public string RegisterAllenatore(int idSocieta, string codTessera, string grado, string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
             SqlParameter parametro;
             DataTable idAllenatore;
-            bool regRiuscita = false;
+            string regRiuscita = "false";
             string sql;
             try
             {
-                //Insert nella tabella Allenatore
-                sql = "";
-                sql += "INSERT INTO Allenatore(IDSocieta,CodiceTessera,Grado,Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel) ";
-                sql += "VALUES (@IDSocieta,@CodiceTessera,@Grado,@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDSocieta", idSocieta);
-                comando.Parameters.Add(parametro);
-                if (codTessera != null)
-                    parametro = new SqlParameter("CodiceTessera", codTessera);
-                else
-                    parametro = new SqlParameter("CodiceTessera", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Grado", grado);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Nome", nome);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Cognome", cognome);
-                comando.Parameters.Add(parametro);
-                if (sesso != null)
-                    parametro = new SqlParameter("Sesso", sesso);
-                else
-                    parametro = new SqlParameter("Sesso", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CF", cF);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita);
-                comando.Parameters.Add(parametro);
-                if (comuneNascita != "")
-                    parametro = new SqlParameter("IDComuneNascita", comuneNascita);
-                else
-                    parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (comuneResidenza != "")
-                    parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
-                else
-                    parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (indirizzo != null)
-                    parametro = new SqlParameter("Indirizzo", indirizzo);
-                else
-                    parametro = new SqlParameter("Indirizzo", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (cap != null)
-                    parametro = new SqlParameter("CAP", cap);
-                else
-                    parametro = new SqlParameter("CAP", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Email", email);
-                comando.Parameters.Add(parametro);
-                if (tel != null)
-                    parametro = new SqlParameter("Tel", tel);
-                else
-                    parametro = new SqlParameter("Tel", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                //Cifro la password
-                PasswordHasher hasher = new PasswordHasher();
-                string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
                 sql += "SELECT IDAllenatore FROM Allenatore WHERE Email=@Email";
@@ -1005,113 +945,120 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 if (idAllenatore.Rows.Count > 0)//Controllo abbia trovato l'allenatore
                 {
-                    //Insert nella tabella Login
+                    //Insert nella tabella Allenatore
                     sql = "";
-                    sql += "INSERT INTO Login(Email,PWD,IDAllenatore,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
-                    sql += "VALUES (@Email,@PWD,@IDAllenatore,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                    sql += "INSERT INTO Allenatore(IDSocieta,CodiceTessera,Grado,Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel) ";
+                    sql += "VALUES (@IDSocieta,@CodiceTessera,@Grado,@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel)";
                     comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("IDSocieta", idSocieta);
+                    comando.Parameters.Add(parametro);
+                    if (codTessera != null)
+                        parametro = new SqlParameter("CodiceTessera", codTessera);
+                    else
+                        parametro = new SqlParameter("CodiceTessera", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Grado", grado);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Nome", nome);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Cognome", cognome);
+                    comando.Parameters.Add(parametro);
+                    if (sesso != null)
+                        parametro = new SqlParameter("Sesso", sesso);
+                    else
+                        parametro = new SqlParameter("Sesso", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("CF", cF);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("DataNascita", dataNascita);
+                    comando.Parameters.Add(parametro);
+                    if (comuneNascita != "")
+                        parametro = new SqlParameter("IDComuneNascita", comuneNascita);
+                    else
+                        parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (comuneResidenza != "")
+                        parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
+                    else
+                        parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (indirizzo != null)
+                        parametro = new SqlParameter("Indirizzo", indirizzo);
+                    else
+                        parametro = new SqlParameter("Indirizzo", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (cap != null)
+                        parametro = new SqlParameter("CAP", cap);
+                    else
+                        parametro = new SqlParameter("CAP", DBNull.Value);
+                    comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("Email", email);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("PWD", cifredPWD);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDAllenatore", idAllenatore.Rows[0]["IDAllenatore"]);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                    if (tel != null)
+                        parametro = new SqlParameter("Tel", tel);
+                    else
+                        parametro = new SqlParameter("Tel", DBNull.Value);
                     comando.Parameters.Add(parametro);
                     conn.Open();
                     comando.ExecuteNonQuery();
                     conn.Close();
-                    regRiuscita = true;
+                    //Cifro la password
+                    PasswordHasher hasher = new PasswordHasher();
+                    string cifredPWD = hasher.Hash(pwd);
+                    //Faccio una query per prendere l'IDAllenatore
+                    sql = "";
+                    sql += "SELECT IDAllenatore FROM Allenatore WHERE Email=@Email";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("Email", email));
+                    idAllenatore = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(idAllenatore);
+                    conn.Close();
+                    if (idAllenatore.Rows.Count > 0)//Controllo abbia trovato l'allenatore
+                    {
+                        //Insert nella tabella Login
+                        sql = "";
+                        sql += "INSERT INTO Login(Email,PWD,IDAllenatore,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
+                        sql += "VALUES (@Email,@PWD,@IDAllenatore,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                        comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("Email", email);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("PWD", cifredPWD);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("IDAllenatore", idAllenatore.Rows[0]["IDAllenatore"]);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                        regRiuscita = "true";
+                    }
                 }
+                else return "Allenatore già presente";
             }
             catch (Exception e)
             {
-
+                string error = e.Message;
+                return error;
             }
             return regRiuscita;
         }
-        public bool RegisterAtleta(int idSocieta, string codTessera, string nome, string cognome, char sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, int altezza, int peso, DateTime scadenzaCert, string pwd)
+        public string RegisterAtleta(int idSocieta, string codTessera, string nome, string cognome, char sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, int altezza, int peso, DateTime scadenzaCert, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
             SqlParameter parametro;
             DataTable idAtleta;
-            bool regRiuscita = false;
+            string regRiuscita = "false";
             string sql;
             try
             {
-                //Insert nella tabella Atleta
-                sql = "";
-                sql += "INSERT INTO Atleta(IDSocieta,CodiceTessera,Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel,Altezza,Peso,DataScadenzaCertificato) ";
-                sql += "VALUES (@IDSocieta,@CodiceTessera,@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel,@Altezza,@Peso,@DataScadenzaCertificato)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDSocieta", idSocieta);
-                comando.Parameters.Add(parametro);
-                if (codTessera != null)
-                    parametro = new SqlParameter("CodiceTessera", codTessera);
-                else
-                    parametro = new SqlParameter("CodiceTessera", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Nome", nome);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Cognome", cognome);
-                comando.Parameters.Add(parametro);
-                if (sesso.ToString() != string.Empty)
-                    parametro = new SqlParameter("Sesso", sesso);
-                else
-                    parametro = new SqlParameter("Sesso", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CF", cF);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita);
-                comando.Parameters.Add(parametro);
-                if (comuneNascita != "")
-                    parametro = new SqlParameter("IDComuneNascita", comuneNascita);
-                else
-                    parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (comuneResidenza != "")
-                    parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
-                else
-                    parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (indirizzo != null)
-                    parametro = new SqlParameter("Indirizzo", indirizzo);
-                else
-                    parametro = new SqlParameter("Indirizzo", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (cap != null)
-                    parametro = new SqlParameter("CAP", cap);
-                else
-                    parametro = new SqlParameter("CAP", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Email", email);
-                comando.Parameters.Add(parametro);
-                if (tel != null)
-                    parametro = new SqlParameter("Tel", tel);
-                else
-                    parametro = new SqlParameter("Tel", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Altezza", altezza);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Peso", peso);
-                comando.Parameters.Add(parametro);
-                if (scadenzaCert != DateTime.MinValue)
-                    parametro = new SqlParameter("DataScadenzaCertificato", scadenzaCert);
-                else
-                    parametro = new SqlParameter("DataScadenzaCertificato", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                //Cifro la password
-                PasswordHasher hasher = new PasswordHasher();
-                string cifredPWD = hasher.Hash(pwd);
-                //Faccio una query per prendere l'IDAllenatore
                 sql = "";
                 sql += "SELECT IDAtleta FROM Atleta WHERE Email=@Email";
                 comando = new SqlCommand(sql, conn);
@@ -1121,102 +1068,129 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Open();
                 adapter.Fill(idAtleta);
                 conn.Close();
-                if (idAtleta.Rows.Count > 0)//Controllo abbia trovato l'allenatore
+                if (idAtleta.Rows.Count == 0)//Controllo abbia trovato l'allenatore
                 {
-                    //Insert nella tabella Login
+                    //Insert nella tabella Atleta
                     sql = "";
-                    sql += "INSERT INTO Login(Email,PWD,IDAtleta,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
-                    sql += "VALUES (@Email,@PWD,@IDAtleta,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                    sql += "INSERT INTO Atleta(IDSocieta,CodiceTessera,Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel,Altezza,Peso,DataScadenzaCertificato) ";
+                    sql += "VALUES (@IDSocieta,@CodiceTessera,@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel,@Altezza,@Peso,@DataScadenzaCertificato)";
                     comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("IDSocieta", idSocieta);
+                    comando.Parameters.Add(parametro);
+                    if (codTessera != null)
+                        parametro = new SqlParameter("CodiceTessera", codTessera);
+                    else
+                        parametro = new SqlParameter("CodiceTessera", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Nome", nome);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Cognome", cognome);
+                    comando.Parameters.Add(parametro);
+                    if (sesso.ToString() != string.Empty)
+                        parametro = new SqlParameter("Sesso", sesso);
+                    else
+                        parametro = new SqlParameter("Sesso", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("CF", cF);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("DataNascita", dataNascita);
+                    comando.Parameters.Add(parametro);
+                    if (comuneNascita != "")
+                        parametro = new SqlParameter("IDComuneNascita", comuneNascita);
+                    else
+                        parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (comuneResidenza != "")
+                        parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
+                    else
+                        parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (indirizzo != null)
+                        parametro = new SqlParameter("Indirizzo", indirizzo);
+                    else
+                        parametro = new SqlParameter("Indirizzo", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (cap != null)
+                        parametro = new SqlParameter("CAP", cap);
+                    else
+                        parametro = new SqlParameter("CAP", DBNull.Value);
+                    comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("Email", email);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("PWD", cifredPWD);
+                    if (tel != null)
+                        parametro = new SqlParameter("Tel", tel);
+                    else
+                        parametro = new SqlParameter("Tel", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDAtleta", idAtleta.Rows[0]["IDAtleta"]);
+                    parametro = new SqlParameter("Altezza", altezza);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                    parametro = new SqlParameter("Peso", peso);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                    if (scadenzaCert != DateTime.MinValue)
+                        parametro = new SqlParameter("DataScadenzaCertificato", scadenzaCert);
+                    else
+                        parametro = new SqlParameter("DataScadenzaCertificato", DBNull.Value);
                     comando.Parameters.Add(parametro);
                     conn.Open();
                     comando.ExecuteNonQuery();
                     conn.Close();
-                    regRiuscita = true;
+                    //Cifro la password
+                    PasswordHasher hasher = new PasswordHasher();
+                    string cifredPWD = hasher.Hash(pwd);
+                    //Faccio una query per prendere l'IDAllenatore
+                    sql = "";
+                    sql += "SELECT IDAtleta FROM Atleta WHERE Email=@Email";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("Email", email));
+                    idAtleta = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(idAtleta);
+                    conn.Close();
+                    if (idAtleta.Rows.Count > 0)//Controllo abbia trovato l'allenatore
+                    {
+                        //Insert nella tabella Login
+                        sql = "";
+                        sql += "INSERT INTO Login(Email,PWD,IDAtleta,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
+                        sql += "VALUES (@Email,@PWD,@IDAtleta,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                        comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("Email", email);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("PWD", cifredPWD);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("IDAtleta", idAtleta.Rows[0]["IDAtleta"]);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                        regRiuscita = "true";
+                    }
                 }
+                else return "Atleta già presente";
             }
             catch (Exception e)
             {
-                string c = e.Message;
+                string error = e.Message;
+                return error;
             }
             return regRiuscita;
         }
-        public bool RegisterDelegato(string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
+        public string RegisterDelegato(string nome, string cognome, string sesso, string cF, DateTime dataNascita, string comuneNascita, string comuneResidenza, string indirizzo, string cap, string email, string tel, bool arbitro, bool supervisore, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
             SqlParameter parametro;
             DataTable idDelegato;
-            bool regRiuscita = false;
+            string regRiuscita = "false";
             string sql;
             try
             {
-                //Insert nella tabella Delegato
-                sql = "";
-                sql += "INSERT INTO DelegatoTecnico(Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel,Arbitro,Supervisore) ";
-                sql += "VALUES (@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel,@Arbitro,@Supervisore)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("Nome", nome);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Cognome", cognome);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("CF", cF);
-                comando.Parameters.Add(parametro);
-                if (sesso != null)
-                    parametro = new SqlParameter("Sesso", sesso);
-                else
-                    parametro = new SqlParameter("Sesso", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataNascita", dataNascita);
-                comando.Parameters.Add(parametro);
-                if (comuneNascita != "")
-                    parametro = new SqlParameter("IDComuneNascita", comuneNascita);
-                else
-                    parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (comuneResidenza != "")
-                    parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
-                else
-                    parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (indirizzo != null)
-                    parametro = new SqlParameter("Indirizzo", indirizzo);
-                else
-                    parametro = new SqlParameter("Indirizzo", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (cap != null)
-                    parametro = new SqlParameter("CAP", cap);
-                else
-                    parametro = new SqlParameter("CAP", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Email", email);
-                comando.Parameters.Add(parametro);
-                if (tel != null)
-                    parametro = new SqlParameter("Tel", tel);
-                else
-                    parametro = new SqlParameter("Tel", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Arbitro", arbitro);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Supervisore", supervisore);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                //Cifro la password
-                PasswordHasher hasher = new PasswordHasher();
-                string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
                 sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Email=@Email";
@@ -1229,128 +1203,115 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 if (idDelegato.Rows.Count > 0)//Controllo abbia trovato l'allenatore
                 {
-                    //Insert nella tabella Login
+                    //Insert nella tabella Delegato
                     sql = "";
-                    sql += "INSERT INTO Login(Email,PWD,IDDelegato,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
-                    sql += "VALUES (@Email,@PWD,@IDDelegato,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                    sql += "INSERT INTO DelegatoTecnico(Nome,Cognome,Sesso,CF,DataNascita,IDComuneNascita,IDComuneResidenza,Indirizzo,CAP,Email,Tel,Arbitro,Supervisore) ";
+                    sql += "VALUES (@Nome,@Cognome,@Sesso,@CF,@DataNascita,@IDComuneNascita,@IDComuneResidenza,@Indirizzo,@CAP,@Email,@Tel,@Arbitro,@Supervisore)";
                     comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("Nome", nome);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Cognome", cognome);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("CF", cF);
+                    comando.Parameters.Add(parametro);
+                    if (sesso != null)
+                        parametro = new SqlParameter("Sesso", sesso);
+                    else
+                        parametro = new SqlParameter("Sesso", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("DataNascita", dataNascita);
+                    comando.Parameters.Add(parametro);
+                    if (comuneNascita != "")
+                        parametro = new SqlParameter("IDComuneNascita", comuneNascita);
+                    else
+                        parametro = new SqlParameter("IDComuneNascita", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (comuneResidenza != "")
+                        parametro = new SqlParameter("IDComuneResidenza", comuneResidenza);
+                    else
+                        parametro = new SqlParameter("IDComuneResidenza", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (indirizzo != null)
+                        parametro = new SqlParameter("Indirizzo", indirizzo);
+                    else
+                        parametro = new SqlParameter("Indirizzo", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (cap != null)
+                        parametro = new SqlParameter("CAP", cap);
+                    else
+                        parametro = new SqlParameter("CAP", DBNull.Value);
+                    comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("Email", email);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("PWD", cifredPWD);
+                    if (tel != null)
+                        parametro = new SqlParameter("Tel", tel);
+                    else
+                        parametro = new SqlParameter("Tel", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDDelegato", idDelegato.Rows[0]["IDDelegato"]);
+                    parametro = new SqlParameter("Arbitro", arbitro);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
-                    comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                    parametro = new SqlParameter("Supervisore", supervisore);
                     comando.Parameters.Add(parametro);
                     conn.Open();
                     comando.ExecuteNonQuery();
                     conn.Close();
-                    regRiuscita = true;
+                    //Cifro la password
+                    PasswordHasher hasher = new PasswordHasher();
+                    string cifredPWD = hasher.Hash(pwd);
+                    //Faccio una query per prendere l'IDAllenatore
+                    sql = "";
+                    sql += "SELECT IDDelegato FROM DelegatoTecnico WHERE Email=@Email";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("Email", email));
+                    idDelegato = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(idDelegato);
+                    conn.Close();
+                    if (idDelegato.Rows.Count > 0)//Controllo abbia trovato l'allenatore
+                    {
+                        //Insert nella tabella Login
+                        sql = "";
+                        sql += "INSERT INTO Login(Email,PWD,IDDelegato,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
+                        sql += "VALUES (@Email,@PWD,@IDDelegato,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                        comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("Email", email);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("PWD", cifredPWD);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("IDDelegato", idDelegato.Rows[0]["IDDelegato"]);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                        regRiuscita = "true";
+                    }
                 }
-                else
-                    return false;
+                else return "Delegato già presente";
             }
             catch (Exception e)
             {
-
+                string error = e.Message;
+                return error;
             }
             return regRiuscita;
         }
-        public bool RegisterSocieta(string comune, string nomeSocieta, string indirizzo, string citta, string cap, DateTime dataFondazione, DateTime dataAffilizione, string codAffiliazione, bool affiliata, string email, string presidente, string referente, string sito, string tel1, string tel2, string pec, string piva, string cF, string cU, string pwd)
+        public string RegisterSocieta(string comune, string nomeSocieta, string indirizzo, string citta, string cap, DateTime dataFondazione, DateTime dataAffilizione, string codAffiliazione, bool affiliata, string email, string presidente, string referente, string sito, string tel1, string tel2, string pec, string piva, string cF, string cU, string pwd)
         {
             SqlDataAdapter adapter;
             SqlCommand comando;
             SqlParameter parametro;
             DataTable idSocieta;
-            bool regRiuscita = false;
+            string regRiuscita = "false";
             string sql;
             try
             {
-                sql = "";
-                sql += "INSERT INTO Societa(IDComune,NomeSocieta,Indirizzo,Citta,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Presidente,Referente,Sito,Tel1,Tel2,Pec,PIVA,CF,CU) ";
-                sql += "VALUES (@IDComune,@NomeSocieta,@Indirizzo,@Citta,@CAP,@DataFondazione,@DataAffiliazione,@CodiceAffiliazione,@Affiliata,@Email,@presidente,@referente,@Sito,@Tel1,@Tel2,@Pec,@PIVA,@CF,@CU)";
-                comando = new SqlCommand(sql, conn);
-                parametro = new SqlParameter("IDComune", comune);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("NomeSocieta", nomeSocieta);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Indirizzo", indirizzo);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Citta", citta);
-                comando.Parameters.Add(parametro);
-                if (cap != null)
-                    parametro = new SqlParameter("CAP", cap);
-                else
-                    parametro = new SqlParameter("CAP", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataFondazione", dataFondazione);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("DataAffiliazione", dataAffilizione);
-                comando.Parameters.Add(parametro);
-                if (codAffiliazione != null)
-                    parametro = new SqlParameter("CodiceAffiliazione", codAffiliazione);
-                else
-                    parametro = new SqlParameter("CodiceAffiliazione", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Affiliata", affiliata);
-                comando.Parameters.Add(parametro);
-                parametro = new SqlParameter("Email", email);
-                comando.Parameters.Add(parametro);
-                if (referente != null)
-                    parametro = new SqlParameter("referente", referente);
-                else
-                    parametro = new SqlParameter("referente", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (presidente != null)
-                    parametro = new SqlParameter("presidente", presidente);
-                else
-                    parametro = new SqlParameter("presidente", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (sito != null)
-                    parametro = new SqlParameter("Sito", sito);
-                else
-                    parametro = new SqlParameter("Sito", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (tel1 != null)
-                    parametro = new SqlParameter("Tel1", tel1);
-                else
-                    parametro = new SqlParameter("Tel1", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (tel2 != null)
-                    parametro = new SqlParameter("Tel2", tel2);
-                else
-                    parametro = new SqlParameter("Tel2", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (pec != null)
-                    parametro = new SqlParameter("Pec", pec);
-                else
-                    parametro = new SqlParameter("Pec", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (piva != null)
-                    parametro = new SqlParameter("PIVA", piva);
-                else
-                    parametro = new SqlParameter("PIVA", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (cF != null)
-                    parametro = new SqlParameter("CF", cF);
-                else
-                    parametro = new SqlParameter("CF", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                if (cU != null)
-                    parametro = new SqlParameter("CU", cU);
-                else
-                    parametro = new SqlParameter("CU", DBNull.Value);
-                comando.Parameters.Add(parametro);
-                conn.Open();
-                comando.ExecuteNonQuery();
-                conn.Close();
-                //Cifro la password
-                PasswordHasher hasher = new PasswordHasher();
-                string cifredPWD = hasher.Hash(pwd);
                 //Faccio una query per prendere l'IDAllenatore
                 sql = "";
                 sql += "SELECT IDSocieta FROM Societa WHERE Email=@Email";
@@ -1363,32 +1324,128 @@ namespace WebAPIAuthJWT.Helpers
                 conn.Close();
                 if (idSocieta.Rows.Count > 0)//Controllo abbia trovato l'allenatore
                 {
-                    //Insert nella tabella Login
                     sql = "";
-                    sql += "INSERT INTO Login(Email,PWD,IDSocieta,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
-                    sql += "VALUES (@Email,@PWD,@IDSocieta,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                    sql += "INSERT INTO Societa(IDComune,NomeSocieta,Indirizzo,Citta,CAP,DataFondazione,DataAffiliazione,CodiceAffiliazione,Affiliata,Email,Presidente,Referente,Sito,Tel1,Tel2,Pec,PIVA,CF,CU) ";
+                    sql += "VALUES (@IDComune,@NomeSocieta,@Indirizzo,@Citta,@CAP,@DataFondazione,@DataAffiliazione,@CodiceAffiliazione,@Affiliata,@Email,@presidente,@referente,@Sito,@Tel1,@Tel2,@Pec,@PIVA,@CF,@CU)";
                     comando = new SqlCommand(sql, conn);
+                    parametro = new SqlParameter("IDComune", comune);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("NomeSocieta", nomeSocieta);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Indirizzo", indirizzo);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Citta", citta);
+                    comando.Parameters.Add(parametro);
+                    if (cap != null)
+                        parametro = new SqlParameter("CAP", cap);
+                    else
+                        parametro = new SqlParameter("CAP", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("DataFondazione", dataFondazione);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("DataAffiliazione", dataAffilizione);
+                    comando.Parameters.Add(parametro);
+                    if (codAffiliazione != null)
+                        parametro = new SqlParameter("CodiceAffiliazione", codAffiliazione);
+                    else
+                        parametro = new SqlParameter("CodiceAffiliazione", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    parametro = new SqlParameter("Affiliata", affiliata);
+                    comando.Parameters.Add(parametro);
                     parametro = new SqlParameter("Email", email);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("PWD", cifredPWD);
+                    if (referente != null)
+                        parametro = new SqlParameter("referente", referente);
+                    else
+                        parametro = new SqlParameter("referente", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("IDSocieta", idSocieta.Rows[0]["IDSocieta"]);
+                    if (presidente != null)
+                        parametro = new SqlParameter("presidente", presidente);
+                    else
+                        parametro = new SqlParameter("presidente", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                    if (sito != null)
+                        parametro = new SqlParameter("Sito", sito);
+                    else
+                        parametro = new SqlParameter("Sito", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
+                    if (tel1 != null)
+                        parametro = new SqlParameter("Tel1", tel1);
+                    else
+                        parametro = new SqlParameter("Tel1", DBNull.Value);
                     comando.Parameters.Add(parametro);
-                    parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                    if (tel2 != null)
+                        parametro = new SqlParameter("Tel2", tel2);
+                    else
+                        parametro = new SqlParameter("Tel2", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (pec != null)
+                        parametro = new SqlParameter("Pec", pec);
+                    else
+                        parametro = new SqlParameter("Pec", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (piva != null)
+                        parametro = new SqlParameter("PIVA", piva);
+                    else
+                        parametro = new SqlParameter("PIVA", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (cF != null)
+                        parametro = new SqlParameter("CF", cF);
+                    else
+                        parametro = new SqlParameter("CF", DBNull.Value);
+                    comando.Parameters.Add(parametro);
+                    if (cU != null)
+                        parametro = new SqlParameter("CU", cU);
+                    else
+                        parametro = new SqlParameter("CU", DBNull.Value);
                     comando.Parameters.Add(parametro);
                     conn.Open();
                     comando.ExecuteNonQuery();
                     conn.Close();
-                    regRiuscita = true;
+                    //Cifro la password
+                    PasswordHasher hasher = new PasswordHasher();
+                    string cifredPWD = hasher.Hash(pwd);
+                    //Faccio una query per prendere l'IDAllenatore
+                    sql = "";
+                    sql += "SELECT IDSocieta FROM Societa WHERE Email=@Email";
+                    comando = new SqlCommand(sql, conn);
+                    comando.Parameters.Add(new SqlParameter("Email", email));
+                    idSocieta = new DataTable();
+                    adapter = new SqlDataAdapter(comando);
+                    conn.Open();
+                    adapter.Fill(idSocieta);
+                    conn.Close();
+                    if (idSocieta.Rows.Count > 0)//Controllo abbia trovato l'allenatore
+                    {
+                        //Insert nella tabella Login
+                        sql = "";
+                        sql += "INSERT INTO Login(Email,PWD,IDSocieta,DataUltimoCambioPwd,DataRichiestaCambioPwd,DataUltimoAccesso) ";
+                        sql += "VALUES (@Email,@PWD,@IDSocieta,@DataUltimoCambioPwd,@DataRichiestaCambioPwd,@DataUltimoAccesso) ";
+                        comando = new SqlCommand(sql, conn);
+                        parametro = new SqlParameter("Email", email);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("PWD", cifredPWD);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("IDSocieta", idSocieta.Rows[0]["IDSocieta"]);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataRichiestaCambioPwd", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        parametro = new SqlParameter("DataUltimoAccesso", DateTime.Now.Date);
+                        comando.Parameters.Add(parametro);
+                        conn.Open();
+                        comando.ExecuteNonQuery();
+                        conn.Close();
+                        regRiuscita = "true";
+                    }
                 }
+                else return "Societa già presente";
             }
             catch (Exception e)
             {
-                string c = e.Message;
+                string error = e.Message;
+                return error;
             }
             return regRiuscita;
         }
@@ -2307,13 +2364,13 @@ namespace WebAPIAuthJWT.Helpers
                 mail.To.Add(email);
                 mail.Subject = "Recupero password Account AIBVC";
                 mail.Body = "Clicca il bottone per cambiare la password" +
-                    "<br><form action=\"https://aibvcwa.azurewebsites.net/nuovapassword\" method=\"post\">" +
+                    "<br><form action=\"http://80.211.0.174/app/newpassword\" method=\"post\">" +
                     "<input type=\"hidden\" name=\"email\" value=\"" + email + "\" id=\"email\"/>" +
                     "<button type =\"submit\"> Cambia Password </button>" +
                     "</form> ";
                 mail.IsBodyHtml = true;
                 SmtpServer.Port = 587;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("recoverypass.aibvc@gmail.com", "rpsabv21");
+                SmtpServer.Credentials = new System.Net.NetworkCredential("recoverypass.aibvc@gmail.com", "hwwzapfnfxhkkxzf");
                 SmtpServer.EnableSsl = true;
 
                 SmtpServer.Send(mail);

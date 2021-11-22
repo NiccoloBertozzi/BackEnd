@@ -1168,27 +1168,20 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\berto\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\nicco\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\berto\\Desktop\\AIBVC\\Backend\\API_AIBVC\\API_AIBVC.csproj",
+      "projectUniqueName": "E:\\NICO\\Scuola\\Progetti\\Github\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
       "projectName": "API_AIBVC",
-      "projectPath": "C:\\Users\\berto\\Desktop\\AIBVC\\Backend\\API_AIBVC\\API_AIBVC.csproj",
-      "packagesPath": "C:\\Users\\berto\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\berto\\Desktop\\AIBVC\\Backend\\API_AIBVC\\obj\\",
+      "projectPath": "E:\\NICO\\Scuola\\Progetti\\Github\\BackEnd\\API_AIBVC\\API_AIBVC.csproj",
+      "packagesPath": "C:\\Users\\nicco\\.nuget\\packages\\",
+      "outputPath": "E:\\NICO\\Scuola\\Progetti\\Github\\BackEnd\\API_AIBVC\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\berto\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\nicco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -1248,12 +1241,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[3.1.18, 3.1.18]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -1262,7 +1249,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.303\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-rc.2.21505.57\\RuntimeIdentifierGraph.json"
       }
     }
   }
