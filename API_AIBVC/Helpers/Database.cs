@@ -2364,10 +2364,7 @@ namespace WebAPIAuthJWT.Helpers
                 mail.To.Add(email);
                 mail.Subject = "Recupero password Account AIBVC";
                 mail.Body = "Clicca il bottone per cambiare la password" +
-                    "<br><form action=\"http://80.211.0.174/app/newpassword\" method=\"post\">" +
-                    "<input type=\"hidden\" name=\"email\" value=\"" + email + "\" id=\"email\"/>" +
-                    "<button type =\"submit\"> Cambia Password </button>" +
-                    "</form> ";
+                    "<a href=\"http://80.211.0.174/app/login\"> Cambia Password</a> ";
                 mail.IsBodyHtml = true;
                 SmtpServer.Port = 587;
                 SmtpServer.Credentials = new System.Net.NetworkCredential("recoverypass.aibvc@gmail.com", "hwwzapfnfxhkkxzf");

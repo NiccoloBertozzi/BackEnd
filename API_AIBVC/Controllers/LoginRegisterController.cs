@@ -121,11 +121,11 @@ namespace API_AIBVC.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<InfoMsg> CambiaPsw([FromBody] SetNuovaPsw setNPSW)
+        public ActionResult<InfoMsg> CambiaPsw([FromBody] Credenziali credenziali)
         {
             PasswordHasher hasher = new PasswordHasher();
-            setNPSW.Password = hasher.Hash(setNPSW.Password);
-            if (db.SetNuovaPsw(setNPSW.Email, setNPSW.Password))
+            credenziali.Password = hasher.Hash(credenziali.Password);
+            if (db.SetNuovaPsw(credenziali.Email, credenziali.Password))
                 return Ok(new InfoMsg(DateTime.Today, $"Password cambiata con successo."));
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
@@ -139,7 +139,13 @@ namespace API_AIBVC.Controllers
         public ActionResult<InfoMsg> RecuperaPassword([FromBody] SetNuovaPsw setNPSW)
         {
             if (db.RecuperaPassword(setNPSW.Email))
+            {
+                //Set cookie con ruolo
+                CookieOptions Co = new CookieOptions();
+                Co.Expires = DateTime.Now.AddMinutes(20);
+                HttpContext.Response.Cookies.Append("newpassword", "SI", Co);
                 return Ok(new InfoMsg(DateTime.Today, $"OK"));
+            }
             else
                 return StatusCode(500, new InfoMsg(DateTime.Today, $"Errore nel cambio password."));
         }
